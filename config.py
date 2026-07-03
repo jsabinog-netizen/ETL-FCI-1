@@ -11,8 +11,8 @@ MODULES_COLSUBSIDIO = {
         "Estado_m_dulo_1", "Fecha_m_dulo_1_programado",
         "Fecha_m_dulo_1_ejecutado", "Estado_m_dulo_2",
         "Fecha_m_dulo_2_programado", "Fecha_m_dulo_2_ejecutado",
-        "Estado_sensibilizaci_n", "Fecha_sensibilizaci_n_ejecutada",
-        "Estado_transferencia", "Fecha_transferencia_programada",
+        "Estado_sensibilizaci_n", "Fecha_sensibilizaci_n_programada",
+        "Fecha_sensibilizaci_n_ejecutada", "Estado_transferencia", "Fecha_transferencia_programada",
         "Fecha_transferencia_ejecutada", "Owner", "Created_By", "Modified_By", "Modified_Time",
     ],
     "Agenda_acompa_amiento": [
