@@ -36,7 +36,7 @@ MODULES_COLSUBSIDIO = {
         "Profesional_asignado","Agenda_origen","Connected_To__s","Email","Secondary_Email",
         "Created_By","Owner","Empresa","Estado_del_diagnostico","Tag","Fecha_y_hora_fin",
         "Fecha_y_hora_inicio","Informe_PDF","Modified_By","Email_Opt_Out","Name",
-        "Conclusiones","Profesional_asignado1","Record_Image","Recomendaciones"
+        "Conclusiones","Profesional_asignado1","Record_Image","Recomendaciones","Tipo_de_sesi_n"
     ],
     "Asesor_a":[
         "Profesional_asignado", "Agenda","Owner", "Connected_To__s", "Email",
