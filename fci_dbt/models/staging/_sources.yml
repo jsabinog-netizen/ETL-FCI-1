@@ -6,5 +6,9 @@ sources:
     schema: colsubsidio_ruta_empresas
     tables:
       - name: registro_empresas
-      - name: diagnostico
+      - name: diagn_stico
       - name: asesoria
+      - name: transferencia
+      - name: sensibilizaci_n
+      - name: asesor_a
+      - name: asesor_a_vacantes

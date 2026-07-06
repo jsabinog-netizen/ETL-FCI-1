@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: fct_servicios
+    columns:
+      - name: servicio_id
+        tests:
+          - unique
+          - not_null
+      - name: estado
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['programado', 'cancelado', 'ejecutado']
+      - name: tipo_servicio
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['diagnostico', 'asesoria_legal', 'sensibilizacion', 'transferencia', 'asesoria_vacantes']

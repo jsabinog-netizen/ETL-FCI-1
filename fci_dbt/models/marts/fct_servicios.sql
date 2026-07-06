@@ -1,0 +1,68 @@
+select
+    concat('diagnostico', '_', id) as servicio_id,
+    'diagnostico' as tipo_servicio,
+    nit,
+    asesor_diagnostico as asesor,
+    estado_diagnostico as estado,
+    inicio,
+    fin,
+    tiene_informe,
+    case when estado_diagnostico = 'ejecutado' then 1 else 0 end as es_ejecutado
+from {{ ref('stg_diagnostico') }}
+
+union all
+
+select
+    concat('asesoria_legal', '_', id) as servicio_id,
+    'asesoria_legal' as tipo_servicio,
+    nit,
+    asesor_legal as asesor,
+    estado_asesoria_legal as estado,
+    inicio,
+    fin,
+    tiene_informe,
+    case when estado_asesoria_legal = 'ejecutado' then 1 else 0 end as es_ejecutado
+from {{ ref('stg_asesoria_legal') }}
+
+union all
+
+select
+    concat('sensibilizacion', '_', id) as servicio_id,
+    'sensibilizacion' as tipo_servicio,
+    nit,
+    asesor_sensibilizacion as asesor,
+    estado_sensibilizacion as estado,
+    inicio,
+    fin,
+    tiene_informe,
+    case when estado_sensibilizacion = 'ejecutado' then 1 else 0 end as es_ejecutado
+from {{ ref('stg_sensibilizacion') }}
+
+union all
+
+select
+    concat('transferencia', '_', id) as servicio_id,
+    'transferencia' as tipo_servicio,
+    nit,
+    asesor_transferencia as asesor,
+    estado_transferencia as estado,
+    inicio,
+    fin,
+    tiene_informe,
+    case when estado_transferencia = 'ejecutado' then 1 else 0 end as es_ejecutado
+from {{ ref('stg_transferencia') }}
+
+
+union all
+select
+    concat('asesoria_vacantes', '_', id) as servicio_id,
+    'asesoria_vacantes' as tipo_servicio,
+    nit,
+    asesor_vacante as asesor,
+    estado_asesoria_vacante as estado,
+    inicio,
+    fin,
+    tiene_informe,
+    case when estado_asesoria_vacante = 'ejecutado' then 1 else 0 end as es_ejecutado
+from {{ ref('stg_asesoria_vacantes') }}
+
