@@ -57,7 +57,7 @@ MODULES_COLSUBSIDIO = {
         "Secondary_Email", "Created_By","Empresa", "Estado_de_la_sensibilizaci_n", "Tag", 
         "Fecha_y_hora_fin", "Fecha_y_hora_inicio", "Informe_PDF", "Modified_By", 
         "Email_Opt_Out", "Name", "Conclusiones", "Profesional_asignado1", "Record_Image",
-        "Recomendaciones", "Owner"
+        "Recomendaciones", "Owner","Tipo_de_sesi_n"
     ],
     "Transferencia":[
         "Profesional_asignado","Agenda", "Connected_To__s", "Email", "Secondary_Email",
