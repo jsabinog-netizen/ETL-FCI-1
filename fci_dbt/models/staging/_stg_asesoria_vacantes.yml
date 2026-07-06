@@ -1,0 +1,14 @@
+version: 2
+
+models:
+  - name: stg_asesoria_vacantes
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: estado_asesoria_vacante
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['programado', 'cancelado', 'ejecutado']

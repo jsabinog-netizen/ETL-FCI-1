@@ -1,0 +1,14 @@
+version: 2
+
+models:
+  - name: stg_sensibilizacion
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: estado_sensibilizacion
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['programado', 'cancelado', 'ejecutado']
