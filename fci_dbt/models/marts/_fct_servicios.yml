@@ -17,3 +17,11 @@ models:
           - accepted_values:
               arguments:
                 values: ['diagnostico', 'asesoria_legal', 'sensibilizacion', 'transferencia', 'asesoria_vacantes']
+      - name: nit
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_empresa')
+                field: nit
+              config:
+                severity: warn

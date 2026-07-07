@@ -6,7 +6,7 @@ select -- identificador y texto: se dejan como vienen por ahora
     Tipo_de_sesi_n as tipo_de_sesion,
 
     --Empresa: json
-    JSON_VALUE(Empresa, '$.name') as nit,
+    coalesce(json_value(Empresa, '$.name'), 'SIN_EMPRESA') as nit,
     JSON_VALUE(profesional_asignado1, '$.name') as asesor_diagnostico,
 
     -- fechas: STRING -> DATE con SAFE_CAST

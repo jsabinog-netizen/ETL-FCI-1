@@ -4,7 +4,7 @@ select -- identificador y texto: se dejan como vienen por ahora
     Observaciones as observaciones,
 
     --Empresa: json
-    JSON_VALUE(Empresa, '$.name') as nit,
+    coalesce(json_value(Empresa, '$.name'), 'SIN_EMPRESA') as nit,
     JSON_VALUE(profesional_asignado1, '$.name') as asesor_vacante,
 
     -- fechas: STRING -> DATE con SAFE_CAST
