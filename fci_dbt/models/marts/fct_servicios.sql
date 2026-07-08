@@ -1,7 +1,8 @@
 select
     concat('diagnostico', '_', id) as servicio_id,
-    'diagnostico' as tipo_servicio,
     nit,
+    nombre_empresa,
+    'diagnostico' as tipo_servicio,
     asesor_diagnostico as asesor,
     estado_diagnostico as estado,
     inicio,
@@ -14,8 +15,9 @@ union all
 
 select
     concat('asesoria_legal', '_', id) as servicio_id,
-    'asesoria_legal' as tipo_servicio,
     nit,
+    nombre_empresa,
+    'asesoria_legal' as tipo_servicio,
     asesor_legal as asesor,
     estado_asesoria_legal as estado,
     inicio,
@@ -28,8 +30,9 @@ union all
 
 select
     concat('sensibilizacion', '_', id) as servicio_id,
-    'sensibilizacion' as tipo_servicio,
     nit,
+    nombre_empresa,
+    'sensibilizacion' as tipo_servicio,
     asesor_sensibilizacion as asesor,
     estado_sensibilizacion as estado,
     inicio,
@@ -42,8 +45,9 @@ union all
 
 select
     concat('transferencia', '_', id) as servicio_id,
-    'transferencia' as tipo_servicio,
     nit,
+    nombre_empresa,
+    'transferencia' as tipo_servicio,
     asesor_transferencia as asesor,
     estado_transferencia as estado,
     inicio,
@@ -56,8 +60,9 @@ from {{ ref('stg_transferencia') }}
 union all
 select
     concat('asesoria_vacantes', '_', id) as servicio_id,
-    'asesoria_vacantes' as tipo_servicio,
     nit,
+    nombre_empresa,
+    'asesoria_vacantes' as tipo_servicio,
     asesor_vacante as asesor,
     estado_asesoria_vacante as estado,
     inicio,

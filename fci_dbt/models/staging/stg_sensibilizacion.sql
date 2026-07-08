@@ -7,7 +7,7 @@ select
     Tipo_de_sesi_n as tipo_de_sesion,
 
     --Datos tipo json
-    coalesce(json_value(Empresa, '$.name'), 'SIN_EMPRESA') as nit,
+    coalesce(json_value(Agenda, '$.name'), 'SIN_EMPRESA') as nit,
     JSON_VALUE(profesional_asignado1, '$.name') as asesor_sensibilizacion,
 
     -- fechas: STRING -> DATE con SAFE_CAST
