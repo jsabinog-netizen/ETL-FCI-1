@@ -7,7 +7,7 @@ select
 
     --Datos tipo json
     coalesce(json_value(Agenda, '$.name'), 'SIN_EMPRESA') as nit,
-    JSON_VALUE(profesional_asignado1, '$.name') as asesor_transferencia,
+    coalesce(nullif(trim(json_value(Profesional_asignado1, '$.name')), ''), 'Sin asesor asignado') as asesor_transferencia,
 
     -- fechas: STRING -> DATE con SAFE_CAST
     safe_cast(Fecha_y_hora_inicio  as timestamp) as inicio,
