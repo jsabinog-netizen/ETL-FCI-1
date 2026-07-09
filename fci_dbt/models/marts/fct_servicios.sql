@@ -7,6 +7,8 @@ select
     estado_diagnostico as estado,
     inicio,
     fin,
+    date(inicio) as fecha_inicio,
+    date(fin) as fecha_fin,
     tiene_informe,
     case when estado_diagnostico = 'ejecutado' then 1 else 0 end as es_ejecutado
 from {{ ref('stg_diagnostico') }}
@@ -22,6 +24,8 @@ select
     estado_asesoria_legal as estado,
     inicio,
     fin,
+    date(inicio) as fecha_inicio,
+    date(fin) as fecha_fin,
     tiene_informe,
     case when estado_asesoria_legal = 'ejecutado' then 1 else 0 end as es_ejecutado
 from {{ ref('stg_asesoria_legal') }}
@@ -37,6 +41,8 @@ select
     estado_sensibilizacion as estado,
     inicio,
     fin,
+    date(inicio) as fecha_inicio,
+    date(fin) as fecha_fin,
     tiene_informe,
     case when estado_sensibilizacion = 'ejecutado' then 1 else 0 end as es_ejecutado
 from {{ ref('stg_sensibilizacion') }}
@@ -52,6 +58,8 @@ select
     estado_transferencia as estado,
     inicio,
     fin,
+    date(inicio) as fecha_inicio,
+    date(fin) as fecha_fin,
     tiene_informe,
     case when estado_transferencia = 'ejecutado' then 1 else 0 end as es_ejecutado
 from {{ ref('stg_transferencia') }}
@@ -67,6 +75,8 @@ select
     estado_asesoria_vacante as estado,
     inicio,
     fin,
+    date(inicio) as fecha_inicio,
+    date(fin) as fecha_fin,
     tiene_informe,
     case when estado_asesoria_vacante = 'ejecutado' then 1 else 0 end as es_ejecutado
 from {{ ref('stg_asesoria_vacantes') }}
