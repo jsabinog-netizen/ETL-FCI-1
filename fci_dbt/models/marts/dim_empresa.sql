@@ -6,6 +6,7 @@ select
     sector_economico,
     municipio,
     cluster,
+    fecha_registro,
     estado_en_la_ruta,
 
     -- banderitas: 1 si el servicio esta ejecutado, 0 si no
