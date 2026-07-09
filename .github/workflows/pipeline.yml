@@ -1,0 +1,67 @@
+name: Pipeline ELT Colsubsidio
+
+on:
+  workflow_dispatch:          # boton manual en la pestana Actions
+  schedule:
+    - cron: "*/55 * * * *"    # cada 55 minutos
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install dbt-bigquery
+
+      # Materializa la credencial de GCP desde el Secret.
+      # Heredoc: respeta los saltos de linea del private_key.
+      - name: Crear gcp-credentials.json
+        run: |
+          cat > gcp-credentials.json << 'CREDENTIAL_EOF'
+          ${{ secrets.GCP_CREDENTIALS_JSON }}
+          CREDENTIAL_EOF
+
+      - name: Crear profiles.yml de dbt
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml << 'EOF'
+          fci_dbt:
+            target: dev
+            outputs:
+              dev:
+                type: bigquery
+                method: service-account
+                project: zoho-bq-pipeline-492116
+                dataset: colsubsidio_ruta_empresas
+                location: US
+                keyfile: ${{ github.workspace }}/gcp-credentials.json
+                threads: 4
+                job_execution_timeout_seconds: 300
+                job_retries: 1
+                priority: interactive
+          EOF
+
+      - name: Extraer y cargar (EL)
+        env:
+          ZOHO_CLIENT_ID: ${{ secrets.ZOHO_CLIENT_ID }}
+          ZOHO_CLIENT_SECRET: ${{ secrets.ZOHO_CLIENT_SECRET }}
+          ZOHO_REFRESH_TOKEN: ${{ secrets.ZOHO_REFRESH_TOKEN }}
+        run: |
+          python extractor.py
+          python loader.py
+
+      - name: Transformar (dbt build)
+        run: |
+          cd fci_dbt
+          dbt build
