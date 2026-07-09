@@ -7,7 +7,8 @@ from dotenv import load_dotenv
 from metadata import ensure_metadata_table, write_run
 
 # Cargar variables de entorno
-load_dotenv(".env")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 # Misma config de logging que extractor.py
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
@@ -30,11 +31,8 @@ NESTED_FIELDS = {
 
 
 def get_client():
-    """
-    Crea y devuelve un cliente de BigQuery.
-    Busca la credencial vía GOOGLE_APPLICATION_CREDENTIALS (ya está en tu .env).
-    """
-    return bigquery.Client(project=PROJECT_ID)
+    cred_path = os.path.join(BASE_DIR, "gcp-credentials.json")
+    return bigquery.Client.from_service_account_json(cred_path, project=PROJECT_ID)
 
 # SCHEMAS — explícitos, no autodetect
 

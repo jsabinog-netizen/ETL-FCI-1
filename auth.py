@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 import json
 
 #Lee las variables de entorno y las carga en os
-load_dotenv(".env")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 class ZohoAuth:
     def __init__(self):
