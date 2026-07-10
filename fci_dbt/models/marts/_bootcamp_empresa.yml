@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: bootcamp_empresa
+    description: "Una fila por empresa en bootcamp. Estado derivado de las dos sesiones."
+    columns:
+      - name: nit
+        tests:
+          - unique
+          - not_null
+      - name: estado_bootcamp
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['completado', 'en proceso', 'sin iniciar']
+      - name: estado_sesion_1
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['ejecutada', 'pendiente', 'programada']
+      - name: estado_sesion_2
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['ejecutada', 'pendiente', 'programada']
+              
+
+
+

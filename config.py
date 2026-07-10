@@ -30,7 +30,7 @@ MODULES_COLSUBSIDIO = {
         "Fecha_en_que_se_realiza_la_solicitud", "Modified_By", "Name", "Email_Opt_Out", 
         "Nombre_Completo", "Nombre_Completo_2", "Nombre_del_asesoro_a_que_solicita_el_servicio", 
         "N_mero_de_documento", "N_mero_de_documento_2", "Record_Image", "Raz_n_social_de_la_empresa",
-        "Rol", "Rol_2", "Seleccione_el_m_dulo", "Seleccione_fecha"
+        "Rol", "Rol_2", "Seleccione_el_m_dulo", "Seleccione_fecha","Seleccione_fecha_2","Sesi_n_1","Sesi_n_2"
     ],
     "Diagn_stico":[
         "Profesional_asignado","Agenda_origen","Connected_To__s","Email","Secondary_Email",
@@ -85,7 +85,7 @@ MODULES_COLSUBSIDIO = {
         "Nombre_Completo_2","Name", "N_mero_documento", "N_mero_documento_2",
         "Observaciones_del_participante_1", "Observaciones_del_participante_2",
         "Observaciones_generales", "Record_Image", "Owner",
-        "Raz_n_social_empresa", "Rol", "Rol_2",
+        "Raz_n_social_empresa", "Rol", "Rol_2","NIT"
     ],
     "Modulo_2": [
         "Asistencia_participante_2", "Asistencia_participante_1",
@@ -97,7 +97,7 @@ MODULES_COLSUBSIDIO = {
         "Nombre_Completo_2", "Name", "N_mero_documento", "N_mero_documento_2",
         "Observaciones_del_participante_1", "Observaciones_del_participante_2",
         "Observaciones_generales", "Record_Image", "Owner",
-        "Raz_n_social_empresa", "Rol", "Rol_2",
+        "Raz_n_social_empresa", "Rol", "Rol_2","NIT"
     ],
     "Intermediaci_n_RE": [
         "Asistencia", "Asistencia_2", "Asistencia_3", "Asistencia_4",

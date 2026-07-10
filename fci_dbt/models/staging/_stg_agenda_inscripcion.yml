@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: stg_agenda_inscripcion
+    description: "Empresas inscritas en bootcamp desde Agenda_inscripci_n. Grano: una fila por empresa."
+    columns:
+      - name: nit
+        tests:
+          - not_null
+      - name: estado_sesion_1
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['ejecutada', 'pendiente', 'programada']
+      - name: estado_sesion_2
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['ejecutada', 'pendiente', 'programada']
