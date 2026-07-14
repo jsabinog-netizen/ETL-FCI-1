@@ -215,7 +215,7 @@ def extract_module(auth, module_name, fields, since=None):
         os.remove(checkpoint_file)
     return all_records
 
-def run_extraction(projects=None,since=None):
+def run_extraction(projects=None, since=None, full_refresh=False):
     """
     Ejecuta la extracción de los proyectos seleccionados.
 
@@ -251,7 +251,11 @@ def run_extraction(projects=None,since=None):
         logger.info(f"Extrayendo proyecto {project_name}...")
         for module_name, fields in modules.items():
             try:
-                module_since = since or get_watermark(client, project_name, module_name)
+                if full_refresh:
+                    #Ignora la marca de agua, si elegi traer todos los datos
+                    module_since = None
+                else:
+                    module_since = since or get_watermark(client, project_name, module_name)
                 registros = extract_module(auth, module_name, fields, since=module_since)
                 ruta_registros = f"output/{project_name}/{module_name}.json"
                 with open(ruta_registros, "w") as f:
