@@ -1,3 +1,4 @@
+with servicios as (
 select
     concat('diagnostico', '_', id) as servicio_id,
     nit,
@@ -81,3 +82,11 @@ select
     case when estado_asesoria_vacante = 'ejecutado' then 1 else 0 end as es_ejecutado
 from {{ ref('stg_asesoria_vacantes') }}
 
+)
+
+select 
+    servicios.*,
+    case when dim_empresa.nit is not null then true else false end as tiene_empresa
+from servicios
+left JOIN {{ ref('dim_empresa')}} as dim_empresa
+    on servicios.nit = dim_empresa.nit
