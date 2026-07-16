@@ -20,6 +20,14 @@ select
             or estado_asesoria = 'ejecutado'
             or estado_transferencia = 'ejecutado'
             or estado_sensibilizacion = 'ejecutado'
-            then 1 else 0 end as atendida
+            then 1 else 0 end as atendida,
+
+    case estado_en_la_ruta
+        when 'sin iniciar'              then 'Sin iniciar'
+        when 'en diagnóstico'           then 'En diagnóstico'
+        when 'en asesoría legal'        then 'En asesoría legal'
+        when 'en sensibilización'       then 'En sensibilización'
+        when 'en asesoría de vacantes'  then 'En asesoría de vacantes'
+    end as estado_en_la_ruta_label
 
 from {{ ref('stg_registro_empresas') }}

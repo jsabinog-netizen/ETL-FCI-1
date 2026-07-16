@@ -84,9 +84,22 @@ from {{ ref('stg_asesoria_vacantes') }}
 
 )
 
-select 
+select
     servicios.*,
-    case when dim_empresa.nit is not null then true else false end as tiene_empresa
+    case when dim_empresa.nit is not null then true else false end as tiene_empresa,
+    -- Etiquetas servicios y estado para visualizaciones
+    case servicios.tipo_servicio
+        when 'diagnostico'        then 'Diagnóstico'
+        when 'asesoria_legal'     then 'Asesoría legal'
+        when 'sensibilizacion'    then 'Sensibilización'
+        when 'transferencia'      then 'Transferencia'
+        when 'asesoria_vacantes'  then 'Asesoría de vacantes'
+    end as tipo_servicio_label,
+    case servicios.estado
+        when 'programado' then 'Programado'
+        when 'ejecutado'  then 'Ejecutado'
+        when 'cancelado'  then 'Cancelado'
+    end as estado_label
 from servicios
-left JOIN {{ ref('dim_empresa')}} as dim_empresa
+left join {{ ref('dim_empresa') }} as dim_empresa
     on servicios.nit = dim_empresa.nit
