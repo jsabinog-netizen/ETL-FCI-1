@@ -5,7 +5,15 @@ select -- identificador y texto: se dejan como vienen por ahora
     Recomendaciones as recomendaciones,
 
     --Empresa: json
-    coalesce(json_value(Agenda, '$.name'), 'SIN_EMPRESA') as nit,
+    coalesce(
+        json_value(Empresa, '$.name'), 
+        json_value(Agenda, '$.name'),
+        'SIN_EMPRESA'
+    
+    ) as nit,
+
+    case when json_value(Empresa, '$.name') is not null then true else false end as vinculo_empresa_directo,
+
     coalesce(nullif(trim(json_value(Profesional_asignado1, '$.name')), ''), 'Sin asesor asignado') as asesor_legal, 
 
     -- fechas: STRING -> DATE con SAFE_CAST
