@@ -5,14 +5,14 @@ with base as (
         Name as cedula,
         Cargo as cargo,
         lower(trim(Estado_del_curso)) as estado_curso,
-        Evaluaci_n_1 as evaluacion_1,
+        Evaluacion_1 as evaluacion_1,
         (
             case when lower(trim(Asistencia))   = 'asistió' then 1 else 0 end +
             case when lower(trim(Asistencia_2)) = 'asistió' then 1 else 0 end +
             case when lower(trim(Asistencia_3)) = 'asistió' then 1 else 0 end +
             case when lower(trim(Asistencia_4)) = 'asistió' then 1 else 0 end
         ) as sesiones_asistidas
-    from {{ source('zoho_raw', 'asistencia_formaci_n_com') }}
+    from {{ source('zoho_raw', 'intermediaci_n_re') }}
 )
 
 select

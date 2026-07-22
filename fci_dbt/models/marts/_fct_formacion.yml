@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: fct_formacion
+    description: "Consolidado de las 3 formaciones. Grano: una fila por estudiante-curso."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - cedula
+              - curso
+    columns:
+      - name: cedula
+        tests:
+          - not_null
+      - name: curso
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Estrategias comerciales', 'Lengua de Señas', 'Intermediación laboral']
+      - name: porcentaje_asistencia
+        tests:
+          - not_null

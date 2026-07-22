@@ -1,9 +1,16 @@
 name: Pipeline ELT Colsubsidio
 
 on:
-  workflow_dispatch:          # boton manual en la pestana Actions
+  workflow_dispatch:
   schedule:
-    - cron: "*/55 * * * *"    # cada 55 minutos
+    - cron: "20 9 * * *"    # 4:20 COL → antes del refresh BI 5:00
+    - cron: "20 12 * * *"   # 7:20 COL → antes de 8:00
+    - cron: "20 14 * * *"   # 9:20 COL → antes de 10:00
+    - cron: "50 16 * * *"   # 11:50 COL → antes de 12:30
+    - cron: "20 18 * * *"   # 13:20 COL → antes de 14:00
+    - cron: "20 20 * * *"   # 15:20 COL → antes de 16:00
+    - cron: "20 22 * * *"   # 17:20 COL → antes de 18:00
+    - cron: "20 0 * * *"    # 19:20 COL → antes de 20:00
 
 jobs:
   run-pipeline:
@@ -24,8 +31,6 @@ jobs:
           pip install -r requirements.txt
           pip install dbt-bigquery
 
-      # Materializa la credencial de GCP desde el Secret.
-      # Heredoc: respeta los saltos de linea del private_key.
       - name: Crear gcp-credentials.json
         run: |
           cat > gcp-credentials.json << 'CREDENTIAL_EOF'
@@ -64,4 +69,5 @@ jobs:
       - name: Transformar (dbt build)
         run: |
           cd fci_dbt
+          dbt deps
           dbt build
