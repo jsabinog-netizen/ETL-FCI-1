@@ -52,7 +52,8 @@ MODULES_COLSUBSIDIO = {
         "Profesional_asignado","Agenda","Owner", "Connected_To__s", "Email",
         "Secondary_Email", "Created_By","Empresa", "Estado_de_la_asesor_a", "Tag",
         "Fecha_y_hora_fin", "Fecha_y_hora_inicio", "Informe_PDF", "Modified_By",
-        "Email_Opt_Out", "Name", "Observaciones", "Profesional_asignado1", "Record_Image"
+        "Email_Opt_Out", "Name", "Observaciones", "Profesional_asignado1", "Record_Image",
+        "Cantidad_de_vacantes_creadas"
     ],
     "Sensibilizaci_n":[
         "Profesional_asignado","Agenda", "Connected_To__s", "Email",
@@ -109,7 +110,8 @@ MODULES_COLSUBSIDIO = {
         "Tag", "Fecha_sesi_n", "Fecha_sesi_n_2", "Fecha_sesi_n_3",
         "Fecha_sesi_n_4", "Fecha_sesi_n_5", "Fecha_sesi_n_6", "Fecha_sesi_n_7",
         "Fecha_sesi_n_8", "Modified_By", "Email_Opt_Out", "Nombre_Completo",
-        "Name", "Observaciones", "Record_Image", "Owner", "Sede",
+        "Name", "Observaciones", "Record_Image", "Owner", "Sede","Estado_del_curso", 
+        "Evaluacion_1"
     ],
     "Asistencia_Formaci_n_LS": [
         "Asistencia", "Asistencia_2", "Asistencia_3", "Asistencia_4",
@@ -118,7 +120,16 @@ MODULES_COLSUBSIDIO = {
         "Tag", "Fecha_sesi_n", "Fecha_sesi_n_2", "Fecha_sesi_n_3",
         "Fecha_sesi_n_4", "Fecha_sesi_n_5", "Fecha_sesi_n_6", "Fecha_sesi_n_7",
         "Fecha_sesi_n_8", "Modified_By", "Email_Opt_Out", "Nombre_Completo",
-        "Name", "Observaciones", "Record_Image", "Owner", "Sede",
+        "Name", "Observaciones", "Record_Image", "Owner", "Sede","Evaluaci_n_1",
+        "Evaluaci_n_2","Estado_del_curso"
+    ],
+    "Asistencia_Formaci_n_Com":[
+        "Asistencia", "Asistencia_2", "Asistencia_3", "Asistencia_4",
+        "Cargo", "Connected_To__s", "Email", "Secondary_Email", "Created_By",
+        "Tag", "Fecha_sesi_n", "Fecha_sesi_n_2", "Fecha_sesi_n_3",
+        "Fecha_sesi_n_4", "Modified_By", "Email_Opt_Out", "Nombre_Completo",
+        "Name", "Observaciones", "Record_Image", "Owner", "Sede","Estado_del_curso", 
+        "Evaluaci_n_1"
     ]
     
 }
