@@ -1,0 +1,13 @@
+version: 2
+
+models:
+  - name: stg_formacion_comercial
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: cedula
+        tests:
+          - unique
+          - not_null

@@ -13,3 +13,6 @@ sources:
       - name: asesor_a
       - name: asesor_a_vacantes
       - name: agenda_inscripci_n
+      - name: asistencia_formaci_n_com
+      - name: asistencia_formaci_n_ls
+      - name: intermediaci_n_re
