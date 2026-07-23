@@ -5,6 +5,7 @@ import logging
 from google.cloud import bigquery
 from dotenv import load_dotenv
 from metadata import ensure_metadata_table, write_run
+from config import PROJECTS
 
 # Cargar variables de entorno
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -15,7 +16,6 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 PROJECT_ID = "zoho-bq-pipeline-492116"
-DATASET_ID = "colsubsidio_ruta_empresas"
 
 # Campos que Zoho devuelve como OBJETO ({"name":..,"id":..,"email":..}) o LISTA.
 # Estos aterrizan como columna JSON nativa en raw. .
@@ -27,6 +27,8 @@ NESTED_FIELDS = {
     # lookups a otros módulos (vienen como objeto {name, id})
     "Empresa", "Profesional_asignado", "Profesional_asignado1",
     "Agenda", "Agenda_origen", "Agendamiento_grupal_origen",
+    "Colocaci_n", "Intermediaci_n", "Orientaci_n", "Registro",
+    "Registro_Giz"
 }
 
 
@@ -243,7 +245,7 @@ def es_seguro_borrar(client, staging_fqn, raw_fqn, umbral_pct=0.8, tolerancia_ab
     return False, n_staging, n_raw
 
 
-def reconciliar_module(client, module_name, fields, project_name="colsubsidio", umbral_pct=0.8, tolerancia_abs=5):
+def reconciliar_module(client, module_name, fields,dataset, project_name="colsubsidio", umbral_pct=0.8, tolerancia_abs=5):
     """
     Modo RECONCILIACIÓN: carga full refresh + MERGE con borrado de los que
     ya no están en Zoho. Protegido por guardrail de conteo.
@@ -252,8 +254,8 @@ def reconciliar_module(client, module_name, fields, project_name="colsubsidio", 
     Corre por separado del pipeline incremental normal.
     """
     table_name = module_name.lower()
-    raw_fqn = f"{PROJECT_ID}.{DATASET_ID}.{table_name}"
-    staging_fqn = f"{PROJECT_ID}.{DATASET_ID}._stg_{table_name}"
+    raw_fqn = f"{PROJECT_ID}.{dataset}.{table_name}"
+    staging_fqn = f"{PROJECT_ID}.{dataset}._stg_{table_name}"
 
     path = f"output/{project_name}/{module_name}.json"
     if not os.path.exists(path):
@@ -304,14 +306,14 @@ def reconciliar_module(client, module_name, fields, project_name="colsubsidio", 
 
 # ORQUESTACIÓN POR MÓDULO
 
-def load_module(client, module_name, fields, project_name="colsubsidio"):
+def load_module(client, module_name, fields,dataset, project_name="colsubsidio"):
     """
     Carga un módulo desde output/{project_name}/{module_name}.json a su tabla raw,
     con upsert idempotente. Loggea insertados vs actualizados.
     """
     table_name = module_name.lower()
-    raw_fqn = f"{PROJECT_ID}.{DATASET_ID}.{table_name}"
-    staging_fqn = f"{PROJECT_ID}.{DATASET_ID}._stg_{table_name}"
+    raw_fqn = f"{PROJECT_ID}.{dataset}.{table_name}"
+    staging_fqn = f"{PROJECT_ID}.{dataset}._stg_{table_name}"
 
     # 1. Leer el JSON que dejó el extractor
     path = f"output/{project_name}/{module_name}.json"
@@ -361,24 +363,37 @@ def load_module(client, module_name, fields, project_name="colsubsidio"):
     watermark = max(fechas) if fechas else None
     write_run(client, project_name, module_name, "success", len(records), watermark)
 
-# PUNTO DE ENTRADA
-
-if __name__ == "__main__":
-    from config import MODULES_COLSUBSIDIO
+def run_load(projects=None):
+    """
+    Carga los módulos de los proyectos seleccionados a BigQuery.
+    projects: lista de nombres ["colsubsidio", "giz"] o None para todos.
+    """
+    todos = PROJECTS
+    if projects is None:
+        projects = todos
+    else:
+        projects = {nombre: todos[nombre] for nombre in projects}
 
     client = get_client()
     ensure_metadata_table(client)
 
-    exitosos = 0
-    fallidos = []
-    for module_name, fields in MODULES_COLSUBSIDIO.items():
-        try:
-            load_module(client, module_name, fields)
-            exitosos += 1
-        except Exception as e:
-            logger.error(f"{module_name} FALLÓ al cargar — continúo: {e}")
-            fallidos.append(module_name)
+    for project_name, project_cfg in projects.items():
+        dataset  = project_cfg["dataset_id"]
+        modules  = project_cfg["modules"]
+        logger.info(f"Cargando proyecto {project_name}...")
+        exitosos, fallidos = 0, []
+        for module_name, fields in modules.items():
+            try:
+                load_module(client, module_name, fields, dataset, project_name=project_name)
+                exitosos += 1
+            except Exception as e:
+                logger.error(f"{module_name} FALLÓ — continúo: {e}")
+                fallidos.append(module_name)
+        logger.info(f"{project_name}: {exitosos} OK | {len(fallidos)} fallidos")
+        if fallidos:
+            logger.warning(f"Fallidos: {fallidos}")
 
-    logger.info(f"Carga terminada: {exitosos} OK | {len(fallidos)} fallidos")
-    if fallidos:
-        logger.warning(f"Módulos fallidos: {fallidos}")
+# PUNTO DE ENTRADA
+
+if __name__ == "__main__":
+    run_load(["giz"])
