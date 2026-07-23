@@ -11,7 +11,8 @@ from datetime import datetime
 from auth import ZohoAuth
 
 #Importat modulos
-from config import MODULES_COLSUBSIDIO, MODULES_CUIDARTE
+from config import PROJECTS
+
 
 from metadata import get_watermark
 from loader import get_client
@@ -224,10 +225,7 @@ def run_extraction(projects=None, since=None, full_refresh=False):
         since: datetime ISO string para modo incremental, o None para full refresh
     """
     #Listar todos los proyectos de config
-    todos_los_proyectos = {
-        "colsubsidio": MODULES_COLSUBSIDIO,
-        "cuidarte": MODULES_CUIDARTE,
-        }
+    todos_los_proyectos = PROJECTS
     #Si se escogio el proyecto validar si existe y extraerlo, si no extraer todos los proyectps
     if projects is None:
         projects = todos_los_proyectos
@@ -240,15 +238,16 @@ def run_extraction(projects=None, since=None, full_refresh=False):
                 )
         projects = {nombre: todos_los_proyectos[nombre] for nombre in projects}
     
-    auth = ZohoAuth() #Inicializar la clase zohoauth
     os.makedirs("output", exist_ok=True) #Crer carpeta de salidas
 
     client = get_client()
 
     #Recorre cada proyecto y cada módulo
-    for project_name, modules in projects.items():
+    for project_name, project_cfg in projects.items():
+        auth = ZohoAuth(env_prefix=project_cfg["env_prefix"])  # ← por proyecto
+        modules = project_cfg["modules"] 
         os.makedirs(f"output/{project_name}", exist_ok=True)
-        logger.info(f"Extrayendo proyecto {project_name}...")
+        logger.info(f"Extrayendo proyecto {project_name}...")                       
         for module_name, fields in modules.items():
             try:
                 if full_refresh:
@@ -267,4 +266,4 @@ def run_extraction(projects=None, since=None, full_refresh=False):
 
 #Probar el modulo
 if __name__ == "__main__":
-    run_extraction(projects=["colsubsidio"])
+    run_extraction(projects=["giz"], full_refresh=True)
