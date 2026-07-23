@@ -33,3 +33,4 @@ output/
 #GCP credentials
 gcp-credentials.json
 logs/
+get_fields_giz.py
