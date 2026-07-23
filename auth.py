@@ -10,11 +10,11 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 class ZohoAuth:
-    def __init__(self):
+    def __init__(self, env_prefix= "ZOHO"):
         #Obtener variables de entorno
-        self.zoho_client = os.getenv("ZOHO_CLIENT_ID")
-        self.zoho_secret = os.getenv("ZOHO_CLIENT_SECRET")
-        self.refresh_token = os.getenv("ZOHO_REFRESH_TOKEN")
+        self.zoho_client = os.getenv(f"{env_prefix}_CLIENT_ID")
+        self.zoho_secret = os.getenv(f"{env_prefix}_CLIENT_SECRET")
+        self.refresh_token = os.getenv(f"{env_prefix}_REFRESH_TOKEN")
         
         #Crear acces token
         self.access_token = None
