@@ -27,7 +27,13 @@ clean-targets:         # directories to be removed by `dbt clean`
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
 models:
   fci_dbt:
-    staging:
-      +materialized: view
-    marts:
-      +materialized: table
+    colsubsidio:
+      staging:
+        +materialized: view
+      marts:
+        +materialized: table
+    giz:
+      staging:
+        +materialized: view
+      marts:
+        +materialized: table
