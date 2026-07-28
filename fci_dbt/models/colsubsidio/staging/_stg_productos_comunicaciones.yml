@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: stg_productos_comunicaciones
+    description: "Productos del Componente IV (Comunicaciones). Grano: una fila por producto."
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: nombre_producto
+        tests:
+          - not_null
+      - name: tipo_producto
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Documento', 'Video', 'Pieza gráfica', 'Evento']
+      - name: cantidad_total
+        tests:
+          - not_null

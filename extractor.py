@@ -266,4 +266,4 @@ def run_extraction(projects=None, since=None, full_refresh=False):
 
 #Probar el modulo
 if __name__ == "__main__":
-    run_extraction(projects=["giz"], full_refresh=True)
+    run_extraction(projects=["colsubsidio"])

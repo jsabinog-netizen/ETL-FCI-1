@@ -325,6 +325,10 @@ def load_module(client, module_name, fields,dataset, project_name="colsubsidio")
 
     if not records:
         logger.warning(f"{module_name}: 0 registros en {path} — nada que cargar")
+        # Asegurar que la tabla exista aunque esté vacía
+        raw_schema = build_raw_schema(fields)
+        raw_fqn = f"{PROJECT_ID}.{dataset}.{module_name.lower()}"
+        ensure_table(client, raw_fqn, raw_schema)
         write_run(client, project_name, module_name, "empty", 0, None)
         return
 
@@ -396,4 +400,4 @@ def run_load(projects=None):
 # PUNTO DE ENTRADA
 
 if __name__ == "__main__":
-    run_load(["giz"])
+    run_load(["colsubsidio"])

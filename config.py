@@ -130,6 +130,12 @@ MODULES_COLSUBSIDIO = {
         "Fecha_sesi_n_4", "Modified_By", "Email_Opt_Out", "Nombre_Completo",
         "Name", "Observaciones", "Record_Image", "Owner", "Sede","Estado_del_curso", 
         "Evaluaci_n_1"
+    ],
+    "Productos_Componente_IV":[
+        "de_avance", "Cantidad_en_proceso", "Cantidad_finalizada", "Cantidad_sin_iniciar",
+        "Cantidad_total", "Connected_To__s", "Email", "Secondary_Email", "Created_By",
+        "Estado", "Tag", "Fecha_compromiso", "Modified_By", "Email_Opt_Out", "Name",
+        "Observaciones", "Record_Image", "Owner", "Tipo_de_producto"
     ]
     
 }
@@ -161,7 +167,8 @@ MODULES_GIZ = {
         "Presenta_barreras_de_pre_vinculaci_n", "Barreras_interna_de_previnculaci_n", 
         "Barrera_externa_de_pre_vinculaci_n", "Estrategia_para_la_superaci_n_de_barreras", 
         "Remisi_n_atenci_n_psic_social", "Tiene_medio_de_transporte", "Cu_ntas_personas_est_n_a_tu_cargo",
-        "Registro_Giz", "Owner", "Tag", "Connected_To__s", "Observaci_n_Calidad", "Validaci_n_Calidad", "Metas"
+        "Registro_Giz", "Owner", "Tag", "Connected_To__s", "Observaci_n_Calidad", "Validaci_n_Calidad", "Metas",
+        "Name"
     ],
     "Intermediaci_n_Giz":[
         "Desea_hacer_otra_intermediaci_n", "C_digo_de_la_vacante", "C_digo_de_la_vacante_2", 
