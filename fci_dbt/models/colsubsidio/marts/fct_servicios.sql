@@ -12,7 +12,8 @@ select
     date(fin) as fecha_fin,
     tiene_informe,
     vinculo_empresa_directo,
-    case when estado_diagnostico = 'ejecutado' then 1 else 0 end as es_ejecutado
+    case when estado_diagnostico = 'ejecutado' then 1 else 0 end as es_ejecutado,
+    null as vacantes_creadas
 from {{ ref('stg_diagnostico') }}
 
 union all
@@ -30,7 +31,8 @@ select
     date(fin) as fecha_fin,
     tiene_informe,
     vinculo_empresa_directo,
-    case when estado_asesoria_legal = 'ejecutado' then 1 else 0 end as es_ejecutado
+    case when estado_asesoria_legal = 'ejecutado' then 1 else 0 end as es_ejecutado,
+    null as vacantes_creadas
 from {{ ref('stg_asesoria_legal') }}
 
 union all
@@ -48,7 +50,8 @@ select
     date(fin) as fecha_fin,
     tiene_informe,
     vinculo_empresa_directo,
-    case when estado_sensibilizacion = 'ejecutado' then 1 else 0 end as es_ejecutado
+    case when estado_sensibilizacion = 'ejecutado' then 1 else 0 end as es_ejecutado,
+    null as vacantes_creadas
 from {{ ref('stg_sensibilizacion') }}
 
 union all
@@ -66,7 +69,8 @@ select
     date(fin) as fecha_fin,
     tiene_informe,
     vinculo_empresa_directo,
-    case when estado_transferencia = 'ejecutado' then 1 else 0 end as es_ejecutado
+    case when estado_transferencia = 'ejecutado' then 1 else 0 end as es_ejecutado,
+    null as vacantes_creadas
 from {{ ref('stg_transferencia') }}
 
 
@@ -84,7 +88,8 @@ select
     date(fin) as fecha_fin,
     tiene_informe,
     vinculo_empresa_directo,
-    case when estado_asesoria_vacante = 'ejecutado' then 1 else 0 end as es_ejecutado
+    case when estado_asesoria_vacante = 'ejecutado' then 1 else 0 end as es_ejecutado,
+    vacantes_creadas
 from {{ ref('stg_asesoria_vacantes') }}
 
 )

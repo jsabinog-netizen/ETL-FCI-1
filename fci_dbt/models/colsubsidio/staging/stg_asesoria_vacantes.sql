@@ -24,6 +24,9 @@ select -- identificador y texto: se dejan como vienen por ahora
     --validacion informe
     case when Informe_PDF is not null and Informe_PDF != '' then 1 else 0 end as tiene_informe,
 
+    -- num vacants creadas
+    coalesce(safe_cast(Cantidad_de_vacantes_creadas as int64),1) as vacantes_creadas, 
+
     -- plumbing: la fecha de sistema tambien a timestamp
     safe_cast(Modified_Time as timestamp) as modified_time
 from {{ source('zoho_raw', 'asesor_a_vacantes') }}
