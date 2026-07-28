@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: zoho_raw_giz
+    database: zoho-bq-pipeline-492116
+    schema: proyecto_giz
+    tables:
+      - name: registro_giz
+      - name: orientaci_n_giz
+      - name: intermediaci_n_giz
+      - name: colocaci_n_giz
+      - name: empresa_giz
+      - name: vacantes_giz
+      - name: mitigaci_n_giz
+      - name: calidad_giz
