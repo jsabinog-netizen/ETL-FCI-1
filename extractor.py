@@ -254,7 +254,7 @@ def run_extraction(projects=None, since=None, full_refresh=False):
                     #Ignora la marca de agua, si elegi traer todos los datos
                     module_since = None
                 else:
-                    module_since = since or get_watermark(client, project_name, module_name)
+                    module_since = since or get_watermark(client, project_name, module_name, project_cfg["dataset_id"])
                 registros = extract_module(auth, module_name, fields, since=module_since)
                 ruta_registros = f"output/{project_name}/{module_name}.json"
                 with open(ruta_registros, "w") as f:

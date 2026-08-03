@@ -1,24 +1,20 @@
-import logging
 from datetime import datetime, timezone
 
 from google.cloud import bigquery
 
+import logging
+from config import PROJECTS, PROJECT_ID
+
 logger = logging.getLogger(__name__)
 
-# NOTA: estos constantes están duplicados en loader.py. A futuro conviene
-# centralizarlos en config.py para que no se desincronicen.
-PROJECT_ID = "zoho-bq-pipeline-492116"
-DATASET_ID = "colsubsidio_ruta_empresas"
-METADATA_TABLE = f"{PROJECT_ID}.{DATASET_ID}.pipeline_metadata"
-
-
-def ensure_metadata_table(client):
+def ensure_metadata_table(client, dataset_id):
     """
     Crea pipeline_metadata si no existe. Una fila por módulo por corrida (historial).
     - status:    success | empty | failed
     - watermark: MAX(Modified_Time) de lo cargado en esa corrida; NULL si vacío/falló.
                  De acá sale el since incremental: MAX(watermark) por módulo.
     """
+    METADATA_TABLE = f"{PROJECT_ID}.{dataset_id}.pipeline_metadata"
     schema = [
         bigquery.SchemaField("project_name", "STRING"),
         bigquery.SchemaField("module_name", "STRING"),
@@ -31,7 +27,8 @@ def ensure_metadata_table(client):
     client.create_table(table, exists_ok=True)
 
 
-def get_watermark(client, project_name, module_name):
+def get_watermark(client, project_name, module_name, dataset_id):
+    METADATA_TABLE = f"{PROJECT_ID}.{dataset_id}.pipeline_metadata"
     """
     Devuelve el since para un módulo: el MAX(watermark) de TODAS sus corridas.
     - None → el módulo nunca se cargó con datos → full refresh.
@@ -58,7 +55,7 @@ def get_watermark(client, project_name, module_name):
     return since.isoformat()
 
 
-def write_run(client, project_name, module_name, status, records_loaded, watermark):
+def write_run(client, project_name, module_name, status, records_loaded, watermark, dataset_id):
     """
     Agrega una fila de auditoría por corrida.
 
@@ -70,6 +67,7 @@ def write_run(client, project_name, module_name, status, records_loaded, waterma
     Usa insert_rows_json (streaming) — sin job, inmediato. Como solo agregamos
     filas y nunca las editamos, las limitaciones del streaming buffer no aplican.
     """
+    METADATA_TABLE = f"{PROJECT_ID}.{dataset_id}.pipeline_metadata"
     row = {
         "project_name": project_name,
         "module_name": module_name,

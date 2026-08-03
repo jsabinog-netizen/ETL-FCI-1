@@ -4,8 +4,9 @@ import logging
 
 from google.cloud import bigquery
 from dotenv import load_dotenv
+
 from metadata import ensure_metadata_table, write_run
-from config import PROJECTS
+from config import PROJECTS, PROJECT_ID
 
 # Cargar variables de entorno
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -14,8 +15,6 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 # Misma config de logging que extractor.py
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 logger = logging.getLogger(__name__)
-
-PROJECT_ID = "zoho-bq-pipeline-492116"
 
 # Campos que Zoho devuelve como OBJETO ({"name":..,"id":..,"email":..}) o LISTA.
 # Estos aterrizan como columna JSON nativa en raw. .
@@ -329,7 +328,7 @@ def load_module(client, module_name, fields,dataset, project_name="colsubsidio")
         raw_schema = build_raw_schema(fields)
         raw_fqn = f"{PROJECT_ID}.{dataset}.{module_name.lower()}"
         ensure_table(client, raw_fqn, raw_schema)
-        write_run(client, project_name, module_name, "empty", 0, None)
+        write_run(client, project_name, module_name, "empty", 0, None, dataset_id=dataset)
         return
 
     # 2. Guardrail: sin 'id' no hay MERGE seguro
@@ -365,7 +364,7 @@ def load_module(client, module_name, fields,dataset, project_name="colsubsidio")
     # 9. Watermark = MAX(Modified_Time) de lo cargado → fuente del since incremental
     fechas = [r.get("Modified_Time") for r in records if r.get("Modified_Time")]
     watermark = max(fechas) if fechas else None
-    write_run(client, project_name, module_name, "success", len(records), watermark)
+    write_run(client, project_name, module_name, "success", len(records), watermark, dataset_id=dataset)
 
 def run_load(projects=None):
     """
@@ -379,11 +378,11 @@ def run_load(projects=None):
         projects = {nombre: todos[nombre] for nombre in projects}
 
     client = get_client()
-    ensure_metadata_table(client)
 
     for project_name, project_cfg in projects.items():
         dataset  = project_cfg["dataset_id"]
         modules  = project_cfg["modules"]
+        ensure_metadata_table(client, dataset)
         logger.info(f"Cargando proyecto {project_name}...")
         exitosos, fallidos = 0, []
         for module_name, fields in modules.items():
