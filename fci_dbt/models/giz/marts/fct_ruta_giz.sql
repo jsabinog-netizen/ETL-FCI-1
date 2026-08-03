@@ -7,8 +7,18 @@ WITH registro AS (
         genero,
         tipo_participante,
         ciudad,
-        departamento
+        departamento,
+        inscripcion_completada, 
+        fecha_registro,
+        gestor,
+        nivel_educativo,
+        tipo_discapacidad,
+        pais_nacimiento
     FROM {{ ref('stg_registro_giz') }}
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY documento 
+        ORDER BY fecha_registro DESC NULLS LAST
+    ) = 1
 ),
 
 orientacion AS (
@@ -17,32 +27,54 @@ orientacion AS (
     SELECT 
         documento,
         orientacion_completada,
-        fecha_orientacion
+        fecha_orientacion,
+        orientador
     FROM {{ ref('stg_orientacion_giz') }}
 ),
 
 intermediacion_agg AS (
-    -- Agrupamos para evitar multiplicar filas en el JOIN principal
     SELECT 
         documento,
-        COUNT(id) AS num_intermediaciones,
-        MAX(fecha_intermediacion) AS ultima_fecha_intermediacion,
-        MAX(empresa) AS ultima_empresa_intermediada
+        COUNT(id)                                                                    AS num_intermediaciones,
+        MAX(fecha_intermediacion)                                                    AS ultima_fecha_intermediacion,
+        ARRAY_AGG(estado      ORDER BY fecha_intermediacion DESC LIMIT 1)[OFFSET(0)] AS estado_intermediacion,
+        ARRAY_AGG(empresa     ORDER BY fecha_intermediacion DESC LIMIT 1)[OFFSET(0)] AS ultima_empresa_intermediada,
+        ARRAY_AGG(intermediador ORDER BY fecha_intermediacion DESC LIMIT 1)[OFFSET(0)] AS intermediador,
+        ARRAY_AGG(vacante ORDER BY fecha_intermediacion DESC LIMIT 1)[OFFSET(0)] AS ultima_vacante_intermediada,
+        ARRAY_AGG(perfil_ocupacional ORDER BY fecha_intermediacion DESC LIMIT 1)[OFFSET(0)] AS ultimo_perfil_ocupasional_intermediado
+        -- empresa_intermediacion se elimina — es lo mismo que ultima_empresa_intermediada
     FROM {{ ref('stg_intermediacion_giz') }}
-    GROUP BY 1
+    GROUP BY documento
 ),
 
 colocacion AS (
+    SELECT
+        documento,
+        ARRAY_AGG(colocacion_completada  ORDER BY fecha_vinculacion DESC LIMIT 1)[OFFSET(0)] AS colocacion_completada,
+        MAX(fecha_vinculacion)                                                                 AS fecha_vinculacion,
+        ARRAY_AGG(nombre_empresa         ORDER BY fecha_vinculacion DESC LIMIT 1)[OFFSET(0)] AS nombre_empresa,
+        ARRAY_AGG(nit_empresa ORDER BY fecha_vinculacion DESC LIMIT 1)[OFFSET(0)] AS nit_empresa_colocacion,
+        ARRAY_AGG(cargo                  ORDER BY fecha_vinculacion DESC LIMIT 1)[OFFSET(0)] AS cargo,
+        ARRAY_AGG(tipo_contrato          ORDER BY fecha_vinculacion DESC LIMIT 1)[OFFSET(0)] AS tipo_contrato,
+        ARRAY_AGG(salario                ORDER BY fecha_vinculacion DESC LIMIT 1)[OFFSET(0)] AS salario,
+        ARRAY_AGG(encargado_colocacion   ORDER BY fecha_vinculacion DESC LIMIT 1)[OFFSET(0)] AS encargado_colocacion,
+        COUNT(*)                                                                               AS num_colocaciones
+
+    FROM {{ ref('stg_colocacion_giz') }}
+    GROUP BY documento
+),
+
+mitigacion AS (
     SELECT 
         documento,
-        colocacion_completada,
-        fecha_vinculacion,
-        nombre_empresa AS empresa_colocacion,
-        cargo,
-        tipo_contrato,
-        salario
-    FROM {{ ref('stg_colocacion_giz') }}
+        estado_mitigacion,
+        valor_recibido,
+        encargado_mitigacion,
+        fecha_mitigacion,
+        tipo_mitigacion
+    FROM {{ ref('stg_mitigacion_giz') }}
 )
+
 
 SELECT
     r.documento,
@@ -52,25 +84,51 @@ SELECT
     r.tipo_participante,
     r.ciudad,
     r.departamento,
+    r.nivel_educativo,
+    r.tipo_discapacidad,
+    r.pais_nacimiento,
 
     -- Flags del embudo de ruta
-    IF(o.documento IS NOT NULL, true, false) AS tiene_orientacion,
-    o.fecha_orientacion,
-    o.orientacion_completada,
+    IF(r.inscripcion_completada ="true", "Sí", "No") AS Inscripcion_completada,
+    r.fecha_registro,
+    r.gestor as gestor_registro,
 
-    IF(i.documento IS NOT NULL, true, false) AS tiene_intermediacion,
+    IF(orientacion_completada = "true", "Sí", "No") AS tiene_orientacion,
+    DATE(o.fecha_orientacion) AS fecha_orientacion,
+    o.orientacion_completada,
+    o.orientador,
+
+    IF(i.estado_intermediacion IS NOT NULL, "Sí", "No") AS tiene_intermediacion,
     i.num_intermediaciones,
     i.ultima_fecha_intermediacion,
+    i.intermediador,
+    i.ultima_empresa_intermediada,
+    i.ultima_vacante_intermediada,
+    i.ultimo_perfil_ocupasional_intermediado,
 
-    IF(c.documento IS NOT NULL, true, false) AS tiene_colocacion,
-    c.fecha_vinculacion,
+    IF(c.colocacion_completada = "true", "Sí", "No") AS tiene_colocacion,
+    DATE(c.fecha_vinculacion) AS fecha_colocacion,
+
     c.colocacion_completada,
-    c.empresa_colocacion,
+    c.nombre_empresa,
+    c.nit_empresa_colocacion,
     c.cargo,
     c.tipo_contrato,
-    c.salario
+    c.salario,
+    c.encargado_colocacion,
+    
+
+    IF(m.tipo_mitigacion = "Pago exitoso colocación", "Sí", "No") AS mitigacion_colocacion,
+    IF(m.tipo_mitigacion = "Pago exitoso Formación", "Sí", "No") AS mitigacion_formacion,
+    m.estado_mitigacion,
+    m.valor_recibido,
+    m.encargado_mitigacion,
+    m.fecha_mitigacion,
+    m.tipo_mitigacion
+
 
 FROM registro r
 LEFT JOIN orientacion o      ON r.documento = o.documento
 LEFT JOIN intermediacion_agg i ON r.documento = i.documento
-LEFT JOIN colocacion c       ON r.documento = c.documento
+LEFT JOIN colocacion c       ON r.documento = c.documento 
+LEFT JOIN mitigacion m ON r.documento = m.documento
