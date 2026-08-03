@@ -41,7 +41,8 @@ intermediacion_agg AS (
         ARRAY_AGG(empresa     ORDER BY fecha_intermediacion DESC LIMIT 1)[OFFSET(0)] AS ultima_empresa_intermediada,
         ARRAY_AGG(intermediador ORDER BY fecha_intermediacion DESC LIMIT 1)[OFFSET(0)] AS intermediador,
         ARRAY_AGG(vacante ORDER BY fecha_intermediacion DESC LIMIT 1)[OFFSET(0)] AS ultima_vacante_intermediada,
-        ARRAY_AGG(perfil_ocupacional ORDER BY fecha_intermediacion DESC LIMIT 1)[OFFSET(0)] AS ultimo_perfil_ocupasional_intermediado
+        ARRAY_AGG(perfil_ocupacional ORDER BY fecha_intermediacion DESC LIMIT 1)[OFFSET(0)] AS ultimo_perfil_ocupasional_intermediado,
+        ARRAY_AGG(estado_intermediacion_grupo ORDER BY fecha_intermediacion DESC LIMIT 1)[OFFSET(0)] AS estado_intermediacion_grupo
         -- empresa_intermediacion se elimina — es lo mismo que ultima_empresa_intermediada
     FROM {{ ref('stg_intermediacion_giz') }}
     GROUP BY documento
@@ -105,6 +106,8 @@ SELECT
     i.ultima_empresa_intermediada,
     i.ultima_vacante_intermediada,
     i.ultimo_perfil_ocupasional_intermediado,
+    i.estado_intermediacion,
+    i.estado_intermediacion_grupo,
 
     IF(c.colocacion_completada = "true", "Sí", "No") AS tiene_colocacion,
     DATE(c.fecha_vinculacion) AS fecha_colocacion,
