@@ -37,6 +37,9 @@ select
         'Sin gestor asignado'
     )                                               as gestor,
 
+    -- Fechas
+    safe_cast(Fecha_de_registro as timestamp)      as fecha_registro,
+
     -- plumbing
     safe_cast(Modified_Time as timestamp)           as modified_time,
     safe_cast(_loaded_at    as timestamp)           as _loaded_at

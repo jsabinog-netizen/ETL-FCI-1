@@ -1,7 +1,7 @@
 select
     id,
     Nombre_de_la_empresa                            as nombre_empresa,
-    Rut                                             as nit,
+    Name                                             as nit,
     D_gito_de_verificaci_n                          as digito_verificacion,
     lower(trim(Sector_al_que_pertenece))            as sector,
     Nombre_Contacto                                 as contacto,

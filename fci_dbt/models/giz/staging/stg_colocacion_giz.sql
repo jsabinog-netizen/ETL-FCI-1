@@ -20,7 +20,7 @@ select
 
     -- resultado / calidad
     lower(trim(Colocaci_n_Completada))              as colocacion_completada,
-    coalesce(nullif(trim(json_value(Encargado_Colocaci_n, '$.name')), ''), 'Sin encargado') as encargado,
+    coalesce(nullif(trim(json_value(Encargado_Colocaci_n, '$.name')), ''), 'Sin encargado') as encargado_colocacion,
 
     safe_cast(Modified_Time as timestamp)           as modified_time
 from {{ source('zoho_raw_giz', 'colocaci_n_giz') }}

@@ -152,7 +152,7 @@ MODULES_GIZ = {
         "Tel_fono_de_contacto", "Tiene_alguna_de_estas_responsabilidades_de_cuidado", 
         "Tipo_de_discapacidad", "Tipo_de_documento", "Tipo_de_participante", 
         "Ultimo_nivel_educativo_alcanzado", "Validaci_n_inscripci_n", "V_ctima_del_conflicto_armado",
-        "Whatsapp_de_contacto", "Zona_geogr_fica_de_residencia"
+        "Whatsapp_de_contacto", "Zona_geogr_fica_de_residencia", "Fecha_de_registro"
     ],
     "Orientaci_n_Giz":[
         "Primer_Nombre", "Primer_Apellido", "Segundo_apellido", "Tipo_de_documento", "G_nero", 
@@ -214,7 +214,7 @@ MODULES_GIZ = {
         "Nombre_del_propietario_de_la_cuenta", "N_mero_de_celular", "Primer_apellido", 
         "Primer_nombre", "Record_Image", "Owner", "Qu_valor_recibi_para_superar_la_barrera", 
         "Segundo_apellido", "Segundo_nombre", "Seleccione_el_tipo_de_barrera_individual",
-        "Soporte_mitigaci_n", "Tipo_de_documento", "Tipo_de_mitigaci_n"
+        "Soporte_mitigaci_n", "Tipo_de_documento", "Tipo_de_mitigaci_n", "Fecha_de_pago_de_la_mitigaci_n"
     ],
     "Calidad_Giz":[
         "Colocaci_n", "Connected_To__s", "Email", "Secondary_Email", "Created_By", 
