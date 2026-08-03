@@ -73,9 +73,9 @@ mitigacion AS (
         fecha_mitigacion,
         tipo_mitigacion
     FROM {{ ref('stg_mitigacion_giz') }}
-)
+),
 
-
+base as (
 SELECT
     r.documento,
     r.primer_nombre,
@@ -126,9 +126,20 @@ SELECT
     m.fecha_mitigacion,
     m.tipo_mitigacion
 
-
 FROM registro r
 LEFT JOIN orientacion o      ON r.documento = o.documento
 LEFT JOIN intermediacion_agg i ON r.documento = i.documento
 LEFT JOIN colocacion c       ON r.documento = c.documento 
 LEFT JOIN mitigacion m ON r.documento = m.documento
+)
+
+SELECT 
+    *,
+    case
+        when tiene_colocacion      = 'Sí' then '4. Colocado/a'
+        when tiene_intermediacion  = 'Sí' then '3. Intermediado/a'
+        when tiene_orientacion     = 'Sí' then '2. Orientado/a'
+        when inscripcion_completada = 'Sí' then '1. Registrado/a'
+        else '0. Sin completar'
+    end as estado_ruta
+FROM base
