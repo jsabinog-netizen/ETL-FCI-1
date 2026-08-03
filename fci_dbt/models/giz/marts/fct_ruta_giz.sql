@@ -139,7 +139,7 @@ SELECT
         when tiene_colocacion      = 'Sí' then '4. Colocado/a'
         when tiene_intermediacion  = 'Sí' then '3. Intermediado/a'
         when tiene_orientacion     = 'Sí' then '2. Orientado/a'
-        when inscripcion_completada = 'Sí' then '1. Registrado/a'
+        when inscripcion_completada = 'Sí' then '1. Inscrito/a'
         else '0. Sin completar'
     end as estado_ruta
 FROM base
