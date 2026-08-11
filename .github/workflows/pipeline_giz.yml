@@ -1,0 +1,64 @@
+name: Pipeline ELT GIZ
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 * * * *"   # cada hora en punto (UTC)
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install dbt-bigquery
+
+      - name: Crear gcp-credentials.json
+        run: |
+          cat > gcp-credentials.json << 'CREDENTIAL_EOF'
+          ${{ secrets.GCP_CREDENTIALS_JSON }}
+          CREDENTIAL_EOF
+
+      - name: Crear profiles.yml de dbt
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml << 'EOF'
+          fci_dbt:
+            target: dev
+            outputs:
+              dev:
+                type: bigquery
+                method: service-account
+                project: zoho-bq-pipeline-492116
+                dataset: proyecto_giz
+                location: US
+                keyfile: ${{ github.workspace }}/gcp-credentials.json
+                threads: 4
+                job_execution_timeout_seconds: 300
+                job_retries: 1
+                priority: interactive
+          EOF
+
+      - name: Instalar paquetes dbt
+        run: |
+          cd fci_dbt
+          dbt deps
+
+      - name: Correr pipeline completo GIZ
+        env:
+          ZOHO_GIZ_CLIENT_ID: ${{ secrets.ZOHO_GIZ_CLIENT_ID }}
+          ZOHO_GIZ_CLIENT_SECRET: ${{ secrets.ZOHO_GIZ_CLIENT_SECRET }}
+          ZOHO_GIZ_REFRESH_TOKEN: ${{ secrets.ZOHO_GIZ_REFRESH_TOKEN }}
+        run: |
+          python main.py giz
