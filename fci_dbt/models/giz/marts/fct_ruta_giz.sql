@@ -2,8 +2,11 @@ WITH registro AS (
     SELECT 
         id,
         documento,
+        archivo_documento,
         primer_nombre,
+        segundo_nombre,
         primer_apellido,
+        segundo_apellido,
         genero,
         tipo_participante,
         ciudad,
@@ -13,7 +16,9 @@ WITH registro AS (
         gestor,
         nivel_educativo,
         tipo_discapacidad,
-        pais_nacimiento
+        pais_nacimiento,
+        edad,
+        tipo_documento
     FROM {{ ref('stg_registro_giz') }}
     QUALIFY ROW_NUMBER() OVER (
         PARTITION BY documento 
@@ -28,7 +33,15 @@ orientacion AS (
         documento,
         orientacion_completada,
         fecha_orientacion,
-        orientador
+        orientador,
+        ocupacion_actual,
+
+        perfil_ocupacional,
+        experiencia_formal,
+        presenta_barreras,
+        barrera_interna,
+        barrera_externa,
+        recomendado_vacante,
     FROM {{ ref('stg_orientacion_giz') }}
 ),
 
@@ -52,15 +65,17 @@ colocacion AS (
     SELECT
         documento,
         ARRAY_AGG(colocacion_completada  ORDER BY fecha_vinculacion DESC LIMIT 1)[OFFSET(0)] AS colocacion_completada,
-        MAX(fecha_vinculacion)                                                                 AS fecha_vinculacion,
-        ARRAY_AGG(nombre_empresa         ORDER BY fecha_vinculacion DESC LIMIT 1)[OFFSET(0)] AS nombre_empresa,
+        MAX(fecha_vinculacion)                                                               AS fecha_vinculacion,
+        ARRAY_AGG(sector_empresa ORDER BY fecha_vinculacion DESC LIMIT 1)[OFFSET(0)] AS sector_empresa,
+        ARRAY_AGG(certificado_laboral ORDER BY fecha_vinculacion DESC LIMIT 1)[OFFSET(0)] AS certificado_laboral,
+        ARRAY_AGG(nombre_empresa ORDER BY fecha_vinculacion DESC LIMIT 1)[OFFSET(0)] AS nombre_empresa,
         ARRAY_AGG(nit_empresa ORDER BY fecha_vinculacion DESC LIMIT 1)[OFFSET(0)] AS nit_empresa_colocacion,
         ARRAY_AGG(cargo                  ORDER BY fecha_vinculacion DESC LIMIT 1)[OFFSET(0)] AS cargo,
         ARRAY_AGG(tipo_contrato          ORDER BY fecha_vinculacion DESC LIMIT 1)[OFFSET(0)] AS tipo_contrato,
         ARRAY_AGG(salario                ORDER BY fecha_vinculacion DESC LIMIT 1)[OFFSET(0)] AS salario,
         ARRAY_AGG(encargado_colocacion   ORDER BY fecha_vinculacion DESC LIMIT 1)[OFFSET(0)] AS encargado_colocacion,
-        COUNT(*)                                                                               AS num_colocaciones
-
+        ARRAY_AGG(empleo_verde   ORDER BY fecha_vinculacion DESC LIMIT 1)[OFFSET(0)] AS empleo_verde,
+        COUNT(*)                                                                               AS num_colocaciones,
     FROM {{ ref('stg_colocacion_giz') }}
     GROUP BY documento
 ),
@@ -79,6 +94,8 @@ mitigacion AS (
 base as (
 SELECT
     r.documento,
+    r.tipo_documento,
+    r.archivo_documento,
     r.primer_nombre,
     r.primer_apellido,
     r.genero,
@@ -88,6 +105,15 @@ SELECT
     r.nivel_educativo,
     r.tipo_discapacidad,
     r.pais_nacimiento,
+    r.edad,
+    TRIM(
+        CONCAT(
+                COALESCE(NULLIF(r.primer_Nombre, ''), ''), ' ',
+                COALESCE(NULLIF(r.segundo_Nombre, ''), ''), ' ',
+                COALESCE(NULLIF(r.primer_Apellido, ''), ''), ' ',
+                COALESCE(NULLIF(r.segundo_apellido, ''), '')
+            )
+        ) AS nombre_completo,
 
     -- Flags del embudo de ruta
     IF(r.inscripcion_completada ="true", "Sí", "No") AS Inscripcion_completada,
@@ -98,6 +124,13 @@ SELECT
     DATE(o.fecha_orientacion) AS fecha_orientacion,
     o.orientacion_completada,
     o.orientador,
+    ocupacion_actual,
+    perfil_ocupacional,
+    experiencia_formal,
+    presenta_barreras,
+    barrera_interna,
+    barrera_externa,
+    recomendado_vacante,
 
     IF(i.estado_intermediacion IS NOT NULL, "Sí", "No") AS tiene_intermediacion,
     i.num_intermediaciones,
@@ -119,6 +152,10 @@ SELECT
     c.tipo_contrato,
     c.salario,
     c.encargado_colocacion,
+    c.sector_empresa,
+    c.certificado_laboral,
+    c.empleo_verde,
+    IF(c.certificado_laboral IS NOT NULL, "Sí","No") As soporte_colocacion,
     
 
     IF(m.tipo_mitigacion = "Pago exitoso colocación", "Sí", "No") AS mitigacion_colocacion,
@@ -144,5 +181,16 @@ SELECT
         when tiene_orientacion     = 'Sí' then '2. Orientado/a'
         when inscripcion_completada = 'Sí' then '1. Inscrito/a'
         else '0. Sin completar'
-    end as estado_ruta
+    end as estado_ruta, 
+
+    CASE
+        WHEN Inscripcion_completada = 'Sí'
+        AND tiene_orientacion      = 'Sí'
+        AND tiene_intermediacion   = 'Sí'
+        AND tiene_colocacion       = 'Sí'
+        AND mitigacion_colocacion  = 'Sí'
+        THEN 'Sí'
+        ELSE 'No'
+    END AS ruta_completa
+
 FROM base
