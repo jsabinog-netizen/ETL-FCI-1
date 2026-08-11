@@ -13,5 +13,5 @@ select
     json_value(Intermediaci_n,'$.id')               as intermediacion_id,
     json_value(Colocaci_n,    '$.id')               as colocacion_id,
 
-    safe_cast(Modified_Time as timestamp)           as modified_time
+    DATE(safe_cast(Modified_Time as timestamp))           as modified_time
 from {{ source('zoho_raw_giz', 'calidad_giz') }}

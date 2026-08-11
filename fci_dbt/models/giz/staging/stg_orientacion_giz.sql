@@ -33,8 +33,8 @@ select
     coalesce(nullif(trim(json_value(Orientador, '$.name')), ''), 'Sin orientador') as orientador,
     lower(trim(Orientaci_n_Completada))             as orientacion_completada,
     Recomendado_para_una_vacante_de                 as recomendado_vacante,
-    safe_cast(Fecha_de_orientaci_n as timestamp)    as fecha_orientacion,
+    DATE(safe_cast(Fecha_de_orientaci_n as timestamp))    as fecha_orientacion,
 
     -- plumbing
-    safe_cast(Modified_Time as timestamp)           as modified_time
+    DATE(safe_cast(Modified_Time as timestamp))          as modified_time
 from {{ source('zoho_raw_giz', 'orientaci_n_giz') }}

@@ -5,5 +5,5 @@ select
     D_gito_de_verificaci_n                          as digito_verificacion,
     lower(trim(Sector_al_que_pertenece))            as sector,
     Nombre_Contacto                                 as contacto,
-    safe_cast(Modified_Time as timestamp)           as modified_time
+    DATE(safe_cast(Modified_Time as timestamp)) as modified_time
 from {{ source('zoho_raw_giz', 'empresa_giz') }}
