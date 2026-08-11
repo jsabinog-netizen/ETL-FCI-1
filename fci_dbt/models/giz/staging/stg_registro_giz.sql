@@ -3,10 +3,13 @@ select
     id,
     Name                                            as documento,
     lower(trim(Tipo_de_documento))                  as tipo_documento,
+    Documento_de_identidad                          as archivo_documento,
     Primer_Nombre                                   as primer_nombre,
     Primer_Apellido                                 as primer_apellido,
     Segundo_Nombre                                  as segundo_nombre,
     Segundo_apellido                                as segundo_apellido,
+    Edad                                            as edad,
+    
 
     -- variables de metas 
     lower(trim(G_nero))                             as genero,
@@ -38,10 +41,10 @@ select
     )                                               as gestor,
 
     -- Fechas
-    safe_cast(Fecha_de_registro as timestamp)      as fecha_registro,
+    DATE(safe_cast(Fecha_de_registro as timestamp))      as fecha_registro,
 
     -- plumbing
-    safe_cast(Modified_Time as timestamp)           as modified_time,
-    safe_cast(_loaded_at    as timestamp)           as _loaded_at
+    DATE(safe_cast(Modified_Time as timestamp))           as modified_time,
+    DATE(safe_cast(_loaded_at    as timestamp))           as _loaded_at
 
 from {{ source('zoho_raw_giz', 'registro_giz') }}  
