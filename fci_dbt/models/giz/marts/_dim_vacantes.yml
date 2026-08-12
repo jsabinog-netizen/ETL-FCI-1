@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: dim_vacantes_giz
+    description: "Catálogo de vacantes disponibles GIZ. Passthrough de stg_vacantes_giz."
+    columns:
+      - name: id
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: vacante
+        tests:
+          - not_null:
+              config:
+                severity: warn

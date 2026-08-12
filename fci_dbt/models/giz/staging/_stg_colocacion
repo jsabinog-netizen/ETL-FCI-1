@@ -1,0 +1,27 @@
+version: 2
+
+models:
+
+  - name: stg_colocacion_giz
+    description: "Colocación laboral. Grano: una fila por colocación (puede haber varias por persona)."
+    columns:
+      - name: id
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: documento
+        tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: colocacion_completada
+        tests:
+          - accepted_values:
+              config:
+                severity: warn
+              arguments:
+                values: ['true', 'false']

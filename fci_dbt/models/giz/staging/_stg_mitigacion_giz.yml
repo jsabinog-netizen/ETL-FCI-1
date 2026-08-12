@@ -1,0 +1,25 @@
+version: 2
+
+models:
+
+  - name: stg_mitigacion_giz
+    description: "Mitigación de barreras. Grano: una fila por mitigación (puede haber varias por persona)."
+    columns:
+      - name: id
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: tipo_mitigacion
+        tests:
+          - not_null:
+              config:
+                severity: warn
+          - accepted_values:
+              config:
+                severity: warn
+              arguments:
+                values: ['pago de colocacion', 'pago de formacion']

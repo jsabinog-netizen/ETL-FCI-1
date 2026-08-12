@@ -1,0 +1,52 @@
+version: 2
+
+models:
+
+  - name: stg_registro_giz
+    description: "Registro de participantes GIZ. Grano: una fila por persona (registro en Zoho)."
+    columns:
+      - name: id
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: documento
+        tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: genero
+        tests:
+          - not_null:
+              config:
+                severity: warn
+          - accepted_values:
+              config:
+                severity: warn
+              arguments:
+                values: ['mujer', 'hombre', 'Persona no binaria', 'mujer trans','hombre trans', 'desea no responder']
+      - name: tipo_participante
+        tests:
+          - not_null:
+              config:
+                severity: warn
+          - accepted_values:
+              config:
+                severity: warn
+              arguments:
+                values:
+                  - 'migrante venezolano(a)'
+                  - 'colombiano(a) retornado(a)'
+                  - 'comunidad de acogida (nacional colombiano)'
+                  - 'migrante con otra nacionalidad'
+                  - 'colombiano'
+      - name: inscripcion_completada
+        tests:
+          - accepted_values:
+              config:
+                severity: warn
+              arguments:
+                values: ['true', 'false']
