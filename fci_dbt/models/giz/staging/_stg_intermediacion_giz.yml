@@ -1,0 +1,30 @@
+version: 2
+
+models:
+
+  - name: stg_intermediacion_giz
+    description: "Intermediación laboral. Grano: una fila por intermediación (puede haber varias por persona)."
+    columns:
+      - name: id
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: documento
+        tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: estado_intermediacion_grupo
+        tests:
+          - not_null:
+              config:
+                severity: warn
+          - accepted_values:
+              config:
+                severity: warn
+              arguments:
+                values: ['Exitosa', 'En proceso', 'No continuó', 'No calificó', 'Otro']

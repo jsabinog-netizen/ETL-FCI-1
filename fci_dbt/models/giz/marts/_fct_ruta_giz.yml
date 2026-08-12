@@ -1,0 +1,94 @@
+version: 2
+
+models:
+
+  - name: fct_ruta_giz
+    description: "Ruta de empleabilidad GIZ. Grano: una fila por participante. 
+                  Agrega registro, orientación, intermediación, colocación y mitigación."
+    columns:
+      - name: documento
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: genero
+        tests:
+          - not_null:
+              config:
+                severity: warn
+          - accepted_values:
+              config:
+                severity: warn
+              arguments:
+                values: ['mujer', 'hombre', 'no binario', 'prefiero no decir']
+      - name: tipo_participante
+        tests:
+          - not_null:
+              config:
+                severity: warn
+          - accepted_values:
+              config:
+                severity: warn
+              arguments:
+                values:
+                  - 'migrante venezolano/a'
+                  - 'colombiano/a retornado/a'
+                  - 'comunidad de acogida (nacional colombiano/a)'
+      - name: tiene_orientacion
+        tests:
+          - not_null:
+              config:
+                severity: warn
+          - accepted_values:
+              config:
+                severity: warn
+              arguments:
+                values: ['Sí', 'No']
+      - name: tiene_intermediacion
+        tests:
+          - not_null:
+              config:
+                severity: warn
+          - accepted_values:
+              config:
+                severity: warn
+              arguments:
+                values: ['Sí', 'No']
+      - name: tiene_colocacion
+        tests:
+          - not_null:
+              config:
+                severity: warn
+          - accepted_values:
+              config:
+                severity: warn
+              arguments:
+                values: ['Sí', 'No']
+      - name: estado_ruta
+        tests:
+          - not_null:
+              config:
+                severity: warn
+          - accepted_values:
+              config:
+                severity: warn
+              arguments:
+                values:
+                  - '0. Sin completar'
+                  - '1. Registrado/a'
+                  - '2. Orientado/a'
+                  - '3. Intermediado/a'
+                  - '4. Colocado/a'
+      - name: ruta_completa
+        tests:
+          - not_null:
+              config:
+                severity: warn
+          - accepted_values:
+              config:
+                severity: warn
+              arguments:
+                values: ['Sí', 'No']
