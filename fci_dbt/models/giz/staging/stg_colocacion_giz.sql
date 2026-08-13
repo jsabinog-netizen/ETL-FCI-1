@@ -15,7 +15,7 @@ select
     -- detalle de la vinculación
     Cargo_en_la_empresa                             as cargo,
     lower(trim(Tipo_de_contrato))                   as tipo_contrato,
-    safe_cast(Salario as numeric)                   as salario,
+    Salario                                         as salario,
     lower(trim(Es_un_empleo_verde))                 as empleo_verde,
     DATE(safe_cast(Fecha_de_vinculaci_n as timestamp))    as fecha_vinculacion,
 

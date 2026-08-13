@@ -116,13 +116,17 @@ SELECT
         ) AS nombre_completo,
 
     -- Flags del embudo de ruta
-    IF(r.inscripcion_completada ="true", "Sí", "No") AS Inscripcion_completada,
+    CASE LOWER(TRIM(r.inscripcion_completada))
+        WHEN 'si' THEN 'Sí'
+        WHEN 'sí' THEN 'Sí'
+        WHEN 'no' THEN 'No'
+        ELSE 'No'
+    END AS inscripcion_completada,
     r.fecha_registro,
     r.gestor as gestor_registro,
 
-    IF(orientacion_completada = "true", "Sí", "No") AS tiene_orientacion,
     DATE(o.fecha_orientacion) AS fecha_orientacion,
-    o.orientacion_completada,
+    o.orientacion_completada AS tiene_orientacion,
     o.orientador,
     ocupacion_actual,
     perfil_ocupacional,
@@ -142,10 +146,13 @@ SELECT
     i.estado_intermediacion,
     i.estado_intermediacion_grupo,
 
-    IF(c.colocacion_completada = "true", "Sí", "No") AS tiene_colocacion,
+    CASE LOWER(TRIM(c.colocacion_completada))
+        WHEN 'si' THEN 'Sí'
+        WHEN 'sí' THEN 'Sí'
+        WHEN 'no' THEN 'No'
+        ELSE 'No'
+    END AS tiene_colocacion,
     DATE(c.fecha_vinculacion) AS fecha_colocacion,
-
-    c.colocacion_completada,
     c.nombre_empresa,
     c.nit_empresa_colocacion,
     c.cargo,
