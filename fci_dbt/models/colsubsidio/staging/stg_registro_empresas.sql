@@ -4,7 +4,9 @@ select -- identificador y texto: se dejan como vienen por ahora
     Raz_n_social_de_la_empresa as razon_social,
     Municipio as municipio,
     Departamento as departamento,
+    Direcci_n_de_la_empresa as direccion,
     Sector_econ_mico_de_la_empresa as sector_economico,
+    lower(trim(Tama_o_de_la_empresa)) as tamano,
     Cluster as cluster,
 
     -- fechas: STRING -> DATE con SAFE_CAST

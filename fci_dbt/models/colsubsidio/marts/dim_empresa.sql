@@ -8,6 +8,10 @@ select
     cluster,
     fecha_registro,
     estado_en_la_ruta,
+    tamano,
+    direccion,
+    departamento,
+
 
     -- banderitas: 1 si el servicio esta ejecutado, 0 si no
     case when estado_diagnostico = 'ejecutado' then 1 else 0 end as tiene_diagnostico,
