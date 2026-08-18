@@ -50,7 +50,8 @@ def main():
                     module_name,
                     fields,
                     dataset=config["dataset_id"],
-                    project_name=p
+                    project_name=p,
+                    umbral_pct=0.8
                 )
                 exitosos += 1
             except Exception as e:
