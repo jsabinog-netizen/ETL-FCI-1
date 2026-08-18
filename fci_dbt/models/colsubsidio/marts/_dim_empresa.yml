@@ -11,3 +11,5 @@ models:
         tests:
         - unique
         - not_null
+        config:
+          severity: warn

@@ -3,11 +3,11 @@ select -- identificador y texto: se dejan como vienen por ahora
     Name as nit,
     Raz_n_social_de_la_empresa as razon_social,
     Municipio as municipio,
-    Departamento as departamento,
+    coalesce(nullif(trim(Departamento), ''), 'Departamento no registrado') as departamento,
     Direcci_n_de_la_empresa as direccion,
-    Sector_econ_mico_de_la_empresa as sector_economico,
-    lower(trim(Tama_o_de_la_empresa)) as tamano,
-    Cluster as cluster,
+    coalesce(nullif(trim(Sector_econ_mico_de_la_empresa), ''), 'Sector no registrado') as sector_economico,
+    coalesce(nullif(trim(Tama_o_de_la_empresa), ''), 'Tamaño no registrado') as tamano,
+    coalesce(nullif(trim(Cluster), ''), 'Cluster no registrado') as cluster,
 
     -- fechas: STRING -> DATE con SAFE_CAST
     safe_cast(Fecha_de_registro as date) as fecha_registro,
