@@ -225,6 +225,46 @@ MODULES_GIZ = {
         "Owner", "Registro", "Segundo_apellido", "Segundo_nombre", "Tipo_de_discapacidad",
         "Tipo_de_documento", "Tipo_de_participante", "Ultimo_nivel_educativo_alcanzado", 
         "Url_documento_de_identidad"
+    ],
+    "Formaci_n_Giz":[
+        "Record_Status__s", "Name", "Owner", "Email", "Created_Time", "Modified_Time",
+        "Last_Activity_Time", "Tag", "Unsubscribed_Mode", "Unsubscribed_Time", "Locked__s",
+        "Url_certificado_bancario", "Certificado_Bancario", "Observaci_n_diploma_Habilidades_para_el_trabajo",
+        "Observaci_n_Diploma_T_cnicas", "Nombre_del_curso_T_cnico", "Diploma_T_cnicas", "Diploma_Blandas", 
+        "Url_Diploma_T_cnicas", "Url_diploma_Blandas", "Nombre_del_Beneficiario_de_la_cuenta", "Primer_Nombre",
+        "N_Cuenta_bancaria", "Segundo_Nombre", "Primer_Apellido", "Segundo_Apellido", 
+        "Nombre_Diploma_Habilidades_para_el_trabajo", "Validaci_n_diploma_Habilidades_para_el_trabajo", 
+        "Validaci_n_Diploma_T_cnicas", "Entidad_Bancaria", "Formaci_n_Completadas", "Tipo_de_cuenta", "Gestor_formaci_n"
+        ],
+    "Mitigaci_n_Giz":[
+        "Record_Status__s", "Name", "Owner", "Email", "Created_Time", "Modified_Time",
+        "Last_Activity_Time", "Tag", "Unsubscribed_Mode", "Unsubscribed_Time", "Locked__s",
+        "Descripci_n_de_mitigacion", "Nombre_de_encargado", "Es_micromitigaci_n", 
+        "Soporte_mitigaci_n", "Tipo_de_mitigaci_n", "Primer_apellido", "Segundo_apellido", 
+        "Municipio", "Entidad_Bancaria", "Enfrenta_alg_n_tipo_de_barrera", "N_de_cuenta_Bancaria",
+        "Seleccione_el_tipo_de_barrera_individual", "Tipo_de_documento", 
+        "Nombre_del_propietario_de_la_cuenta", "Qu_servicio_recibi_para_superar_la_barrera",
+        "Qu_valor_recibi_para_superar_la_barrera", "Primer_nombre", "N_mero_de_celular", 
+        "Segundo_nombre", "Departamento", "Estado_de_mitigaci_n", "Fecha_de_registro", 
+        "Fecha_de_pago_de_la_mitigaci_n", "Gestor_Mitigaci_n"
+    ],
+    "Postvinculaci_n_Giz":[
+        "Name", "Nit_de_la_empresa", "Empresa", "Nombre_de_la_vacante", "C_digo_de_la_vacante", 
+        "Primer_Nombre", "Primer_apellido","Segundo_nombre", "Segundo_apellido", 
+        "N_mero_de_celular","Whatsapp_de_contacto", "Nombre_del_Gestor_Operativo",
+        "Nombre_del_Gestor_Operativo_S2","Nombre_del_Gestor_Operativo_S3", "Fecha_de_colocaci_n",
+        "Fecha_del_seguimiento_1", "Fecha_del_seguimiento_S2", "Fecha_del_seguimiento_S3",
+        "Permanencia_en_seguimiento_1", "Permanencia_en_seguimiento_S2", "Permanencia_en_seguimiento_3",
+        "Seguimiento_Postvinculaci_n_1_completado", "Seguimiento_Postvinculaci_n_2_completado", 
+        "Seguimiento_Postvinculaci_n_S3_completado","Motivo_de_terminaci_n_contrato_renuncia_despido_se",
+        "Motivo_de_terminaci_n_contrato_renuncia_despido_s1", "Motivo_de_terminaci_n_contrato_renuncia_despido_s2",
+        "Fecha_de_terminaci_n_contrato_renuncia_despido_seg", "Fecha_de_terminaci_n_contrato_renuncia_despido_se1",
+        "Fecha_de_terminaci_n_contrato_renuncia_despido_se2","Enfrenta_alg_n_de_tipo_de_barrera_para_la_permanen",
+        "Seleccione_el_tipo_de_barrera_interna_externa_que", "Cu_l_es_servicio_recibi_para_superar_la_barrera_1",
+        "Enfrenta_alg_n_de_tipo_de_barrera_2_para_la_perman", "Seleccione_el_tipo_de_barrera_interna_externa_que1",
+        "Cu_l_es_servicio_recibi_para_superar_la_barrera_11", "Se_siente_a_gusto_en_la_empresa_para_la_cu_l_traba",
+        "Se_siente_a_gusto_con_el_cargo_que_desempe_a", "Siente_que_el_empleo_actual_a_cumplido_con_sus_exp",
+        "Owner", "Created_Time", "Modified_Time",
     ]
 }
 
