@@ -207,15 +207,17 @@ MODULES_GIZ = {
         "Owner", "Sector_al_que_pertenece", "Tiempo_de_experiencia_meses", "Tipo_de_contrato"
     ],
     "Mitigaci_n_Giz":[
-        "Qu_servicio_recibi_para_superar_la_barrera", "Connected_To__s", "Email", "Secondary_Email",
-        "Created_By", "Departamento", "Descripci_n_de_mitigacion", "Enfrenta_alg_n_tipo_de_barrera",
-        "Entidad_Bancaria", "Es_micromitigaci_n", "Estado_de_mitigaci_n", "Tag", "Modified_By", 
-        "Municipio", "N_de_cuenta_Bancaria", "Email_Opt_Out", "Nombre_de_encargado", "Name", 
-        "Nombre_del_propietario_de_la_cuenta", "N_mero_de_celular", "Primer_apellido", 
-        "Primer_nombre", "Record_Image", "Owner", "Qu_valor_recibi_para_superar_la_barrera", 
-        "Segundo_apellido", "Segundo_nombre", "Seleccione_el_tipo_de_barrera_individual",
-        "Soporte_mitigaci_n", "Tipo_de_documento", "Tipo_de_mitigaci_n", "Fecha_de_pago_de_la_mitigaci_n"
-    ],
+            "Record_Status__s", "Name", "Owner", "Email", "Created_Time", "Modified_Time",
+            "Last_Activity_Time", "Tag", "Unsubscribed_Mode", "Unsubscribed_Time", "Locked__s",
+            "Descripci_n_de_mitigacion", "Nombre_de_encargado", "Es_micromitigaci_n", 
+            "Soporte_mitigaci_n", "Tipo_de_mitigaci_n", "Primer_apellido", "Segundo_apellido", 
+            "Municipio", "Entidad_Bancaria", "Enfrenta_alg_n_tipo_de_barrera", "N_de_cuenta_Bancaria",
+            "Seleccione_el_tipo_de_barrera_individual", "Tipo_de_documento", 
+            "Nombre_del_propietario_de_la_cuenta", "Qu_servicio_recibi_para_superar_la_barrera",
+            "Qu_valor_recibi_para_superar_la_barrera", "Primer_nombre", "N_mero_de_celular", 
+            "Segundo_nombre", "Departamento", "Estado_de_mitigaci_n", "Fecha_de_registro", 
+            "Fecha_de_pago_de_la_mitigaci_n", "Gestor_Mitigaci_n"
+        ],
     "Calidad_Giz":[
         "Colocaci_n", "Connected_To__s", "Email", "Secondary_Email", "Created_By", 
         "Departamento_de_residencia", "Direcci_n_de_residencia", "Estado_de_calidad", 
@@ -236,18 +238,6 @@ MODULES_GIZ = {
         "Nombre_Diploma_Habilidades_para_el_trabajo", "Validaci_n_diploma_Habilidades_para_el_trabajo", 
         "Validaci_n_Diploma_T_cnicas", "Entidad_Bancaria", "Formaci_n_Completadas", "Tipo_de_cuenta", "Gestor_formaci_n"
         ],
-    "Mitigaci_n_Giz":[
-        "Record_Status__s", "Name", "Owner", "Email", "Created_Time", "Modified_Time",
-        "Last_Activity_Time", "Tag", "Unsubscribed_Mode", "Unsubscribed_Time", "Locked__s",
-        "Descripci_n_de_mitigacion", "Nombre_de_encargado", "Es_micromitigaci_n", 
-        "Soporte_mitigaci_n", "Tipo_de_mitigaci_n", "Primer_apellido", "Segundo_apellido", 
-        "Municipio", "Entidad_Bancaria", "Enfrenta_alg_n_tipo_de_barrera", "N_de_cuenta_Bancaria",
-        "Seleccione_el_tipo_de_barrera_individual", "Tipo_de_documento", 
-        "Nombre_del_propietario_de_la_cuenta", "Qu_servicio_recibi_para_superar_la_barrera",
-        "Qu_valor_recibi_para_superar_la_barrera", "Primer_nombre", "N_mero_de_celular", 
-        "Segundo_nombre", "Departamento", "Estado_de_mitigaci_n", "Fecha_de_registro", 
-        "Fecha_de_pago_de_la_mitigaci_n", "Gestor_Mitigaci_n"
-    ],
     "Postvinculaci_n_Giz":[
         "Name", "Nit_de_la_empresa", "Empresa", "Nombre_de_la_vacante", "C_digo_de_la_vacante", 
         "Primer_Nombre", "Primer_apellido","Segundo_nombre", "Segundo_apellido", 
