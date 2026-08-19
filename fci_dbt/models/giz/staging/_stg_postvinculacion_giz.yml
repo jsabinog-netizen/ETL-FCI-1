@@ -1,0 +1,122 @@
+version: 2
+
+models:
+  - name: stg_postvinculacion_giz
+    columns:
+      - name: id
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+
+      - name: documento
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+
+      - name: seguimiento_1_completado
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['si', 'no']
+              config:
+                severity: warn
+
+      - name: seguimiento_2_completado
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['si', 'no']
+              config:
+                severity: warn
+
+      - name: seguimiento_3_completado
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['si', 'no']
+              config:
+                severity: warn
+
+      - name: permanencia_s1
+        tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - 'activo'
+                  - 'terminación de contrato'
+                  - 'renuncia'
+                  - 'despido'
+              config:
+                severity: warn
+
+      - name: permanencia_s2
+        tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - 'activo'
+                  - 'terminación de contrato'
+                  - 'renuncia'
+                  - 'despido'
+              config:
+                severity: warn
+
+      - name: permanencia_s3
+        tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - 'activo'
+                  - 'terminación de contrato'
+                  - 'renuncia'
+                  - 'despido'
+              config:
+                severity: warn
+
+      - name: enfrenta_barrera_s1
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['si', 'no', 'no responde']
+              config:
+                severity: warn
+
+      - name: enfrenta_barrera_s2
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['si', 'no', 'no responde']
+              config:
+                severity: warn
+
+      - name: satisfaccion_empresa
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['si', 'no']
+              config:
+                severity: warn
+
+      - name: satisfaccion_cargo
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['si', 'no']
+              config:
+                severity: warn
+
+      - name: expectativas_cumplidas
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['si', 'no']
+              config:
+                severity: warn
