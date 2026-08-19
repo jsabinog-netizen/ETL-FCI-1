@@ -80,15 +80,16 @@ colocacion AS (
     GROUP BY documento
 ),
 
-mitigacion AS (
-    SELECT 
-        documento,
-        estado_mitigacion,
-        valor_recibido,
-        encargado_mitigacion,
-        fecha_mitigacion,
-        tipo_mitigacion
+mitigacion_colocacion AS (
+    SELECT documento
     FROM {{ ref('stg_mitigacion_giz') }}
+    WHERE tipo_mitigacion = 'pago_de_colocacion'
+),
+
+mitigacion_formacion AS (
+    SELECT documento
+    FROM {{ ref('stg_mitigacion_giz') }}
+    WHERE tipo_mitigacion = 'pago_de_formacion'
 ),
 
 base as (
@@ -165,19 +166,24 @@ SELECT
     IF(c.certificado_laboral IS NOT NULL, "Sí","No") As soporte_colocacion,
     
 
-    IF(m.tipo_mitigacion = "Pago exitoso colocación", "Sí", "No") AS mitigacion_colocacion,
-    IF(m.tipo_mitigacion = "Pago exitoso Formación", "Sí", "No") AS mitigacion_formacion,
-    m.estado_mitigacion,
-    m.valor_recibido,
-    m.encargado_mitigacion,
-    m.fecha_mitigacion,
-    m.tipo_mitigacion
+    IF(mc.documento IS NOT NULL, 'Sí', 'No') AS tiene_mitigacion_colocacion,
+    IF(mf.documento IS NOT NULL, 'Sí', 'No') AS tiene_mitigacion_formacion,
+
+    -- pendiente mitigación colocación
+    CASE
+        WHEN c.fecha_vinculacion <= DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)
+        AND mc.documento IS NULL
+        AND c.documento IS NOT NULL
+        THEN 'Sí'
+        ELSE 'No'
+    END AS pendiente_mitigacion_colocacion
 
 FROM registro r
 LEFT JOIN orientacion o      ON r.documento = o.documento
 LEFT JOIN intermediacion_agg i ON r.documento = i.documento
 LEFT JOIN colocacion c       ON r.documento = c.documento 
-LEFT JOIN mitigacion m ON r.documento = m.documento
+LEFT JOIN mitigacion_colocacion mc ON r.documento = mc.documento
+LEFT JOIN mitigacion_formacion mf  ON r.documento = mf.documento
 )
 
 SELECT 
@@ -195,7 +201,8 @@ SELECT
         AND tiene_orientacion      = 'Sí'
         AND tiene_intermediacion   = 'Sí'
         AND tiene_colocacion       = 'Sí'
-        AND mitigacion_colocacion  = 'Sí'
+        AND tiene_mitigacion_formacion = "Sí"
+        AND tiene_mitigacion_colocacion   = 'Sí'
         THEN 'Sí'
         ELSE 'No'
     END AS ruta_completa
