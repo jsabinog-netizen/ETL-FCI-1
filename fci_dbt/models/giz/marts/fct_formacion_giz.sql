@@ -13,14 +13,18 @@ registro as (
         genero,
         tipo_participante,
         departamento,
-        ciudad
+        ciudad,
+        primer_nombre,
+        primer_apellido
     from {{ ref('stg_registro_giz') }}
 ),
 
-final as (
+fct_formacion as (
     select
         -- identificación
         f.documento,
+        r.primer_nombre,
+        r.primer_apellido,
 
         -- demográficos
         r.genero,
@@ -57,4 +61,4 @@ final as (
     left join registro r on f.documento = r.documento
 )
 
-select * from final
+select * from fct_formacion
