@@ -1,0 +1,52 @@
+version: 2
+
+models:
+  - name: fct_mitigacion_giz
+    columns:
+      - name: id
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+
+      - name: documento
+        tests:
+          - not_null:
+              config:
+                severity: warn
+
+      - name: tipo_mitigacion
+        tests:
+          - not_null:
+              config:
+                severity: warn
+          - accepted_values:
+              arguments:
+                values: ['pago_de_formacion', 'pago_de_colocacion']
+              config:
+                severity: warn
+
+      - name: es_micromitigacion
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['si', 'no']
+              config:
+                severity: warn
+
+      - name: estado_mitigacion
+        tests:
+          - not_null:
+              config:
+                severity: warn
+
+      - name: enfrenta_barrera
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['si', 'no']
+              config:
+                severity: warn
