@@ -128,7 +128,7 @@ SELECT
 
     DATE(o.fecha_orientacion) AS fecha_orientacion,
     o.orientacion_completada AS tiene_orientacion,
-    o.orientador,
+    coalesce(o.orientador, 'Sin orientador') as orientador,
     ocupacion_actual,
     perfil_ocupacional,
     experiencia_formal,

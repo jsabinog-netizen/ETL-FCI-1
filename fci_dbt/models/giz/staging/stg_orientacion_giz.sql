@@ -30,7 +30,7 @@ select
     lower(trim(Remisi_n_atenci_n_psic_social))      as remision_psicosocial,
 
     -- resultado de la etapa
-    coalesce(nullif(trim(json_value(Orientador, '$.name')), ''), 'Sin orientador') as orientador,
+    coalesce(nullif(lower(trim(Orientador)), ' '),'Sin orientador') as orientador,
     lower(trim(Orientaci_n_Completada))             as orientacion_completada,
     Recomendado_para_una_vacante_de                 as recomendado_vacante,
     DATE(safe_cast(Fecha_de_orientaci_n as timestamp))    as fecha_orientacion,

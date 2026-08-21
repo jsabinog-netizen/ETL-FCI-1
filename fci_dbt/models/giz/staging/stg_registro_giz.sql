@@ -35,10 +35,7 @@ select
     Observaci_n_Calidad                             as observacion_calidad,
 
     -- gestor
-    coalesce(
-        nullif(trim(json_value(Gestor_operativo, '$.name')), ''),
-        'Sin gestor asignado'
-    )                                               as gestor,
+    coalesce(nullif(lower(trim(Gestor_operativo)), ' '),'Sin gestor asignado') as gestor,
 
     -- Fechas
     DATE(safe_cast(Fecha_de_registro as timestamp))      as fecha_registro,
