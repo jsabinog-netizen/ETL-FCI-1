@@ -68,6 +68,7 @@ fct_postvinculacion as (
         p.satisfaccion_empresa,
         p.satisfaccion_cargo,
         p.expectativas_cumplidas,
+        p.valora_empleo,
 
         -- flag derivado
         case

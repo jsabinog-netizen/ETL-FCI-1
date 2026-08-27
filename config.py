@@ -254,7 +254,7 @@ MODULES_GIZ = {
         "Enfrenta_alg_n_de_tipo_de_barrera_2_para_la_perman", "Seleccione_el_tipo_de_barrera_interna_externa_que1",
         "Cu_l_es_servicio_recibi_para_superar_la_barrera_11", "Se_siente_a_gusto_en_la_empresa_para_la_cu_l_traba",
         "Se_siente_a_gusto_con_el_cargo_que_desempe_a", "Siente_que_el_empleo_actual_a_cumplido_con_sus_exp",
-        "Owner", "Created_Time", "Modified_Time",
+        "Owner", "Created_Time", "Modified_Time","Qu_es_lo_que_m_s_valora_de_su_empleo" 
     ]
 }
 

@@ -76,6 +76,8 @@ select
         WHEN 'no' THEN 'no' ELSE NULL
     END                                                                      as expectativas_cumplidas,
 
+    LOWER(TRIM(Qu_es_lo_que_m_s_valora_de_su_empleo))                   as valora_empleo,
+
     -- fechas
     DATE(safe_cast(Fecha_de_colocaci_n as timestamp))                                as fecha_colocacion,
     DATE(safe_cast(Fecha_del_seguimiento_1 as timestamp))                            as fecha_seguimiento_s1,
