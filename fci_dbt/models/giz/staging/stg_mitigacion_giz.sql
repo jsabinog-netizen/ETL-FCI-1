@@ -9,7 +9,7 @@ select
     lower(trim(Seleccione_el_tipo_de_barrera_individual))   as tipo_barrera,
     lower(trim(Tipo_de_mitigaci_n))                         as tipo_mitigacion,
     lower(trim(Es_micromitigaci_n))                         as es_micromitigacion,
-    lower(trim(Estado_de_mitigaci_n))                       as estado_mitigacion,
+    coalesce(nullif(lower(trim(Estado_de_mitigaci_n)), ''), 'Cargado en CRM') as estado_mitigacion,
     lower(trim(Qu_servicio_recibi_para_superar_la_barrera)) as servicio_recibido,
     safe_cast(Qu_valor_recibi_para_superar_la_barrera as numeric) as valor_recibido,
     coalesce(nullif(trim(Nombre_de_encargado), ''), 'Sin encargado') as encargado_mitigacion,
