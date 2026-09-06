@@ -1,0 +1,16 @@
+version: 2
+models:
+- name: fct_ruta_mujer
+  description: Una fila por mujer identificada por documento. Base deduplicada en
+    staging. Flags de etapas completadas (si, sí, true); colocada requiere fecha de
+    vinculación. Etapa más avanzada del registro reciente. Documentos vacíos no representan
+    una persona identificable y se excluyen.
+  columns:
+  - name: documento
+    tests:
+    - unique:
+        config:
+          severity: warn
+    - not_null:
+        config:
+          severity: warn
