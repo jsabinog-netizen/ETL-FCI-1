@@ -19,6 +19,10 @@ select
     json_value(`Buscar_empresa`, '$.id') as buscar_empresa_id,
     json_value(`Buscar_empresa`, '$.name') as buscar_empresa_nombre,
     lower(trim(`Sector_Econ_mico`)) as sector_econ_mico,
+
+    -- ── Campo agregado para replicar vw_agendamientos_comerciales (dashboard C2M) ──
+    trim(`Direcci_n_del_lugar`) as direcci_n_del_lugar,
+
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time
 from {{ source('zoho_raw_ruta_mujer', 'ge_agendamiento') }}

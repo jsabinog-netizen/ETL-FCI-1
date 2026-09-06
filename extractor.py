@@ -14,7 +14,7 @@ from auth import ZohoAuth
 from config import PROJECTS
 
 
-from metadata import get_watermark
+from metadata import get_watermark, ensure_metadata_table
 from loader import get_client
 
 #Configurar el logging
@@ -247,6 +247,9 @@ def run_extraction(projects=None, since=None, full_refresh=False):
         auth = ZohoAuth(env_prefix=project_cfg["env_prefix"])  # ← por proyecto
         modules = project_cfg["modules"] 
         os.makedirs(f"output/{project_name}", exist_ok=True)
+
+        ensure_metadata_table(client, project_cfg["dataset_id"]) #Crear la tabla si no existe
+
         logger.info(f"Extrayendo proyecto {project_name}...")                       
         for module_name, fields in modules.items():
             try:
@@ -266,4 +269,4 @@ def run_extraction(projects=None, since=None, full_refresh=False):
 
 #Probar el modulo
 if __name__ == "__main__":
-    run_extraction(projects=["giz"])
+    run_extraction(projects=["ruta_mujer"])

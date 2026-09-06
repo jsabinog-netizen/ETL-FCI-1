@@ -258,17 +258,153 @@ MODULES_GIZ = {
     ]
 }
 
-PROJECT_ID = "zoho-bq-pipeline-492116"  
+MODULES_RUTA_MUJER = {
+    "Pre_registro_RutaM": [
+        "Name", "Created_Time", "Modified_Time", "Primer_nombre", "Segundo_nombre", "Primer_apellido",
+        "Segundo_apellido", "Fecha_de_nacimiento", "Edad", "Tipo_de_documento", "N_mero_de_tel_fono_celular",
+        "Nacionalidad", "Otra_nacionalidad", "Modalidad_de_atenci_n", "Tipo_de_poblaci_n", "Ruta_Mujer",
+        "Preinscripci_n_completad", "Municipio_de_residencia1", "Municipio_de_nacimiento",
+        "Otro_municipio_de_nacimiento", "Departamento_de_nacimiento", "Localidad", "Direcci_n_de_residencia",
+        "Actualmente_te_encuentras", "Nivel_educativo_alcanzado", "Ha_tenido_empleo_con_caja_de_compensaci_n",
+        "A_os_totales_de_experiencia_laboral", "D_nde_te_enteraste_de_esta_vacante", "Cu_l_de_nuestras_vacantes_llam_tu_atenci_n",
+    ],
+    "Inscripci_n_Colsubsidios": [
+        "Name", "Created_Time", "Modified_Time", "Primer_nombre", "Segundo_nombre", "Primer_apellido",
+        "Segundo_apellido", "Fecha_de_registro", "Fecha_de_nacimiento", "Edad", "Tipo_de_documento",
+        "Email", "N_mero_de_celular", "Sexo_al_nacer", "Nacionalidad", "Otra_nacionalidad",
+        "Tipificaci_n_Mujer", "Grupos_poblacionales", "Tipo_de_poblaci_n", "Modalidad_de_atenci_n",
+        "Inscripci_n_completada", "Profesional_de_registro", "Municipio_de_residencia1", "Municipio_de_nacimiento",
+        "Departamento_de_nacimiento", "Localidad", "Direcci_n_de_residencia", "Estrato", "Estado_Civil",
+        "Tiene_hijos", "Pre_registro", "Desea_generar_acompa_amiento_psicosocial", "D_nde_te_enteraste_de_esta_vacante",
+    ],
+    "Orientaci_n_Colsubsidios": [
+        "Name", "Created_Time", "Modified_Time", "Inscripci_n", "Primer_nombre", "Segundo_nombre",
+        "Primer_apellido", "Segundo_apellido", "Fecha_de_orientaci_n", "Orientaci_n_sociocupacion_Completada",
+        "Concepto_de_Orientaci_n", "Concepto_de_orientaci_n_colsubsidio", "Modalidad_Orientacion",
+        "Gestor_operativo", "Perfil_Ocupacional", "Grupos_poblacionales", "Nivel_de_necesidad_de_acompa_amiento_psicosocial",
+        "Sientes_que_actualmente_necesitas_apoyo_adicional", "N_mero_de_celular_Principal",
+        "Municipio_de_residencia", "Localidad", "Actitud_y_disposici_n", "Inter_s_Laboral",
+    ],
+    "Psicosocial_RutaM": [
+        "Name","Created_Time","Modified_Time","Registro_Orientaci_n","Primer_nombre",
+        "Segundo_nombre","Primer_apellido","Segundo_apellido","Fecha_de_nacimiento",
+        "Acompa_amiento_Psicosocial_Completado","Estado_actual_del_proceso",
+        "Concepto_de_orientaci_n","Nivel_de_necesidad_de_acompa_amiento_psicosocial",
+        "Nivel_de_riesgo_psicosocial_identificado","Salud_mental","Gestor_Operativo",
+        "Municipio_de_residencia","Localidad","Seleccione_el_tipo_de_barrera",
+        "Estrategia_para_la_superaci_n_de_la_barrera","Cuenta_con_una_segunda_barrera",
+        "Seleccione_el_tipo_de_barrera_2","Estrategia_para_la_superaci_n_de_la_barrera_2",
+        "Cuenta_con_una_tercera_barrera","Seleccione_el_tipo_de_barrera_3",
+        "Estrategia_para_la_superaci_n_de_la_barrera_3","Tipificaci_n_Mujer",
+    ],
+    "Intermediaci_n_Ruta_M": [
+        "Record_Status__s", "Name", "Owner", "Email", "Created_Time", "Modified_Time",
+        "Last_Activity_Time", "Tag", "Unsubscribed_Mode", "Unsubscribed_Time", "Locked__s",
+        "Observaci_n_Calidad", "Fecha_intermediaci_n", "Concepto_de_intermediaci_n",
+        "Buscar_Vacante", "Intermediaci_n_completada", "Validaci_n_Calidad", "Nombre_vacante",
+        "Nit_de_la_empresa", "Nombre_de_la_empresa_1", "N_mero_de_celular", "Buscar_documento",
+        "Primer_nombre", "Segundo_nombre", "Concepto_de_Orientaci_n", "Primer_apellido",
+        "Segundo_apellido", "Estado", "Fecha_de_orientaci_n", "Intermediador",
+        "Novedad_Intermediaci_n", "Perfil_ocupacional", 
+    ],
+    "Colocaci_n_Colsubsidios": [
+        "Name","Created_Time","Modified_Time","Inscripci_n_RutaM","Psicosocial_RutaM","Primer_nombre",
+        "Segundo_nombre","Primer_apellido","Segundo_apellido","Tipo_de_documento","Edad",
+        "N_mero_de_Celular_principal","Fecha_de_Vinculaci_n_Laboral","Mes_de_Colocaci_n",
+        "Cargo_en_la_empresa","Nombre_de_empresa_contratante_empleador","NIT_de_empresa_contratante_empleador",
+        "Sector_econ_mico_empresa_contratante_empleador","Tipo_de_contrato","Tipo_de_Empleo",
+        "Rango_salarial","Salario_despu_s_de_la_Colocaci_n","Codigo_de_la_vacante","Orientaci_n",
+        "Gestor_Operativo","Estado_de_mitigaci_n","Nivel_de_mitigaci_n","Categorizaci_n_de_Empleo_Verde",
+        "Es_un_empleo_con_titulo_de_educacion_superior",
+    ],
+    "Formaci_n_Colsubsidios": [
+        "Name","Created_Time","Modified_Time","Primer_Nombre","Segundo_nombre","Primer_apellido",
+        "Segundo_apellido","N_mero_de_celular","Fecha_formaci_n","Fecha_curso","Formaci_n_Completada",
+        "Estado_de_mitigacion","Gestor_Operativo","Modalidad","Jornada",
+        "Fortalecimiento_de_habilidades_T_cnica","Fortalecimiento_de_habilidades_T_cnicas_2","Modalidad_2",
+        "Jornada_2","Fortalecimiento_de_habilidades_blandas","Modalidad_blandas","Jornada_blandas",
+        "Municipio","Localidad","Profesional_de_orientaci_n",
+    ],
+    "GE_Vacantes_Colsubsidios": [
+        "Name","Created_Time","Modified_Time","Nombre_vacante","N_mero_de_puestos_de_trabajo",
+        "Tipo_de_contrato","Estado_de_la_vacante","Ciudad_Municipio_de_la_vacante",
+        "Departamento_de_la_vacante","Departamento","Municipio","Rango_salarial",
+        "Tiempo_de_experiencia_requerido_meses","Jornada_laboral","Horario_de_trabajo","Buscar_empresa",
+        "Nombre_de_la_empresa_1","Nombre_de_la_empresa","Ocupaci_n_CUOC_2","Ocupaci_n_CUOC_3",
+        "Email_de_Contacto","Nombre_de_contacto","Fecha_de_inicio_de_la_vacante","Fecha_final_de_la_vacante",
+        "Posibilidad_de_trabajo_h_brido_remoto","Acepta_migrantes_regulares","Acepta_v_ctima_del_conflicto_armado",
+        "Acepta_personas_en_condici_n_de_discapacidad", "Tipo_de_discapacidad", "Certificado_de_discapacidad",
+        "rea_de_experiencia_laboral", "Descripci_n_de_la_capacitaci_n_espec_fica","Requiere_capacitaci_n_espec_fica",
+        "Edad_M_nima","Edad_M_xima", "Fecha_estimada_de_contrataci_n", "Funciones_del_cargo", "Perfil_de_la_vacante",
+        "Proceso_confidencial", "Puede_estar_estudiando", "Requiere_qu_cuente_con_veh_culo", 
+        "Requiere_licencia_para_conducir_carro", "Requiere_licencia_para_conducir_moto", "Requiere_manejar_alg_n_idioma",
+        "Requiere_disponibilidad_para_viajar", "Requiere_vivir_en_barrio_zona_espec_fica", "Tiene_personas_a_cargo"
+    ],
+    "Pre_registro_Empresarial": [
+        "Record_Status__s", "Name", "Owner", "Email", "Created_Time", "Modified_Time",
+        "Last_Activity_Time", "Tag", "Unsubscribed_Mode", "Unsubscribed_Time", "Locked__s",
+        "N_mero_de_whatsapp_2", "Tel_fono_de_contacto_fijo_o_celular_2", "Cargo",
+        "N_mero_de_whatsapp", "Tel_fono_de_contacto_fijo_o_celular", "Nombre_Completo_2",
+        "Cargo_2", "Nombre_de_la_empresa", "Correo_electr_nico_2", "Nombre_Completo",
+        "rea", "Cuenta_con_un_segundo_contacto", "rea_2", "Sector_econ_mico",
+        "Tama_o_de_la_empresa", "Departamento", "Ciudad_municipio_principal",
+    ],
+    "Asist_Pres_RutaM": [
+        "Record_Status__s", "Name", "Owner", "Email", "Created_Time", "Modified_Time",
+        "Last_Activity_Time", "Tag", "Unsubscribed_Mode", "Unsubscribed_Time", "Locked__s",
+        "Primer_apellido", "Segundo_apellido", "Fecha_curso", "Primer_Nombre",
+        "N_mero_de_t_lefono", "Segundo_Nombre", "Jornada", "Tipo_de_documento", "Cursos",
+        "Modalidad_curso",
+    ],
+    "Agenda_Orientadores_RutaM": [
+        "Name","Created_Time","Modified_Time","Primer_nombre","Segundo_nombre","Primer_apellido",
+        "Segundo_apellido","N_mero_de_celular_Principal","N_mero_de_celular_Opcional",
+        "Email","Fecha_y_hora_de_agendamiento","Disponibilidad_Horario","Asunto_de_la_reuni_n",
+        "Enlace_de_la_reuni_n","Estado","Modalidad","Municipio_o_localidad","Persona_que_realiza_el_reporte",
+        
+    ],
+    "GE_Agendamiento": [
+        "Name","Created_Time","Modified_Time","Nombre_de_la_empresa","Fecha_y_hora",
+        "Disponibilidad_Horario","Asunto_de_la_reuni_n","Enlace_de_la_reuni_n","Estado","Modalidad",
+        "Invitador","Departamento","Municipio","Tipo_Actividad","Correo","Persona_de_contacto",
+        "Buscar_empresa","Sector_Econ_mico","Direcci_n_del_lugar"
+    ],
+    "Postvinculaci_n_Colsub": [
+        "Name","Created_Time","Modified_Time","Primer_nombre","Segundo_nombre","Primer_apellido",
+        "Segundo_apellido","Tipo_de_documento","Nacionalidad","Sexo_al_nacer","N_mero_de_Celular_principal",
+        "Fecha_vinculaci_n","Fecha_de_Registro","Ciudad_Municipio","Departamento","Estado_Seguimiento_1",
+        "Fecha_del_seguimiento_1","Permanencia_en_seguimiento_1","Medio_de_contacto_para_el_seguimiento_post_1",
+        "Motivo_de_renuncia_despido_seguimiento_1","Fecha_de_renuncia_despido_Seguimiento_1",
+        "Se_siente_a_gusto_con_el_cargo_que_desempe_a","Considera_que_esta_apto_para_el_cargo",
+        "Remisi_n_Atenci_n_psicosocial","Observacion",
+    ],
+    "Mitigaci_n_Colsubsidios": [
+        "Name","Created_Time","Modified_Time","Primer_nombre","Segundo_nombre","Primer_apellido",
+        "Segundo_apellido","Tipo_de_documento","Sexo_al_nacer","Tipificaci_n_Mujer","Fecha_de_Registro",
+        "Fecha_de_pago_mitigaci_n","Ciudad_Municipio","Departamento","Tipo_de_mitigaci_n",
+        "Estado_de_mitigaci_n","Descripci_n_de_mitigacion","Mitigaci_n_Completada","Gestor_Operativo",
+        "Enfrenta_alg_n_tipo_de_barrera_1","Seleccione_el_tipo_de_barrera_individual",
+        "Qu_servicio_recibi_para_superar_la_barrera_1","Qu_valor_recibi_para_superar_la_barrera_1",
+        "Es_micromitigaci_n",
+    ],
+}
+
+PROJECT_ID = "zoho-bq-pipeline-492116"
 
 PROJECTS = {
     "colsubsidio": {
         "dataset_id": "colsubsidio_ruta_empresas",
-        "env_prefix": "ZOHO",       
+        "env_prefix": "ZOHO",
         "modules": MODULES_COLSUBSIDIO,
     },
     "giz": {
-        "dataset_id": "proyecto_giz",       
-        "env_prefix": "ZOHO_GIZ",        
-        "modules": MODULES_GIZ,          
+        "dataset_id": "proyecto_giz",
+        "env_prefix": "ZOHO_GIZ",
+        "modules": MODULES_GIZ,
+    },
+    "ruta_mujer": {
+        "dataset_id": "proyecto_ruta_mujer",
+        "env_prefix": "ZOHO",
+        "modules": MODULES_RUTA_MUJER,
     },
 }

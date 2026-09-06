@@ -27,6 +27,38 @@ select
     date(safe_cast(`Fecha_final_de_la_vacante` as timestamp)) as fecha_final_de_la_vacante,
     lower(trim(`Posibilidad_de_trabajo_h_brido_remoto`)) as posibilidad_de_trabajo_h_brido_remoto,
     lower(trim(`Acepta_migrantes_regulares`)) as acepta_migrantes_regulares,
+
+    -- ── Campos agregados para replicar view_fact_empresas (dashboard C2M) ──
+    lower(trim(`Acepta_v_ctima_del_conflicto_armado`)) as acepta_v_ctima_del_conflicto_armado,
+    lower(trim(`Acepta_personas_en_condici_n_de_discapacidad`)) as acepta_personas_en_condici_n_de_discapacidad,
+    lower(trim(`Tipo_de_discapacidad`)) as tipo_de_discapacidad,
+    lower(trim(`Certificado_de_discapacidad`)) as certificado_de_discapacidad,
+    trim(`rea_de_experiencia_laboral`) as rea_de_experiencia_laboral,
+    trim(`Descripci_n_de_la_capacitaci_n_espec_fica`) as descripci_n_de_la_capacitaci_n_espec_fica,
+    lower(trim(`Requiere_capacitaci_n_espec_fica`)) as requiere_capacitaci_n_espec_fica,
+    safe_cast(`Edad_M_nima` as int64) as edad_m_nima,
+    safe_cast(`Edad_M_xima` as int64) as edad_m_xima,
+    date(safe_cast(`Fecha_compromiso` as timestamp)) as fecha_compromiso,
+    date(safe_cast(`Fecha_estimada_de_contrataci_n` as timestamp)) as fecha_estimada_de_contrataci_n,
+    trim(`Funciones_del_cargo`) as funciones_del_cargo,
+    trim(`Perfil_de_la_vacante`) as perfil_de_la_vacante,
+    lower(trim(`Proceso_confidencial`)) as proceso_confidencial,
+    lower(trim(`Puede_estar_estudiando`)) as puede_estar_estudiando,
+    lower(trim(`Requiere_qu_cuente_con_veh_culo`)) as requiere_qu_cuente_con_veh_culo,
+    lower(trim(`Requiere_licencia_para_conducir_carro`)) as requiere_licencia_para_conducir_carro,
+    lower(trim(`Requiere_licencia_para_conducir_moto`)) as requiere_licencia_para_conducir_moto,
+    lower(trim(`Requiere_manejar_alg_n_idioma`)) as requiere_manejar_alg_n_idioma,
+    lower(trim(`Requiere_disponibilidad_para_viajar`)) as requiere_disponibilidad_para_viajar,
+    lower(trim(`Requiere_vivir_en_barrio_zona_espec_fica`)) as requiere_vivir_en_barrio_zona_espec_fica,
+    lower(trim(`Tiene_personas_a_cargo`)) as tiene_personas_a_cargo,
+
+    -- Titulo_Homologado (C2M) no tiene equivalente exacto en Zoho.
+    -- Se usa Requiere_tarjeta_profesional como aproximación disponible:
+    -- ambos apuntan a validación de credenciales educativas/profesionales
+    -- de la vacante. Pendiente confirmar con el equipo si esto cubre
+    -- el mismo concepto de negocio.
+    lower(trim(`Requiere_tarjeta_profesional`)) as titulo_homologado,
+
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time
 from {{ source('zoho_raw_ruta_mujer', 'ge_vacantes_colsubsidios') }}
