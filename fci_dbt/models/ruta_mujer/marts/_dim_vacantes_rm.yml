@@ -1,0 +1,14 @@
+version: 2
+models:
+- name: dim_vacantes_rm
+  description: Una fila por vacante, enriquecida con empresa por id del lookup; NIT
+    como alternativa cuando falta el id.
+  columns:
+  - name: id
+    tests:
+    - unique:
+        config:
+          severity: warn
+    - not_null:
+        config:
+          severity: warn
