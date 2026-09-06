@@ -1,0 +1,14 @@
+version: 2
+models:
+- name: fct_formacion_rm
+  description: Una fila por registro de inscripción a formación Zoho. Conserva los
+    campos de cursos del registro sin multiplicar filas.
+  columns:
+  - name: id
+    tests:
+    - unique:
+        config:
+          severity: warn
+    - not_null:
+        config:
+          severity: warn
