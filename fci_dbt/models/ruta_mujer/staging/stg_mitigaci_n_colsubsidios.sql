@@ -1,0 +1,30 @@
+-- Grano: un registro del modulo Zoho (id).
+-- Name conserva el documento como texto; los eventos no se deduplican por persona.
+select
+    id,
+    nullif(trim(Name), '') as documento,
+    safe_cast(`Created_Time` as timestamp) as created_time,
+    trim(`Primer_nombre`) as primer_nombre,
+    trim(`Segundo_nombre`) as segundo_nombre,
+    trim(`Primer_apellido`) as primer_apellido,
+    trim(`Segundo_apellido`) as segundo_apellido,
+    lower(trim(`Tipo_de_documento`)) as tipo_de_documento,
+    lower(trim(`Sexo_al_nacer`)) as sexo_al_nacer,
+    lower(trim(`Tipificaci_n_Mujer`)) as tipificaci_n_mujer,
+    date(safe_cast(`Fecha_de_Registro` as timestamp)) as fecha_de_registro,
+    date(safe_cast(`Fecha_de_pago_mitigaci_n` as timestamp)) as fecha_de_pago_mitigaci_n,
+    lower(trim(`Ciudad_Municipio`)) as ciudad_municipio,
+    lower(trim(`Departamento`)) as departamento,
+    lower(trim(`Tipo_de_mitigaci_n`)) as tipo_de_mitigaci_n,
+    lower(trim(`Estado_de_mitigaci_n`)) as estado_de_mitigaci_n,
+    trim(`Descripci_n_de_mitigacion`) as descripci_n_de_mitigacion,
+    lower(trim(`Mitigaci_n_Completada`)) as mitigaci_n_completada,
+    trim(`Gestor_Operativo`) as gestor_operativo,
+    lower(trim(`Enfrenta_alg_n_tipo_de_barrera_1`)) as enfrenta_alg_n_tipo_de_barrera_1,
+    lower(trim(`Seleccione_el_tipo_de_barrera_individual`)) as seleccione_el_tipo_de_barrera_individual,
+    trim(`Qu_servicio_recibi_para_superar_la_barrera_1`) as qu_servicio_recibi_para_superar_la_barrera_1,
+    safe_cast(`Qu_valor_recibi_para_superar_la_barrera_1` as numeric) as qu_valor_recibi_para_superar_la_barrera_1,
+    lower(trim(`Es_micromitigaci_n`)) as es_micromitigaci_n,
+    safe_cast(_loaded_at as timestamp) as _loaded_at,
+    safe_cast(Modified_Time as timestamp) as modified_time
+from {{ source('zoho_raw_ruta_mujer', 'mitigaci_n_colsubsidios') }}

@@ -1,0 +1,31 @@
+-- Grano: un registro del modulo Zoho (id).
+-- Name conserva el documento como texto; los eventos no se deduplican por persona.
+select
+    id,
+    nullif(trim(Name), '') as documento,
+    safe_cast(`Created_Time` as timestamp) as created_time,
+    trim(`Primer_nombre`) as primer_nombre,
+    trim(`Segundo_nombre`) as segundo_nombre,
+    trim(`Primer_apellido`) as primer_apellido,
+    trim(`Segundo_apellido`) as segundo_apellido,
+    lower(trim(`Tipo_de_documento`)) as tipo_de_documento,
+    lower(trim(`Nacionalidad`)) as nacionalidad,
+    lower(trim(`Sexo_al_nacer`)) as sexo_al_nacer,
+    trim(`N_mero_de_Celular_principal`) as n_mero_de_celular_principal,
+    date(safe_cast(`Fecha_vinculaci_n` as timestamp)) as fecha_vinculaci_n,
+    date(safe_cast(`Fecha_de_Registro` as timestamp)) as fecha_de_registro,
+    lower(trim(`Ciudad_Municipio`)) as ciudad_municipio,
+    lower(trim(`Departamento`)) as departamento,
+    lower(trim(`Estado_Seguimiento_1`)) as estado_seguimiento_1,
+    date(safe_cast(`Fecha_del_seguimiento_1` as timestamp)) as fecha_del_seguimiento_1,
+    lower(trim(`Permanencia_en_seguimiento_1`)) as permanencia_en_seguimiento_1,
+    lower(trim(`Medio_de_contacto_para_el_seguimiento_post_1`)) as medio_de_contacto_para_el_seguimiento_post_1,
+    lower(trim(`Motivo_de_renuncia_despido_seguimiento_1`)) as motivo_de_renuncia_despido_seguimiento_1,
+    date(safe_cast(`Fecha_de_renuncia_despido_Seguimiento_1` as timestamp)) as fecha_de_renuncia_despido_seguimiento_1,
+    lower(trim(`Se_siente_a_gusto_con_el_cargo_que_desempe_a`)) as se_siente_a_gusto_con_el_cargo_que_desempe_a,
+    lower(trim(`Considera_que_esta_apto_para_el_cargo`)) as considera_que_esta_apto_para_el_cargo,
+    lower(trim(`Remisi_n_Atenci_n_psicosocial`)) as remisi_n_atenci_n_psicosocial,
+    trim(`Observacion`) as observacion,
+    safe_cast(_loaded_at as timestamp) as _loaded_at,
+    safe_cast(Modified_Time as timestamp) as modified_time
+from {{ source('zoho_raw_ruta_mujer', 'postvinculaci_n_colsub') }}

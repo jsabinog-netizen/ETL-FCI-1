@@ -1,0 +1,20 @@
+version: 2
+sources:
+- name: zoho_raw_ruta_mujer
+  database: zoho-bq-pipeline-492116
+  schema: proyecto_ruta_mujer
+  tables:
+  - name: pre_registro_rutam
+  - name: inscripci_n_colsubsidios
+  - name: orientaci_n_colsubsidios
+  - name: psicosocial_rutam
+  - name: intermediaci_n_ruta_m
+  - name: colocaci_n_colsubsidios
+  - name: formaci_n_colsubsidios
+  - name: ge_vacantes_colsubsidios
+  - name: pre_registro_empresarial
+  - name: asist_pres_rutam
+  - name: agenda_orientadores_rutam
+  - name: ge_agendamiento
+  - name: postvinculaci_n_colsub
+  - name: mitigaci_n_colsubsidios

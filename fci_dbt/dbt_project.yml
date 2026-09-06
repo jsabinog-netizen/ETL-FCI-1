@@ -28,3 +28,10 @@ models:
       marts:
         +materialized: table
         +schema: proyecto_giz
+    ruta_mujer:
+      staging:
+        +materialized: view
+        +schema: proyecto_ruta_mujer
+      marts:
+        +materialized: table
+        +schema: proyecto_ruta_mujer

@@ -1,0 +1,19 @@
+version: 2
+models:
+- name: stg_intermediaci_n_ruta_m
+  description: 'Ruta Mujer: Intermediaci_n_Ruta_M. Grano: un registro Zoho identificado
+    por id.'
+  columns:
+  - name: id
+    tests:
+    - unique:
+        config:
+          severity: warn
+    - not_null:
+        config:
+          severity: warn
+  - name: documento
+    description: Numero de documento proveniente de Name, conservado como texto. Puede
+      repetirse entre eventos.
+  - name: modified_time
+    description: Modified_Time de Zoho convertido de forma segura a TIMESTAMP.

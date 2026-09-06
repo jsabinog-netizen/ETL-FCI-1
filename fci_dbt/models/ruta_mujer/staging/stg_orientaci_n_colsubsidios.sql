@@ -1,0 +1,31 @@
+-- Grano: un registro del modulo Zoho (id).
+-- Name conserva el documento como texto; los eventos no se deduplican por persona.
+select
+    id,
+    nullif(trim(Name), '') as documento,
+    safe_cast(`Created_Time` as timestamp) as created_time,
+    json_value(`Inscripci_n`, '$.id') as inscripci_n_id,
+    json_value(`Inscripci_n`, '$.name') as inscripci_n_nombre,
+    trim(`Primer_nombre`) as primer_nombre,
+    trim(`Segundo_nombre`) as segundo_nombre,
+    trim(`Primer_apellido`) as primer_apellido,
+    trim(`Segundo_apellido`) as segundo_apellido,
+    date(safe_cast(`Fecha_de_orientaci_n` as timestamp)) as fecha_de_orientaci_n,
+    lower(trim(`Orientaci_n_sociocupacion_Completada`)) as orientaci_n_sociocupacion_completada,
+    trim(`Concepto_de_Orientaci_n`) as concepto_de_orientaci_n,
+    trim(`Concepto_de_orientaci_n_colsubsidio`) as concepto_de_orientaci_n_colsubsidio,
+    lower(trim(`Modalidad_Orientacion`)) as modalidad_orientacion,
+    trim(`Gestor_operativo`) as gestor_operativo,
+    trim(`Perfil_Ocupacional`) as perfil_ocupacional,
+    `Grupos_poblacionales` as grupos_poblacionales_json,
+    lower(trim(json_value(`Grupos_poblacionales`, '$[0]'))) as grupos_poblacionales,
+    lower(trim(`Nivel_de_necesidad_de_acompa_amiento_psicosocial`)) as nivel_de_necesidad_de_acompa_amiento_psicosocial,
+    trim(`Sientes_que_actualmente_necesitas_apoyo_adicional`) as sientes_que_actualmente_necesitas_apoyo_adicional,
+    trim(`N_mero_de_celular_Principal`) as n_mero_de_celular_principal,
+    lower(trim(`Municipio_de_residencia`)) as municipio_de_residencia,
+    lower(trim(`Localidad`)) as localidad,
+    lower(trim(`Actitud_y_disposici_n`)) as actitud_y_disposici_n,
+    lower(trim(`Inter_s_Laboral`)) as inter_s_laboral,
+    safe_cast(_loaded_at as timestamp) as _loaded_at,
+    safe_cast(Modified_Time as timestamp) as modified_time
+from {{ source('zoho_raw_ruta_mujer', 'orientaci_n_colsubsidios') }}

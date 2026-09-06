@@ -1,0 +1,31 @@
+-- Grano: un registro del modulo Zoho (id).
+-- Name conserva el documento como texto; los eventos no se deduplican por persona.
+select
+    id,
+    nullif(trim(Name), '') as documento,
+    safe_cast(`Created_Time` as timestamp) as created_time,
+    trim(`Primer_Nombre`) as primer_nombre,
+    trim(`Segundo_nombre`) as segundo_nombre,
+    trim(`Primer_apellido`) as primer_apellido,
+    trim(`Segundo_apellido`) as segundo_apellido,
+    trim(`N_mero_de_celular`) as n_mero_de_celular,
+    date(safe_cast(`Fecha_formaci_n` as timestamp)) as fecha_formaci_n,
+    date(safe_cast(`Fecha_curso` as timestamp)) as fecha_curso,
+    lower(trim(`Formaci_n_Completada`)) as formaci_n_completada,
+    lower(trim(`Estado_de_mitigacion`)) as estado_de_mitigacion,
+    trim(`Gestor_Operativo`) as gestor_operativo,
+    lower(trim(`Modalidad`)) as modalidad,
+    lower(trim(`Jornada`)) as jornada,
+    trim(`Fortalecimiento_de_habilidades_T_cnica`) as fortalecimiento_de_habilidades_t_cnica,
+    trim(`Fortalecimiento_de_habilidades_T_cnicas_2`) as fortalecimiento_de_habilidades_t_cnicas_2,
+    lower(trim(`Modalidad_2`)) as modalidad_2,
+    lower(trim(`Jornada_2`)) as jornada_2,
+    trim(`Fortalecimiento_de_habilidades_blandas`) as fortalecimiento_de_habilidades_blandas,
+    lower(trim(`Modalidad_blandas`)) as modalidad_blandas,
+    lower(trim(`Jornada_blandas`)) as jornada_blandas,
+    lower(trim(`Municipio`)) as municipio,
+    lower(trim(`Localidad`)) as localidad,
+    trim(`Profesional_de_orientaci_n`) as profesional_de_orientaci_n,
+    safe_cast(_loaded_at as timestamp) as _loaded_at,
+    safe_cast(Modified_Time as timestamp) as modified_time
+from {{ source('zoho_raw_ruta_mujer', 'formaci_n_colsubsidios') }}
