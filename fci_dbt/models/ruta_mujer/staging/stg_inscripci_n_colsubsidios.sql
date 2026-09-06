@@ -1,5 +1,5 @@
--- Grano: un registro del modulo Zoho (id).
--- Name conserva el documento como texto; los eventos no se deduplican por persona.
+-- Grano: una fila por documento; prevalece la inscripción más reciente.
+-- Desempates deterministas por modificación, creación e id de Zoho.
 select
     id,
     nullif(trim(Name), '') as documento,
@@ -39,3 +39,8 @@ select
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time
 from {{ source('zoho_raw_ruta_mujer', 'inscripci_n_colsubsidios') }}
+qualify row_number() over (
+    partition by documento
+    order by fecha_de_registro desc nulls last,
+             modified_time desc nulls last, created_time desc nulls last, id desc
+) = 1

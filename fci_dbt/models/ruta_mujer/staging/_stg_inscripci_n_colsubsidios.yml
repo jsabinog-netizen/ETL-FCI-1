@@ -1,8 +1,8 @@
 version: 2
 models:
 - name: stg_inscripci_n_colsubsidios
-  description: 'Ruta Mujer: Inscripci_n_Colsubsidios. Grano: un registro Zoho identificado
-    por id.'
+  description: Inscripción Ruta Mujer. Una fila por documento, deduplicada por fecha
+    de registro, modificación, creación e id.
   columns:
   - name: id
     tests:
@@ -13,7 +13,10 @@ models:
         config:
           severity: warn
   - name: documento
-    description: Numero de documento proveniente de Name, conservado como texto. Puede
-      repetirse entre eventos.
+    description: Documento de Name como texto; una inscripción por documento.
+    tests:
+    - unique:
+        config:
+          severity: warn
   - name: modified_time
     description: Modified_Time de Zoho convertido de forma segura a TIMESTAMP.
