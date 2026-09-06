@@ -1,0 +1,14 @@
+version: 2
+models:
+- name: fct_intermediacion_rm
+  description: Una fila por evento de intermediación Zoho, sin colapsar eventos por
+    mujer.
+  columns:
+  - name: id
+    tests:
+    - unique:
+        config:
+          severity: warn
+    - not_null:
+        config:
+          severity: warn
