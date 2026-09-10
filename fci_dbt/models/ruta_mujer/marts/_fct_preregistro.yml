@@ -1,0 +1,42 @@
+version: 2
+models:
+  - name: fct_preregistro_rm
+    description: >
+      Un preregistro por id de Zoho (grano de evento, no de persona).
+      Incluye estado_inscripcion_final, que replica la columna
+      "Estado Inscripcion Final" del dashboard de C2M.
+      Alimenta la página PREREGISTRO.
+    columns:
+      - name: id
+        description: Identificador del registro en Zoho.
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: documento
+        description: >
+          Documento de la participante, tomado de Name.
+          NO es único: una mujer puede tener varios preregistros.
+        tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: estado_inscripcion_final
+        description: >
+          Inscritos si el documento existe en stg_inscripci_n_colsubsidios;
+          No aplica si preinscripci_n_completad indica no aplica;
+          Pendiente en cualquier otro caso, incluido NULL.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Inscritos', 'No aplica', 'Pendiente']
+              config:
+                severity: warn
+      - name: se_inscribio
+        description: >
+          TRUE si el documento del preregistro aparece en el staging
+          de inscripción. Base de la medida de conversión preregistro
+          a inscripción.

@@ -1,0 +1,35 @@
+version: 2
+models:
+  - name: fct_asistencia_rm
+    description: >
+      Un registro de asistencia a formación presencial por id de Zoho.
+      Grano de evento: una mujer puede asistir a varios cursos.
+      Alimenta la página BD ASISTENCIA FORMACION.
+    columns:
+      - name: id
+        description: Identificador del registro en Zoho.
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: documento
+        description: >
+          Documento de la participante, tomado de Name.
+          NO es único: se repite por cada asistencia registrada.
+        tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: fecha_curso
+        description: Fecha de la sesión de formación a la que asistió.
+        tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: jornada
+        description: Jornada de la sesión (Mañana / Tarde).
+      - name: modalidad_curso
+        description: Modalidad del curso. 40% de nulos al corte del diccionario.
