@@ -37,7 +37,41 @@ select
     lower(trim(`Desea_generar_acompa_amiento_psicosocial`)) as desea_generar_acompa_amiento_psicosocial,
     lower(trim(`D_nde_te_enteraste_de_esta_vacante`)) as d_nde_te_enteraste_de_esta_vacante,
     safe_cast(_loaded_at as timestamp) as _loaded_at,
-    safe_cast(Modified_Time as timestamp) as modified_time
+    safe_cast(Modified_Time as timestamp) as modified_time,
+    lower(trim(`Naturaleza_del_estrato_socioecon_mico`)) as naturaleza_del_estrato_socioecon_mico,
+    lower(trim(`Ultimo_nivel_educativo_alcanzado`)) as ultimo_nivel_educativo_alcanzado,
+    case
+        when `Ultimo_nivel_educativo_alcanzado` is null
+            then null
+        when regexp_contains(lower(trim(`Ultimo_nivel_educativo_alcanzado`)),
+                r'doctor|postdoctor|posdoctor')
+            then 'Doctorado o postdoctorado'
+        when regexp_contains(lower(trim(`Ultimo_nivel_educativo_alcanzado`)),
+                r'especializaci|maestr|mag[íi]ster|posgrado|postgrado')
+            then 'Especialización o maestría'
+        when regexp_contains(lower(trim(`Ultimo_nivel_educativo_alcanzado`)),
+                r'universitar|pregrado|profesional')
+            then 'Universitario (pregrado)'
+        when regexp_contains(lower(trim(`Ultimo_nivel_educativo_alcanzado`)),
+                r't[ée]cn')
+            then 'Técnico o Tecnológico'
+        when regexp_contains(lower(trim(`Ultimo_nivel_educativo_alcanzado`)),
+                r'bachill|media|secundar')
+            then 'Bachillerato'
+        when regexp_contains(lower(trim(`Ultimo_nivel_educativo_alcanzado`)),
+                r'primaria|b[áa]sica')
+            then 'Primaria'
+        when regexp_contains(lower(trim(`Ultimo_nivel_educativo_alcanzado`)),
+                r'ninguno|ningun|sin estudi')
+            then 'Ninguno'
+        else 'Sin clasificar'
+    end as nivel_educativo_normalizado,
+    trim(`Pregunta_de_seguridad`) as pregunta_de_seguridad,
+    trim(`Respuesta_pregunta_seguridad`) as respuesta_pregunta_seguridad,
+    lower(trim(`Seleccione_nivel_de_Sisb_n`)) as seleccione_nivel_de_sisb_n,
+    lower(trim(`Tiene_alguna_de_estas_responsabilidades_de_cuidado`)) as tiene_alguna_de_estas_responsabilidades_de_cuidado,
+
+
 from {{ source('zoho_raw_ruta_mujer', 'inscripci_n_colsubsidios') }}
 qualify row_number() over (
     partition by documento
