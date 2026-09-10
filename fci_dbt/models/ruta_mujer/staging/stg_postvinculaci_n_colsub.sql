@@ -1,31 +1,58 @@
--- Grano: un registro del modulo Zoho (id).
--- Name conserva el documento como texto; los eventos no se deduplican por persona.
+-- Grano: un registro de seguimiento post-vinculación por id de Zoho.
+--
+-- El módulo fue reconstruido en Zoho el 2026-09-09 implementando el
+-- requerimiento de post-vinculación. Dos api_names tienen anomalías
+-- que se usan tal cual: Peramencia_de_seguimiento (falta la "n" de
+-- Permanencia) y Tipo_de_novedad1 (sufijo "1").
 select
     id,
     nullif(trim(Name), '') as documento,
-    safe_cast(`Created_Time` as timestamp) as created_time,
+    lower(trim(`Corte`)) as corte,
+
+    -- Identificación
     trim(`Primer_nombre`) as primer_nombre,
     trim(`Segundo_nombre`) as segundo_nombre,
     trim(`Primer_apellido`) as primer_apellido,
-    trim(`Segundo_apellido`) as segundo_apellido,
     lower(trim(`Tipo_de_documento`)) as tipo_de_documento,
-    lower(trim(`Nacionalidad`)) as nacionalidad,
     lower(trim(`Sexo_al_nacer`)) as sexo_al_nacer,
-    trim(`N_mero_de_Celular_principal`) as n_mero_de_celular_principal,
-    date(safe_cast(`Fecha_vinculaci_n` as timestamp)) as fecha_vinculaci_n,
-    date(safe_cast(`Fecha_de_Registro` as timestamp)) as fecha_de_registro,
+    safe_cast(`Edad` as int64) as edad,
+    lower(trim(`Estado_civil`)) as estado_civil,
+    trim(`N_mero_de_Celular_principal`) as celular,
+    lower(trim(`Nivel_de_Escolaridad`)) as nivel_de_escolaridad,
     lower(trim(`Ciudad_Municipio`)) as ciudad_municipio,
     lower(trim(`Departamento`)) as departamento,
-    lower(trim(`Estado_Seguimiento_1`)) as estado_seguimiento_1,
-    date(safe_cast(`Fecha_del_seguimiento_1` as timestamp)) as fecha_del_seguimiento_1,
-    lower(trim(`Permanencia_en_seguimiento_1`)) as permanencia_en_seguimiento_1,
-    lower(trim(`Medio_de_contacto_para_el_seguimiento_post_1`)) as medio_de_contacto_para_el_seguimiento_post_1,
-    lower(trim(`Motivo_de_renuncia_despido_seguimiento_1`)) as motivo_de_renuncia_despido_seguimiento_1,
-    date(safe_cast(`Fecha_de_renuncia_despido_Seguimiento_1` as timestamp)) as fecha_de_renuncia_despido_seguimiento_1,
-    lower(trim(`Se_siente_a_gusto_con_el_cargo_que_desempe_a`)) as se_siente_a_gusto_con_el_cargo_que_desempe_a,
-    lower(trim(`Considera_que_esta_apto_para_el_cargo`)) as considera_que_esta_apto_para_el_cargo,
-    lower(trim(`Remisi_n_Atenci_n_psicosocial`)) as remisi_n_atenci_n_psicosocial,
-    trim(`Observacion`) as observacion,
+    date(safe_cast(`Fecha_de_Registro` as timestamp)) as fecha_de_registro,
+
+    -- Lookups
+    json_value(`Id_participante`, '$.id') as id_participante,
+    json_value(`Id_participante`, '$.name') as id_participante_nombre,
+    json_value(`Id_Vacante`, '$.id') as id_vacante,
+    json_value(`Id_Vacante`, '$.name') as id_vacante_nombre,
+
+    -- Contrato y empresa
+    trim(coalesce(json_value(`Empresa`, '$.name'), json_value(`Empresa`, '$'))) as empresa,
+    lower(trim(`Sector`)) as sector,
+    date(safe_cast(`Fecha_de_inicio_de_contrato` as timestamp)) as fecha_inicio_contrato,
+
+    -- Seguimiento
+    lower(trim(`Tiene_postvinculaci_n`)) as tiene_postvinculacion,
+    date(safe_cast(`Fecha_llamada_de_seguimiento` as timestamp)) as fecha_llamada_seguimiento,
+    safe_cast(`D_as_faltantes` as int64) as dias_faltantes_zoho,
+    lower(trim(`Estado_de_Post`)) as estado_post_zoho,
+    lower(trim(`Estado_de_caso`)) as estado_caso,
+    lower(trim(`Peramencia_de_seguimiento`)) as permanencia_seguimiento,
+    trim(`Resultado_llamada`) as resultado_llamada,
+
+    -- Novedad y remisión
+    lower(trim(`Tipo_de_novedad1`)) as tipo_novedad,
+    trim(`Otra_novedad`) as otra_novedad,
+    lower(trim(`Motivo_de_retiro`)) as motivo_retiro,
+    trim(`Remitido_a`) as remitido_a,
+    date(safe_cast(`Fecha_de_remision` as timestamp)) as fecha_remision,
+    trim(`Observaciones`) as observaciones,
+
+    -- Auditoría
     safe_cast(_loaded_at as timestamp) as _loaded_at,
-    safe_cast(Modified_Time as timestamp) as modified_time
+    safe_cast(`Created_Time` as timestamp) as created_time,
+    safe_cast(`Modified_Time` as timestamp) as modified_time
 from {{ source('zoho_raw_ruta_mujer', 'postvinculaci_n_colsub') }}
