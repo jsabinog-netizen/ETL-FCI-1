@@ -341,6 +341,13 @@ def load_module(client, module_name, fields,dataset, project_name="colsubsidio")
 
     # 3. Preparar filas y schemas
     rows = prepare_rows(records, fields)
+    if project_name == "ruta_mujer" and module_name == "Postvinculaci_n_Colsub":
+        # Empresa es texto en el módulo reconstruido, pero la columna raw
+        # usa JSON por la convención compartida. Serializar como escalar JSON
+        # conserva el nombre sin cambiar los lookups de los demás proyectos.
+        for record, row in zip(records, rows):
+            if isinstance(record.get("Empresa"), str):
+                row["Empresa"] = json.dumps(record["Empresa"], ensure_ascii=False)
     raw_schema = build_raw_schema(fields)
     staging_schema = build_staging_schema(fields)
 
