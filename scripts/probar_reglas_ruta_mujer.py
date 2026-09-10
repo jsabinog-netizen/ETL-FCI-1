@@ -45,3 +45,14 @@ for r in rows:
     assert r['etapa_mitigacion']==('Colocaci\u00f3n' if completed else 'Sin clasificar')
     assert r['dias_registro_a_pago']==(None if completed else 4)
 print('Mitigacion: 2 escenarios correctos')
+
+# Verify actual stage CASE for every combination of the seven completion flags.
+s=(root/'fct_ruta_mujer.sql').read_text(encoding='utf-8')
+case=re.search(r"case when postvinculada.*?end as etapa_actual",s,re.S).group()
+flags=['inscrita','orientada','psicosocial','formada','intermediada','colocada','postvinculada']
+columns=', '.join(f'(mask & {1 << i}) != 0 as {name}' for i,name in enumerate(flags))
+rows=list(c.query('select mask, '+case+' from (select mask, '+columns+
+                  ' from unnest(generate_array(0,127)) mask)').result())
+for r in rows:
+    assert int(r['etapa_actual'].split('.')[0]) == r['mask'].bit_length()
+print('Etapas: 128 combinaciones correctas, incluidas Formacion y Postvinculacion')

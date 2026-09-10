@@ -6,6 +6,39 @@ models:
     vinculación. Etapa más avanzada del registro reciente. Documentos vacíos no representan
     una persona identificable y se excluyen.
   columns:
+  - name: etapa_actual
+    description: >
+      Etapa más avanzada completada en el orden Registros, Orientación,
+      Atención Psicosocial, Formación, Intermediación, Colocación y
+      Postvinculación. No exige completar todas las etapas anteriores.
+      Sin completar cuando ningún indicador es verdadero.
+    tests:
+      - accepted_values:
+          arguments:
+            values: ['0. Sin completar', '1. Registros', '2. Orientación', '3. Atención Psicosocial', '4. Formación', '5. Intermediación', '6. Colocación', '7. Postvinculación']
+          config:
+            severity: warn
+  - name: formada
+    description: >
+      TRUE si Formaci_n_Completada es si/sí/true en la formación más reciente
+      por fecha de formación (fecha de curso como alternativa), modificación e id.
+  - name: postvinculada
+    description: >
+      TRUE si el seguimiento seleccionado tiene fecha de llamada registrada,
+      conforme al criterio de post realizada. Se prioriza el contrato más reciente,
+      luego la fecha de llamada, modificación e id.
+  - name: tiene_formacion
+    description: Versión Sí/No de formada para segmentadores de Power BI.
+  - name: tiene_postvinculacion
+    description: Versión Sí/No de postvinculada para segmentadores de Power BI.
+  - name: fecha_formacion
+    description: Fecha de la formación seleccionada, con fecha de curso como alternativa; DATE.
+  - name: fecha_postvinculacion
+    description: Fecha de llamada del seguimiento seleccionado; DATE.
+  - name: formacion_id
+    description: Id del registro de formación seleccionado, sin multiplicar mujeres.
+  - name: postvinculacion_id
+    description: Id del seguimiento seleccionado, sin multiplicar mujeres.
   - name: documento
     tests:
     - unique:

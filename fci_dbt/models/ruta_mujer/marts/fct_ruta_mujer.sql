@@ -9,6 +9,21 @@ with orientacion as (
     qualify row_number() over (
         partition by documento order by modified_time desc nulls last, created_time desc nulls last, id desc
     ) = 1
+), formacion as (
+    select * from {{ ref('stg_formaci_n_colsubsidios') }}
+    qualify row_number() over (
+        partition by documento
+        order by coalesce(fecha_formaci_n, fecha_curso) desc nulls last,
+                 modified_time desc nulls last, id desc
+    ) = 1
+), postvinculacion as (
+    select * from {{ ref('stg_postvinculaci_n_colsub') }}
+    qualify row_number() over (
+        partition by documento
+        order by fecha_inicio_contrato desc nulls last,
+                 fecha_llamada_seguimiento desc nulls last,
+                 modified_time desc nulls last, id desc
+    ) = 1
 ), intermediacion_agg as (
     select documento, count(*) as num_intermediaciones,
         -- Un STRUCT conserva juntos los campos del mismo evento, incluso los nulos.
@@ -46,10 +61,13 @@ with orientacion as (
         date(r.fecha_de_registro) as fecha_inscripcion,
         date(o.fecha_de_orientaci_n) as fecha_orientacion,
         date(p.created_time) as fecha_registro_psicosocial,
+        coalesce(f.fecha_formaci_n, f.fecha_curso) as fecha_formacion,
+        pv.fecha_llamada_seguimiento as fecha_postvinculacion,
         date(i.ultima.fecha_intermediacion) as fecha_intermediacion,
         date(c.fecha_de_vinculaci_n_laboral) as fecha_colocacion,
         date(pr.created_time) as fecha_preregistro,
         o.id as orientacion_id, p.id as psicosocial_id,
+        f.id as formacion_id, pv.id as postvinculacion_id,
         i.ultima.id as intermediacion_id, c.id as colocacion_id, pr.id as preregistro_id,
         o.gestor_operativo as orientador, o.perfil_ocupacional,
         p.gestor_operativo as profesional_psicosocial,
@@ -98,11 +116,15 @@ with orientacion as (
         coalesce(r.inscripci_n_completada in ('si', 'sí', 'true'), false) as inscrita,
         coalesce(o.orientaci_n_sociocupacion_completada in ('si', 'sí', 'true'), false) as orientada,
         coalesce(p.acompa_amiento_psicosocial_completado in ('si', 'sí', 'true'), false) as psicosocial,
+        coalesce(f.formaci_n_completada in ('si', 'sí', 'true'), false) as formada,
+        pv.fecha_llamada_seguimiento is not null as postvinculada,
         coalesce(i.ultima.intermediaci_n_completada in ('si', 'sí', 'true'), false) as intermediada,
         c.fecha_de_vinculaci_n_laboral is not null as colocada
     from {{ ref('stg_inscripci_n_colsubsidios') }} r
     left join orientacion o on r.documento = o.documento
     left join psicosocial p on r.documento = p.documento
+    left join formacion f on r.documento = f.documento
+    left join postvinculacion pv on r.documento = pv.documento
     left join intermediacion_agg i on r.documento = i.documento
     left join colocacion c on r.documento = c.documento
     left join preregistro pr on r.documento = pr.documento
@@ -122,17 +144,22 @@ select *,
         else '6. 56 o más'
     end as rango_etario,
 
-    case when colocada then '5. Colocada'
-         when intermediada then '4. Intermediada'
-         when psicosocial then '3. Psicosocial'
-         when orientada then '2. Orientada'
-         when inscrita then '1. Inscrita'
+    -- Etapa más avanzada completada; no implica completar las anteriores.
+    case when postvinculada then '7. Postvinculación'
+         when colocada then '6. Colocación'
+         when intermediada then '5. Intermediación'
+         when formada then '4. Formación'
+         when psicosocial then '3. Atención Psicosocial'
+         when orientada then '2. Orientación'
+         when inscrita then '1. Registros'
          else '0. Sin completar' end as etapa_actual,
     date_diff(fecha_colocacion, fecha_inscripcion, day) as dias_inscripcion_a_colocacion,
 
     case when inscrita then 'Sí' else 'No' end as tiene_inscripcion,
     case when orientada then 'Sí' else 'No' end as tiene_orientacion,
     case when psicosocial then 'Sí' else 'No' end as tiene_psicosocial,
+    case when formada then 'Sí' else 'No' end as tiene_formacion,
+    case when postvinculada then 'Sí' else 'No' end as tiene_postvinculacion,
     case when intermediada then 'Sí' else 'No' end as tiene_intermediacion,
     case when colocada then 'Sí' else 'No' end as tiene_colocacion
 from base
