@@ -411,14 +411,33 @@ MODULES_RUTA_MUJER = {
         "Observaciones",
     ],
     "Mitigaci_n_Colsubsidios": [
+        "Name", "Created_Time", "Modified_Time",
         "Corte",
-        "Name","Created_Time","Modified_Time","Primer_nombre","Segundo_nombre","Primer_apellido",
-        "Segundo_apellido","Tipo_de_documento","Sexo_al_nacer","Tipificaci_n_Mujer","Fecha_de_Registro",
-        "Fecha_de_pago_mitigaci_n","Ciudad_Municipio","Departamento","Tipo_de_mitigaci_n",
-        "Estado_de_mitigaci_n","Descripci_n_de_mitigacion","Mitigaci_n_Completada","Gestor_Operativo",
-        "Enfrenta_alg_n_tipo_de_barrera_1","Seleccione_el_tipo_de_barrera_individual",
-        "Qu_servicio_recibi_para_superar_la_barrera_1","Qu_valor_recibi_para_superar_la_barrera_1",
-        "Es_micromitigaci_n",
+        # Identificación de la participante
+        "Primer_nombre", "Segundo_nombre", "Primer_apellido", "Segundo_apellido",
+        "Tipo_de_documento", "Sexo_al_nacer", "Edad",
+        "N_mero_de_Celular_principal",
+        # Perfil (para desagregar el gasto por tipo de mujer)
+        "Tipificaci_n_Mujer", "Nacionalidad", "Grupo_tnico",
+        "Tipo_de_discapacidad", "Nivel_de_Escolaridad",
+        # Territorio
+        "Ciudad_Municipio", "Departamento", "Zona_geogr_fica",
+        # Mitigación
+        "Fecha_de_Registro", "Fecha_de_pago_mitigaci_n",
+        "Tipo_de_mitigaci_n", "Estado_de_mitigaci_n", "Estado_de_mitigaci_n_2",
+        "Descripci_n_de_mitigacion",
+        "Mitigaci_n_Completada", "Es_micromitigaci_n",
+        "Gestor_Operativo", "Nombre_de_encargado",
+        # Barrera atendida
+        "Enfrenta_alg_n_tipo_de_barrera_1",
+        "Seleccione_el_tipo_de_barrera_individual",
+        "Otro_tipo_de_barrera",
+        "Qu_servicio_recibi_para_superar_la_barrera_1",
+        "Otro_servicio",
+        "Qu_valor_recibi_para_superar_la_barrera_1",
+        # Dispersión (trazabilidad del pago)
+        "Dispersion_formacion_check", "Dispersion_colocacion_check",
+        "Entidad_Bancaria",
     ],
 }
 
