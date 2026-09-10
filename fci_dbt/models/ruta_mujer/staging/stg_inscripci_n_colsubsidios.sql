@@ -36,6 +36,7 @@ select
     json_value(`Pre_registro`, '$.name') as pre_registro_nombre,
     lower(trim(`Desea_generar_acompa_amiento_psicosocial`)) as desea_generar_acompa_amiento_psicosocial,
     lower(trim(`D_nde_te_enteraste_de_esta_vacante`)) as d_nde_te_enteraste_de_esta_vacante,
+    lower(trim(`Corte`)) as corte,
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time,
     lower(trim(`Naturaleza_del_estrato_socioecon_mico`)) as naturaleza_del_estrato_socioecon_mico,

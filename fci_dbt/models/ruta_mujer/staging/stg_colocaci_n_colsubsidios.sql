@@ -34,6 +34,7 @@ select
     lower(trim(`Nivel_de_mitigaci_n`)) as nivel_de_mitigaci_n,
     trim(`Categorizaci_n_de_Empleo_Verde`) as categorizaci_n_de_empleo_verde,
     lower(trim(`Es_un_empleo_con_titulo_de_educacion_superior`)) as es_un_empleo_con_titulo_de_educacion_superior,
+    lower(trim(`Corte`)) as corte,
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time
 from {{ source('zoho_raw_ruta_mujer', 'colocaci_n_colsubsidios') }}

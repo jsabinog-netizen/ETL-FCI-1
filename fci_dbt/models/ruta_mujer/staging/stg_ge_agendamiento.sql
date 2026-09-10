@@ -23,6 +23,7 @@ select
     -- ── Campo agregado para replicar vw_agendamientos_comerciales (dashboard C2M) ──
     trim(`Direcci_n_del_lugar`) as direcci_n_del_lugar,
 
+    lower(trim(`Corte`)) as corte,
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time
 from {{ source('zoho_raw_ruta_mujer', 'ge_agendamiento') }}

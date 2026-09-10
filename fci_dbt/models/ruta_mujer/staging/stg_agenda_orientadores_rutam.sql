@@ -19,6 +19,7 @@ select
     lower(trim(`Modalidad`)) as modalidad,
     lower(trim(`Municipio_o_localidad`)) as municipio_o_localidad,
     trim(`Persona_que_realiza_el_reporte`) as persona_que_realiza_el_reporte,
+    lower(trim(`Corte`)) as corte,
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time
 from {{ source('zoho_raw_ruta_mujer', 'agenda_orientadores_rutam') }}

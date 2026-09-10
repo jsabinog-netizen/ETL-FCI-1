@@ -20,3 +20,5 @@ models:
           severity: warn
   - name: modified_time
     description: Modified_Time de Zoho convertido de forma segura a TIMESTAMP.
+  - name: corte
+    description: Cohorte del programa (Corte 1 / Corte 2), normalizada a minúsculas en staging. Segmentación transversal del dashboard.

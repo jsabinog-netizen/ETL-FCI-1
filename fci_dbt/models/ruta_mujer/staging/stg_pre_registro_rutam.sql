@@ -30,6 +30,7 @@ select
     trim(`A_os_totales_de_experiencia_laboral`) as a_os_totales_de_experiencia_laboral,
     lower(trim(`D_nde_te_enteraste_de_esta_vacante`)) as d_nde_te_enteraste_de_esta_vacante,
     trim(`Cu_l_de_nuestras_vacantes_llam_tu_atenci_n`) as cu_l_de_nuestras_vacantes_llam_tu_atenci_n,
+    lower(trim(`Corte`)) as corte,
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time
 from {{ source('zoho_raw_ruta_mujer', 'pre_registro_rutam') }}

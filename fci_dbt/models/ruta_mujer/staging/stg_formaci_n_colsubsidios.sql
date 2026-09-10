@@ -26,6 +26,7 @@ select
     lower(trim(`Municipio`)) as municipio,
     lower(trim(`Localidad`)) as localidad,
     trim(`Profesional_de_orientaci_n`) as profesional_de_orientaci_n,
+    lower(trim(`Corte`)) as corte,
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time
 from {{ source('zoho_raw_ruta_mujer', 'formaci_n_colsubsidios') }}

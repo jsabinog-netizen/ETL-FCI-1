@@ -24,6 +24,7 @@ select
     lower(trim(`Tama_o_de_la_empresa`)) as tama_o_de_la_empresa,
     lower(trim(`Departamento`)) as departamento,
     lower(trim(`Ciudad_municipio_principal`)) as ciudad_municipio_principal,
+    lower(trim(`Corte`)) as corte,
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time
 from {{ source('zoho_raw_ruta_mujer', 'pre_registro_empresarial') }}

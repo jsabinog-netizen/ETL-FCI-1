@@ -18,6 +18,7 @@ select
     lower(trim(`Tipo_de_documento`)) as tipo_de_documento,
     trim(`Cursos`) as cursos,
     lower(trim(`Modalidad_curso`)) as modalidad_curso,
+    lower(trim(`Corte`)) as corte,
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time
 from {{ source('zoho_raw_ruta_mujer', 'asist_pres_rutam') }}
