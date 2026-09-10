@@ -40,3 +40,11 @@ models:
           TRUE si el documento del preregistro aparece en el staging
           de inscripción. Base de la medida de conversión preregistro
           a inscripción.
+      - name: corte
+        description: Cohorte del programa (Corte 1 / Corte 2), normalizada a minúsculas en staging. Segmentación transversal del dashboard.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['corte 1', 'corte 2']
+              config:
+                severity: warn

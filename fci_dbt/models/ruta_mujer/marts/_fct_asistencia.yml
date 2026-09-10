@@ -33,3 +33,11 @@ models:
         description: Jornada de la sesión (Mañana / Tarde).
       - name: modalidad_curso
         description: Modalidad del curso. 40% de nulos al corte del diccionario.
+      - name: corte
+        description: Cohorte del programa (Corte 1 / Corte 2), normalizada a minúsculas en staging. Segmentación transversal del dashboard.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['corte 1', 'corte 2']
+              config:
+                severity: warn

@@ -12,3 +12,11 @@ models:
     - not_null:
         config:
           severity: warn
+  - name: corte
+    description: Cohorte del programa (Corte 1 / Corte 2), normalizada a minúsculas en staging. Segmentación transversal del dashboard.
+    tests:
+      - accepted_values:
+          arguments:
+            values: ['corte 1', 'corte 2']
+          config:
+            severity: warn

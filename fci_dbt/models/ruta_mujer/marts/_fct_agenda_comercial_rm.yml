@@ -42,3 +42,11 @@ models:
         description: Miembro FCI que agenda la reunión (campo Invitador en Zoho).
       - name: sector_economico
         description: Sector económico de la empresa.
+      - name: corte
+        description: Cohorte del programa (Corte 1 / Corte 2), normalizada a minúsculas en staging. Segmentación transversal del dashboard.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['corte 1', 'corte 2']
+              config:
+                severity: warn

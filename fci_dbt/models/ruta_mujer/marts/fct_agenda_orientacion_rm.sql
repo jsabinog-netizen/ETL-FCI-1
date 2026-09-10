@@ -1,5 +1,6 @@
 select
     id,
+    corte,
     documento,
     date(fecha_y_hora_de_agendamiento, 'America/Bogota') as fecha_cita,
     format_timestamp('%H:%M:%S', fecha_y_hora_de_agendamiento, 'America/Bogota') as hora_cita,

@@ -32,6 +32,7 @@ with orientacion as (
     ) = 1
 ), base as (
     select r.id as inscripcion_id, r.documento,
+        r.corte,
         r.primer_nombre, r.segundo_nombre, r.primer_apellido, r.segundo_apellido,
         trim(concat(coalesce(r.primer_nombre, ''), ' ', coalesce(r.segundo_nombre, ''), ' ',
                     coalesce(r.primer_apellido, ''), ' ', coalesce(r.segundo_apellido, ''))) as nombre_completo,

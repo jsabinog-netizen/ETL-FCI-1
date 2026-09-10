@@ -2,6 +2,7 @@
 
 select
     id,
+    corte,
     nombre_agendamiento,      
     buscar_empresa_id as empresa_id,
     buscar_empresa_nombre as empresa_lookup,
