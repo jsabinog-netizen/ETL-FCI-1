@@ -1,0 +1,45 @@
+version: 2
+models:
+  - name: fct_agenda_orientacion_rm
+    description: >
+      Una cita de orientación individual por id de Zoho. El sujeto es la
+      participante (documento). Separado de fct_agenda_comercial_rm porque
+      son entidades distintas: el mart unificado producía columnas con 95%
+      de nulos estructurales.
+      Fecha de cita en calendario America/Bogota, hora local como texto.
+    columns:
+      - name: id
+        description: Identificador del registro en Zoho.
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: documento
+        description: >
+          Documento de la participante citada. Clave de relación con
+          fct_ruta_mujer para la ficha 360.
+        tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: fecha_cita
+        description: Fecha de la cita en calendario America/Bogota.
+      - name: dia_semana
+        description: Día de la semana en español, traducido en dbt.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Lunes', 'Martes', 'Miércoles', 'Jueves','Viernes', 'Sábado', 'Domingo']
+              config:
+                severity: warn
+      - name: dia_semana_orden
+        description: >
+          Índice 1-7 para "Ordenar por columna" en Power BI. Sin esto los
+          días salen alfabéticos.
+      - name: estado
+        description: Estado de la cita.
+      - name: responsable
+        description: Persona que realiza el reporte (orientadora).

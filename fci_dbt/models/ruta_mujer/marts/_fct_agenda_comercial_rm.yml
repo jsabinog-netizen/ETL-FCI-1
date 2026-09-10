@@ -1,0 +1,44 @@
+version: 2
+models:
+  - name: fct_agenda_comercial_rm
+    description: >
+      Una cita comercial con empresa por id de Zoho. El sujeto es la
+      empresa. Separado de fct_agenda_orientacion_rm porque son entidades
+      distintas.
+      Fecha de cita en calendario America/Bogota, hora local como texto.
+    columns:
+      - name: id
+        description: Identificador del registro en Zoho.
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: empresa_id
+        description: >
+          Id de la empresa desde el lookup Buscar_empresa. Clave de
+          relación con dim_vacantes_rm para medir conversión de
+          agendamiento a vacante.
+      - name: empresa
+        description: Nombre de la empresa agendada.
+      - name: fecha_cita
+        description: Fecha de la cita en calendario America/Bogota.
+      - name: dia_semana
+        description: Día de la semana en español, traducido en dbt.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Lunes', 'Martes', 'Miércoles', 'Jueves',
+                          'Viernes', 'Sábado', 'Domingo']
+              config:
+                severity: warn
+      - name: dia_semana_orden
+        description: Índice 1-7 para "Ordenar por columna" en Power BI.
+      - name: estado
+        description: Estado del agendamiento (agendado, pendiente).
+      - name: responsable
+        description: Miembro FCI que agenda la reunión (campo Invitador en Zoho).
+      - name: sector_economico
+        description: Sector económico de la empresa.
