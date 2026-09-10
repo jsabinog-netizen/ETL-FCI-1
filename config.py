@@ -388,14 +388,27 @@ MODULES_RUTA_MUJER = {
         "Buscar_empresa","Sector_Econ_mico","Direcci_n_del_lugar"
     ],
     "Postvinculaci_n_Colsub": [
+        "Name", "Created_Time", "Modified_Time",
         "Corte",
-        "Name","Created_Time","Modified_Time","Primer_nombre","Segundo_nombre","Primer_apellido",
-        "Segundo_apellido","Tipo_de_documento","Nacionalidad","Sexo_al_nacer","N_mero_de_Celular_principal",
-        "Fecha_vinculaci_n","Fecha_de_Registro","Ciudad_Municipio","Departamento","Estado_Seguimiento_1",
-        "Fecha_del_seguimiento_1","Permanencia_en_seguimiento_1","Medio_de_contacto_para_el_seguimiento_post_1",
-        "Motivo_de_renuncia_despido_seguimiento_1","Fecha_de_renuncia_despido_Seguimiento_1",
-        "Se_siente_a_gusto_con_el_cargo_que_desempe_a","Considera_que_esta_apto_para_el_cargo",
-        "Remisi_n_Atenci_n_psicosocial","Observacion",
+        # Identificación de la participante
+        "Primer_nombre", "Segundo_nombre", "Primer_apellido",
+        "Tipo_de_documento", "Sexo_al_nacer", "Edad", "Estado_civil",
+        "N_mero_de_Celular_principal", "Nivel_de_Escolaridad",
+        "Ciudad_Municipio", "Departamento", "Fecha_de_Registro",
+        # Lookups: relación con participante (Colocación) y vacante
+        "Id_participante", "Id_Vacante",
+        # Contrato y empresa (heredados, visibles sin cruzar tablas)
+        "Empresa", "Sector", "Fecha_de_inicio_de_contrato",
+        # Seguimiento post-vinculación
+        "Tiene_postvinculaci_n", "Fecha_llamada_de_seguimiento",
+        "D_as_faltantes", "Estado_de_Post", "Estado_de_caso",
+        "Peramencia_de_seguimiento",     # typo en Zoho, usar tal cual
+        "Resultado_llamada",
+        # Novedad y remisión
+        "Tipo_de_novedad1",              # sufijo "1" en Zoho, usar tal cual
+        "Otra_novedad", "Motivo_de_retiro",
+        "Remitido_a", "Fecha_de_remision",
+        "Observaciones",
     ],
     "Mitigaci_n_Colsubsidios": [
         "Corte",
