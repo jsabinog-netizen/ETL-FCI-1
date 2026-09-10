@@ -260,6 +260,7 @@ MODULES_GIZ = {
 
 MODULES_RUTA_MUJER = {
     "Pre_registro_RutaM": [
+        "Corte",
         "Name", "Created_Time", "Modified_Time", "Primer_nombre", "Segundo_nombre", "Primer_apellido",
         "Segundo_apellido", "Fecha_de_nacimiento", "Edad", "Tipo_de_documento", "N_mero_de_tel_fono_celular",
         "Nacionalidad", "Otra_nacionalidad", "Modalidad_de_atenci_n", "Tipo_de_poblaci_n", "Ruta_Mujer",
@@ -269,6 +270,7 @@ MODULES_RUTA_MUJER = {
         "A_os_totales_de_experiencia_laboral", "D_nde_te_enteraste_de_esta_vacante", "Cu_l_de_nuestras_vacantes_llam_tu_atenci_n",
     ],
     "Inscripci_n_Colsubsidios": [
+        "Corte",
         "Name", "Created_Time", "Modified_Time", "Primer_nombre", "Segundo_nombre", "Primer_apellido",
         "Segundo_apellido", "Fecha_de_registro", "Fecha_de_nacimiento", "Edad", "Tipo_de_documento",
         "Email", "N_mero_de_celular", "Sexo_al_nacer", "Nacionalidad", "Otra_nacionalidad",
@@ -280,6 +282,7 @@ MODULES_RUTA_MUJER = {
         "Respuesta_pregunta_seguridad", "Seleccione_nivel_de_Sisb_n", "Tiene_alguna_de_estas_responsabilidades_de_cuidado",
     ],
     "Orientaci_n_Colsubsidios": [
+        "Corte",
         "Name", "Created_Time", "Modified_Time", "Inscripci_n", "Primer_nombre", "Segundo_nombre",
         "Primer_apellido", "Segundo_apellido", "Fecha_de_orientaci_n", "Orientaci_n_sociocupacion_Completada",
         "Concepto_de_Orientaci_n", "Concepto_de_orientaci_n_colsubsidio", "Modalidad_Orientacion",
@@ -290,6 +293,7 @@ MODULES_RUTA_MUJER = {
         "rea_de_Experiencia_Laboral_experiencia_2","Tiempo_de_experiencia_Laboral"
     ],
     "Psicosocial_RutaM": [
+        "Corte",
         "Name","Created_Time","Modified_Time","Registro_Orientaci_n","Primer_nombre",
         "Segundo_nombre","Primer_apellido","Segundo_apellido","Fecha_de_nacimiento",
         "Acompa_amiento_Psicosocial_Completado","Estado_actual_del_proceso",
@@ -302,6 +306,7 @@ MODULES_RUTA_MUJER = {
         "Estrategia_para_la_superaci_n_de_la_barrera_3","Tipificaci_n_Mujer", "Evoluci_n"
     ],
     "Intermediaci_n_Ruta_M": [
+        "Corte",
         "Record_Status__s", "Name", "Owner", "Email", "Created_Time", "Modified_Time",
         "Last_Activity_Time", "Tag", "Unsubscribed_Mode", "Unsubscribed_Time", "Locked__s",
         "Observaci_n_Calidad", "Fecha_intermediaci_n", "Concepto_de_intermediaci_n",
@@ -312,6 +317,7 @@ MODULES_RUTA_MUJER = {
         "Novedad_Intermediaci_n", "Perfil_ocupacional", 
     ],
     "Colocaci_n_Colsubsidios": [
+        "Corte",
         "Name","Created_Time","Modified_Time","Inscripci_n_RutaM","Psicosocial_RutaM","Primer_nombre",
         "Segundo_nombre","Primer_apellido","Segundo_apellido","Tipo_de_documento","Edad",
         "N_mero_de_Celular_principal","Fecha_de_Vinculaci_n_Laboral","Mes_de_Colocaci_n",
@@ -322,6 +328,7 @@ MODULES_RUTA_MUJER = {
         "Es_un_empleo_con_titulo_de_educacion_superior",
     ],
     "Formaci_n_Colsubsidios": [
+        "Corte",
         "Name","Created_Time","Modified_Time","Primer_Nombre","Segundo_nombre","Primer_apellido",
         "Segundo_apellido","N_mero_de_celular","Fecha_formaci_n","Fecha_curso","Formaci_n_Completada",
         "Estado_de_mitigacion","Gestor_Operativo","Modalidad","Jornada",
@@ -330,6 +337,7 @@ MODULES_RUTA_MUJER = {
         "Municipio","Localidad","Profesional_de_orientaci_n",
     ],
     "GE_Vacantes_Colsubsidios": [
+        "Corte",
         "Name","Created_Time","Modified_Time","Nombre_vacante","N_mero_de_puestos_de_trabajo",
         "Tipo_de_contrato","Estado_de_la_vacante","Ciudad_Municipio_de_la_vacante",
         "Departamento_de_la_vacante","Departamento","Municipio","Rango_salarial",
@@ -346,6 +354,7 @@ MODULES_RUTA_MUJER = {
         "Fecha_compromiso", "Requiere_tarjeta_profesional"
     ],
     "Pre_registro_Empresarial": [
+        "Corte",
         "Record_Status__s", "Name", "Owner", "Email", "Created_Time", "Modified_Time",
         "Last_Activity_Time", "Tag", "Unsubscribed_Mode", "Unsubscribed_Time", "Locked__s",
         "N_mero_de_whatsapp_2", "Tel_fono_de_contacto_fijo_o_celular_2", "Cargo",
@@ -355,6 +364,7 @@ MODULES_RUTA_MUJER = {
         "Tama_o_de_la_empresa", "Departamento", "Ciudad_municipio_principal",
     ],
     "Asist_Pres_RutaM": [
+        "Corte",
         "Record_Status__s", "Name", "Owner", "Email", "Created_Time", "Modified_Time",
         "Last_Activity_Time", "Tag", "Unsubscribed_Mode", "Unsubscribed_Time", "Locked__s",
         "Primer_apellido", "Segundo_apellido", "Fecha_curso", "Primer_Nombre",
@@ -362,6 +372,7 @@ MODULES_RUTA_MUJER = {
         "Modalidad_curso",
     ],
     "Agenda_Orientadores_RutaM": [
+        "Corte",
         "Name","Created_Time","Modified_Time","Primer_nombre","Segundo_nombre","Primer_apellido",
         "Segundo_apellido","N_mero_de_celular_Principal","N_mero_de_celular_Opcional",
         "Email","Fecha_y_hora_de_agendamiento","Disponibilidad_Horario","Asunto_de_la_reuni_n",
@@ -370,12 +381,14 @@ MODULES_RUTA_MUJER = {
         
     ],
     "GE_Agendamiento": [
+        "Corte",
         "Name","Created_Time","Modified_Time","Nombre_de_la_empresa","Fecha_y_hora",
         "Disponibilidad_Horario","Asunto_de_la_reuni_n","Enlace_de_la_reuni_n","Estado","Modalidad",
         "Invitador","Departamento","Municipio","Tipo_Actividad","Correo","Persona_de_contacto",
         "Buscar_empresa","Sector_Econ_mico","Direcci_n_del_lugar"
     ],
     "Postvinculaci_n_Colsub": [
+        "Corte",
         "Name","Created_Time","Modified_Time","Primer_nombre","Segundo_nombre","Primer_apellido",
         "Segundo_apellido","Tipo_de_documento","Nacionalidad","Sexo_al_nacer","N_mero_de_Celular_principal",
         "Fecha_vinculaci_n","Fecha_de_Registro","Ciudad_Municipio","Departamento","Estado_Seguimiento_1",
@@ -385,6 +398,7 @@ MODULES_RUTA_MUJER = {
         "Remisi_n_Atenci_n_psicosocial","Observacion",
     ],
     "Mitigaci_n_Colsubsidios": [
+        "Corte",
         "Name","Created_Time","Modified_Time","Primer_nombre","Segundo_nombre","Primer_apellido",
         "Segundo_apellido","Tipo_de_documento","Sexo_al_nacer","Tipificaci_n_Mujer","Fecha_de_Registro",
         "Fecha_de_pago_mitigaci_n","Ciudad_Municipio","Departamento","Tipo_de_mitigaci_n",
