@@ -56,10 +56,42 @@ with orientacion as (
         i.ultima.estado as estado_intermediacion, i.ultima.intermediador,
         i.ultima.buscar_vacante_id as ultima_vacante_id,
         i.ultima.nombre_vacante as ultima_vacante,
+        -- ── Empresa de la última intermediación (expuesta desde el STRUCT `ultima`) ──
+        i.ultima.nit_de_la_empresa as nit_empresa_intermediacion,
+        i.ultima.nombre_de_la_empresa_1 as empresa_intermediacion,
         c.nombre_de_empresa_contratante_empleador as empresa_colocacion,
         c.nit_de_empresa_contratante_empleador as nit_empresa_colocacion,
         c.cargo_en_la_empresa as cargo, c.tipo_de_contrato as tipo_contrato,
         c.salario_despu_s_de_la_colocaci_n as salario,
+
+        -- ── Campos de Orientación agregados para replicar vw_fact_Colsubsidio ──
+        o.concepto_de_orientaci_n,
+        o.inter_s_laboral,
+        o.modalidad_orientacion,
+        o.ocupacion_actual,
+        o.area_experiencia,
+        o.tiempo_de_experiencia_laboral,
+
+        -- ── Campos de Psicosocial agregados para replicar vw_fact_Colsubsidio ──
+        p.seleccione_el_tipo_de_barrera,
+        p.seleccione_el_tipo_de_barrera_2,
+        p.seleccione_el_tipo_de_barrera_3,
+        p.evoluci_n,
+
+        -- ── Campos de Inscripción agregados para replicar vw_fact_Colsubsidio ──
+        r.estrato,
+        r.direcci_n_de_residencia,
+        r.naturaleza_del_estrato_socioecon_mico,
+        r.municipio_de_nacimiento,
+        r.departamento_de_nacimiento,
+        r.ultimo_nivel_educativo_alcanzado,
+        r.nivel_educativo_normalizado,
+        r.tipo_de_poblaci_n,
+        r.pregunta_de_seguridad,
+        r.respuesta_pregunta_seguridad,
+        r.seleccione_nivel_de_sisb_n,
+        r.tiene_alguna_de_estas_responsabilidades_de_cuidado,
+
         coalesce(r.inscripci_n_completada in ('si', 'sí', 'true'), false) as inscrita,
         coalesce(o.orientaci_n_sociocupacion_completada in ('si', 'sí', 'true'), false) as orientada,
         coalesce(p.acompa_amiento_psicosocial_completado in ('si', 'sí', 'true'), false) as psicosocial,
@@ -80,5 +112,14 @@ select *,
          when orientada then '2. Orientada'
          when inscrita then '1. Inscrita'
          else '0. Sin completar' end as etapa_actual,
-    date_diff(fecha_colocacion, fecha_inscripcion, day) as dias_inscripcion_a_colocacion
+    date_diff(fecha_colocacion, fecha_inscripcion, day) as dias_inscripcion_a_colocacion,
+
+    case when inscrita then 'Sí' else 'No' end as tiene_inscripcion,
+    case when orientada then 'Sí' else 'No' end as tiene_orientacion,
+    case when psicosocial then 'Sí' else 'No' end as tiene_psicosocial,
+    case when intermediada then 'Sí' else 'No' end as tiene_intermediacion,
+    case when colocada then 'Sí' else 'No' end as tiene_colocacion
 from base
+
+-- NOTA: "Sede" (columna presente en vw_fact_Colsubsidio de C2M) NO se incluye.
+-- nuevo lo requiere, definir su origen de negocio desde cero.
