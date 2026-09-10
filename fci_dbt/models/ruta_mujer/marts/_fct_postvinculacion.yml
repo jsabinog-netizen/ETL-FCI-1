@@ -1,0 +1,73 @@
+version: 2
+
+models:
+  - name: fct_postvinculacion_rm
+    description: >
+      Un seguimiento post-vinculación por id de Zoho. Grano de evento:
+      una participante puede tener más de un proceso en el tiempo.
+      Incluye columnas calculadas del hito de 20 días, en paralelo a
+      los campos manuales de Zoho (sufijo _zoho) para poder comparar
+      lo reportado contra lo real.
+    columns:
+      - name: id
+        description: Identificador del registro en Zoho.
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: documento
+        description: >
+          Documento de la participante, tomado de Name. Clave de
+          relación con fct_ruta_mujer.
+        tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: corte
+        description: Cohorte del programa (Corte 1 / Corte 2), normalizada a minúsculas en staging. Segmentación transversal del dashboard.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['corte 1', 'corte 2']
+              config:
+                severity: warn
+      - name: fecha_inicio_contrato
+        description: >
+          Fecha de inicio real del contrato. Base del cálculo del
+          hito de 20 días.
+      - name: dias_transcurridos_contrato
+        description: >
+          Días calendario entre fecha_inicio_contrato y hoy.
+          Calculado en dbt, se recalcula en cada build.
+      - name: estado_post_calculado
+        description: >
+          En plazo / Pendiente por post / Post realizada, derivado
+          del hito de 20 días. Comparar contra estado_post_zoho.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['En plazo', 'Pendiente por post', 'Post realizada']
+              config:
+                severity: warn
+      - name: estado_post_zoho
+        description: Campo manual de Zoho. Puede diferir del calculado.
+      - name: alerta_vencida
+        description: >
+          TRUE si pasaron 20 días o más sin llamada registrada.
+          KPI operativo principal de esta tabla.
+      - name: alerta_escalada
+        description: TRUE si pasaron 25 días o más sin llamada.
+      - name: tipo_novedad
+        description: >
+          Tipo de novedad reportada. Viene de Tipo_de_novedad1 en Zoho
+          (el sufijo "1" está en el api_name original).
+      - name: permanencia_seguimiento
+        description: >
+          Activo / Terminación de contrato / Renuncia / Despido.
+          Viene de Peramencia_de_seguimiento en Zoho (typo en el
+          api_name original, falta la "n" de Permanencia).
+      - name: remitido_a
+        description: Área a la que se enrutó el caso.
