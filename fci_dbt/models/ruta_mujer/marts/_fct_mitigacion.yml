@@ -1,0 +1,80 @@
+version: 2
+
+models:
+  - name: fct_mitigacion_rm
+    description: >
+      Una mitigación (apoyo económico o servicio para superar barreras
+      de empleabilidad) por id de Zoho. Grano de evento: una
+      participante puede recibir varias.
+      ⚠️ Tabla vacía al construirla — el módulo Mitigaci_n_Colsubsidios
+      tiene 0 filas en Zoho. Los tests pasan trivialmente; re-verificar
+      cuando lleguen los primeros registros.
+    columns:
+      - name: id
+        description: Identificador del registro en Zoho.
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: documento
+        description: >
+          Documento de la participante, tomado de Name. NO es único:
+          se repite por cada mitigación recibida. Clave de relación
+          con fct_ruta_mujer.
+        tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: corte
+        description: Cohorte del programa (Corte 1 / Corte 2), normalizada a minúsculas en staging. Segmentación transversal del dashboard.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['corte 1', 'corte 2']
+              config:
+                severity: warn
+      - name: valor_mitigacion
+        description: >
+          Monto del apoyo en pesos, limpiado de símbolos y casteado a
+          NUMERIC. El campo crudo se conserva en valor_mitigacion_raw.
+          La limpieza asume cifras enteras sin centavos.
+      - name: valor_mitigacion_raw
+        description: Valor tal como viene de Zoho, para auditoría.
+      - name: tipo_mitigacion
+        description: Tipo de apoyo entregado.
+      - name: barrera_consolidada
+        description: >
+          Tipo de barrera atendida. Usa el campo abierto
+          (otro_tipo_barrera) cuando el picklist dice "otro", para no
+          perder información en los gráficos.
+      - name: servicio_consolidado
+        description: >
+          Servicio recibido, con la misma lógica de consolidación
+          que barrera_consolidada.
+      - name: etapa_mitigacion
+        description: >
+          Formación / Colocación / Sin clasificar, derivado de los
+          checks de dispersión.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Formación', 'Colocación', 'Sin clasificar']
+              config:
+                severity: warn
+      - name: mitigacion_completada
+        description: Flag booleano para medidas DAX.
+      - name: es_micromitigacion
+        description: Flag booleano para medidas DAX.
+      - name: pago_pendiente
+        description: >
+          TRUE si la mitigación está completada pero sin fecha de pago.
+          KPI operativo: apoyos aprobados sin desembolsar.
+      - name: dias_registro_a_pago
+        description: >
+          Días entre el registro de la mitigación y el pago efectivo.
+          Mide agilidad del desembolso. NULL si no hay pago.
+      - name: gestor_operativo
+        description: Gestor a cargo de la mitigación.
