@@ -109,6 +109,19 @@ with orientacion as (
     where r.documento is not null
 )
 select *,
+    -- Rango etario para la pirámide del dashboard. El prefijo numérico
+    -- garantiza el orden correcto en los ejes de Power BI sin tener que
+    -- configurar "Ordenar por columna".
+    case
+        when edad is null then '7. Sin dato'
+        when edad < 18 then '1. Menor de 18'
+        when edad between 18 and 25 then '2. 18-25'
+        when edad between 26 and 35 then '3. 26-35'
+        when edad between 36 and 45 then '4. 36-45'
+        when edad between 46 and 55 then '5. 46-55'
+        else '6. 56 o más'
+    end as rango_etario,
+
     case when colocada then '5. Colocada'
          when intermediada then '4. Intermediada'
          when psicosocial then '3. Psicosocial'
