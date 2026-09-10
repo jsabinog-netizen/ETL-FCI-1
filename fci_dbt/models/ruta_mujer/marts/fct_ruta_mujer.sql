@@ -14,6 +14,7 @@ with orientacion as (
         -- Un STRUCT conserva juntos los campos del mismo evento, incluso los nulos.
         array_agg(struct(id, fecha_intermediaci_n as fecha_intermediacion,
                          intermediaci_n_completada, estado, intermediador,
+                         concepto_de_intermediaci_n as concepto_de_intermediacion,
                          buscar_vacante_id, nombre_vacante, nit_de_la_empresa, nombre_de_la_empresa_1)
             order by fecha_intermediaci_n desc nulls last,
                      modified_time desc nulls last, id desc limit 1)[offset(0)] as ultima
@@ -55,6 +56,7 @@ with orientacion as (
         p.estado_actual_del_proceso as estado_psicosocial,
         coalesce(i.num_intermediaciones, 0) as num_intermediaciones,
         i.ultima.estado as estado_intermediacion, i.ultima.intermediador,
+        i.ultima.concepto_de_intermediacion as concepto_intermediacion,
         i.ultima.buscar_vacante_id as ultima_vacante_id,
         i.ultima.nombre_vacante as ultima_vacante,
         -- ── Empresa de la última intermediación (expuesta desde el STRUCT `ultima`) ──

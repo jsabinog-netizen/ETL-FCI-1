@@ -22,3 +22,5 @@ models:
             values: ['corte 1', 'corte 2']
           config:
             severity: warn
+  - name: concepto_intermediacion
+    description: Concepto de la última intermediación; conserva el mismo evento que estado, intermediador y vacante, incluso si el concepto es nulo.
