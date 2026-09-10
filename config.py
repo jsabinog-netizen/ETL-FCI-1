@@ -276,6 +276,8 @@ MODULES_RUTA_MUJER = {
         "Inscripci_n_completada", "Profesional_de_registro", "Municipio_de_residencia1", "Municipio_de_nacimiento",
         "Departamento_de_nacimiento", "Localidad", "Direcci_n_de_residencia", "Estrato", "Estado_Civil",
         "Tiene_hijos", "Pre_registro", "Desea_generar_acompa_amiento_psicosocial", "D_nde_te_enteraste_de_esta_vacante",
+        "Naturaleza_del_estrato_socioecon_mico", "Ultimo_nivel_educativo_alcanzado", "Pregunta_de_seguridad",
+        "Respuesta_pregunta_seguridad", "Seleccione_nivel_de_Sisb_n", "Tiene_alguna_de_estas_responsabilidades_de_cuidado",
     ],
     "Orientaci_n_Colsubsidios": [
         "Name", "Created_Time", "Modified_Time", "Inscripci_n", "Primer_nombre", "Segundo_nombre",
@@ -284,6 +286,8 @@ MODULES_RUTA_MUJER = {
         "Gestor_operativo", "Perfil_Ocupacional", "Grupos_poblacionales", "Nivel_de_necesidad_de_acompa_amiento_psicosocial",
         "Sientes_que_actualmente_necesitas_apoyo_adicional", "N_mero_de_celular_Principal",
         "Municipio_de_residencia", "Localidad", "Actitud_y_disposici_n", "Inter_s_Laboral",
+        "Actualmente_cu_l_es_su_ocupaci_n",
+        "rea_de_Experiencia_Laboral_experiencia_2","Tiempo_de_experiencia_Laboral"
     ],
     "Psicosocial_RutaM": [
         "Name","Created_Time","Modified_Time","Registro_Orientaci_n","Primer_nombre",
@@ -295,7 +299,7 @@ MODULES_RUTA_MUJER = {
         "Estrategia_para_la_superaci_n_de_la_barrera","Cuenta_con_una_segunda_barrera",
         "Seleccione_el_tipo_de_barrera_2","Estrategia_para_la_superaci_n_de_la_barrera_2",
         "Cuenta_con_una_tercera_barrera","Seleccione_el_tipo_de_barrera_3",
-        "Estrategia_para_la_superaci_n_de_la_barrera_3","Tipificaci_n_Mujer",
+        "Estrategia_para_la_superaci_n_de_la_barrera_3","Tipificaci_n_Mujer", "Evoluci_n"
     ],
     "Intermediaci_n_Ruta_M": [
         "Record_Status__s", "Name", "Owner", "Email", "Created_Time", "Modified_Time",
@@ -338,7 +342,8 @@ MODULES_RUTA_MUJER = {
         "Edad_M_nima","Edad_M_xima", "Fecha_estimada_de_contrataci_n", "Funciones_del_cargo", "Perfil_de_la_vacante",
         "Proceso_confidencial", "Puede_estar_estudiando", "Requiere_qu_cuente_con_veh_culo", 
         "Requiere_licencia_para_conducir_carro", "Requiere_licencia_para_conducir_moto", "Requiere_manejar_alg_n_idioma",
-        "Requiere_disponibilidad_para_viajar", "Requiere_vivir_en_barrio_zona_espec_fica", "Tiene_personas_a_cargo"
+        "Requiere_disponibilidad_para_viajar", "Requiere_vivir_en_barrio_zona_espec_fica", "Tiene_personas_a_cargo",
+        "Fecha_compromiso", "Requiere_tarjeta_profesional"
     ],
     "Pre_registro_Empresarial": [
         "Record_Status__s", "Name", "Owner", "Email", "Created_Time", "Modified_Time",
@@ -361,6 +366,7 @@ MODULES_RUTA_MUJER = {
         "Segundo_apellido","N_mero_de_celular_Principal","N_mero_de_celular_Opcional",
         "Email","Fecha_y_hora_de_agendamiento","Disponibilidad_Horario","Asunto_de_la_reuni_n",
         "Enlace_de_la_reuni_n","Estado","Modalidad","Municipio_o_localidad","Persona_que_realiza_el_reporte",
+        "Direcci_n_del_lugar"
         
     ],
     "GE_Agendamiento": [
