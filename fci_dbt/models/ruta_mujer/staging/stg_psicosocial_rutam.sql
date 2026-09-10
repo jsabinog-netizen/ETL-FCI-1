@@ -30,5 +30,6 @@ select
     trim(`Estrategia_para_la_superaci_n_de_la_barrera_3`) as estrategia_para_la_superaci_n_de_la_barrera_3,
     lower(trim(`Tipificaci_n_Mujer`)) as tipificaci_n_mujer,
     safe_cast(_loaded_at as timestamp) as _loaded_at,
-    safe_cast(Modified_Time as timestamp) as modified_time
+    safe_cast(Modified_Time as timestamp) as modified_time,
+    trim(`Evoluci_n`) as evoluci_n,
 from {{ source('zoho_raw_ruta_mujer', 'psicosocial_rutam') }}

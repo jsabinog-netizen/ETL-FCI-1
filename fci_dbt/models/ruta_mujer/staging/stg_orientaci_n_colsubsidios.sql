@@ -23,8 +23,11 @@ select
     trim(`Sientes_que_actualmente_necesitas_apoyo_adicional`) as sientes_que_actualmente_necesitas_apoyo_adicional,
     trim(`N_mero_de_celular_Principal`) as n_mero_de_celular_principal,
     lower(trim(`Municipio_de_residencia`)) as municipio_de_residencia,
+    lower(trim(`rea_de_Experiencia_Laboral_experiencia_2`)) as area_experiencia,
+    trim(`Tiempo_de_experiencia_Laboral`) as tiempo_de_experiencia_laboral,
     lower(trim(`Localidad`)) as localidad,
     lower(trim(`Actitud_y_disposici_n`)) as actitud_y_disposici_n,
+    lower(trim(`actualmente_cu_l_es_su_ocupaci_n`)) as ocupacion_actual,
     lower(trim(`Inter_s_Laboral`)) as inter_s_laboral,
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time
