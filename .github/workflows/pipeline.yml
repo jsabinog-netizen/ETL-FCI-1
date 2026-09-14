@@ -68,7 +68,8 @@ jobs:
           dbt deps
 
       - name: Registrar inicio del pipeline
-        run: echo "PIPELINE_STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+        id: pipeline_start
+        run: echo "started_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
 
       - name: Correr pipeline completo Colsubsidio
         env:
@@ -79,5 +80,7 @@ jobs:
           python main.py colsubsidio
       - name: Verificar frescura de los datos
         # También auditar cuando main falla; su error original conserva el job rojo.
-        if: ${{ !cancelled() && env.PIPELINE_STARTED_AT != '' }}
+        if: ${{ !cancelled() && steps.pipeline_start.outputs.started_at != '' }}
+        env:
+          PIPELINE_STARTED_AT: ${{ steps.pipeline_start.outputs.started_at }}
         run: python scripts/verificar_frescura.py colsubsidio
