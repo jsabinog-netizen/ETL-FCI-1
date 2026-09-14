@@ -192,6 +192,3 @@ select *,
     case when intermediada then 'Sí' else 'No' end as tiene_intermediacion,
     case when colocada then 'Sí' else 'No' end as tiene_colocacion
 from base
-
--- NOTA: "Sede" (columna presente en vw_fact_Colsubsidio de C2M) NO se incluye.
--- nuevo lo requiere, definir su origen de negocio desde cero.
