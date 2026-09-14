@@ -334,6 +334,16 @@ MODULES_RUTA_MUJER = {
         "Estado_de_mitigacion","Gestor_Operativo","Modalidad","Jornada",
         "Fortalecimiento_de_habilidades_T_cnica","Fortalecimiento_de_habilidades_T_cnicas_2","Modalidad_2",
         "Jornada_2","Fortalecimiento_de_habilidades_blandas","Modalidad_blandas","Jornada_blandas",
+        "Fecha_curso_2", "Fecha_curso_blandas",
+        # Slot 3
+        "Fortalecimiento_de_habilidades_T_cnicas_3", "Fecha_curso_3",
+        "Modalidad_3", "Jornada_3",
+        # Slot 4
+        "Fortalecimiento_de_habilidades_T_cnicas_4", "Fecha_curso_4",
+        "Modalidad_4", "Jornada_4",
+        # Slot 6 (blandas 2)
+        "Fortalecimiento_de_habilidades_blandas_2", "Fecha_curso_blandas_2",
+        "Modalidad_blandas_2", "Jornada_blandas_2",
         "Municipio","Localidad","Profesional_de_orientaci_n",
     ],
     "GE_Vacantes_Colsubsidios": [

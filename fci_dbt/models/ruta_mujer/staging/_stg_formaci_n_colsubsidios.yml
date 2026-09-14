@@ -19,3 +19,31 @@ models:
     description: Modified_Time de Zoho convertido de forma segura a TIMESTAMP.
   - name: corte
     description: Cohorte del programa (Corte 1 / Corte 2), normalizada a minúsculas en staging. Segmentación transversal del dashboard.
+  - name: fecha_curso_2
+    description: Fecha del curso; DATE, slot 2 del registro ancho.
+  - name: fecha_curso_blandas
+    description: Fecha del curso; DATE, slot 5 del registro ancho.
+  - name: fortalecimiento_de_habilidades_t_cnicas_3
+    description: Nombre del curso, slot 3 del registro ancho.
+  - name: fecha_curso_3
+    description: Fecha del curso; DATE, slot 3 del registro ancho.
+  - name: modalidad_3
+    description: Modalidad normalizada, slot 3 del registro ancho.
+  - name: jornada_3
+    description: Jornada normalizada, slot 3 del registro ancho.
+  - name: fortalecimiento_de_habilidades_t_cnicas_4
+    description: Nombre del curso, slot 4 del registro ancho.
+  - name: fecha_curso_4
+    description: Fecha del curso; DATE, slot 4 del registro ancho.
+  - name: modalidad_4
+    description: Modalidad normalizada, slot 4 del registro ancho.
+  - name: jornada_4
+    description: Jornada normalizada, slot 4 del registro ancho.
+  - name: fortalecimiento_de_habilidades_blandas_2
+    description: Nombre del curso, slot 6 del registro ancho.
+  - name: fecha_curso_blandas_2
+    description: Fecha del curso; DATE, slot 6 del registro ancho.
+  - name: modalidad_blandas_2
+    description: Modalidad normalizada, slot 6 del registro ancho.
+  - name: jornada_blandas_2
+    description: Jornada normalizada, slot 6 del registro ancho.

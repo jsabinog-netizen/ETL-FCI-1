@@ -23,6 +23,23 @@ select
     trim(`Fortalecimiento_de_habilidades_blandas`) as fortalecimiento_de_habilidades_blandas,
     lower(trim(`Modalidad_blandas`)) as modalidad_blandas,
     lower(trim(`Jornada_blandas`)) as jornada_blandas,
+    date(safe_cast(`Fecha_curso_2` as timestamp)) as fecha_curso_2,
+    date(safe_cast(`Fecha_curso_blandas` as timestamp)) as fecha_curso_blandas,
+    -- Slot 3
+    trim(`Fortalecimiento_de_habilidades_T_cnicas_3`) as fortalecimiento_de_habilidades_t_cnicas_3,
+    date(safe_cast(`Fecha_curso_3` as timestamp)) as fecha_curso_3,
+    lower(trim(`Modalidad_3`)) as modalidad_3,
+    lower(trim(`Jornada_3`)) as jornada_3,
+    -- Slot 4
+    trim(`Fortalecimiento_de_habilidades_T_cnicas_4`) as fortalecimiento_de_habilidades_t_cnicas_4,
+    date(safe_cast(`Fecha_curso_4` as timestamp)) as fecha_curso_4,
+    lower(trim(`Modalidad_4`)) as modalidad_4,
+    lower(trim(`Jornada_4`)) as jornada_4,
+    -- Slot 6 (blandas 2)
+    trim(`Fortalecimiento_de_habilidades_blandas_2`) as fortalecimiento_de_habilidades_blandas_2,
+    date(safe_cast(`Fecha_curso_blandas_2` as timestamp)) as fecha_curso_blandas_2,
+    lower(trim(`Modalidad_blandas_2`)) as modalidad_blandas_2,
+    lower(trim(`Jornada_blandas_2`)) as jornada_blandas_2,
     lower(trim(`Municipio`)) as municipio,
     lower(trim(`Localidad`)) as localidad,
     trim(`Profesional_de_orientaci_n`) as profesional_de_orientaci_n,
