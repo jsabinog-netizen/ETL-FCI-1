@@ -80,3 +80,17 @@ models:
     description: Cantidad de registros de formación de esa mujer. 0 si no tiene.
   - name: alguna_formacion_completada
     description: TRUE si algún registro de formación de la mujer está completado; FALSE si no tiene registros.
+
+  - name: via_de_ingreso
+    description: >
+      Con preregistro / Registro directo. Identifica las dos puertas
+      de entrada al programa. El lookup Pre_registro de Zoho no es
+      confiable; el cruce se hace por documento.
+    tests:
+      - accepted_values:
+          arguments:
+            values: ['Con preregistro', 'Registro directo']
+          config:
+            severity: warn
+  - name: tuvo_preregistro
+    description: TRUE si la mujer tiene registro en Pre_registro_RutaM.

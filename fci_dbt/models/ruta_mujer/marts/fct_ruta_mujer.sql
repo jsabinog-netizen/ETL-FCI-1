@@ -146,6 +146,12 @@ with orientacion as (
     where r.documento is not null
 )
 select *,
+    -- Puerta de entrada al programa. Hay mujeres que se inscriben sin
+    -- pasar por el formulario de preregistro (registro directo hecho
+    -- por el equipo, presencial o virtual).
+    preregistro_id is not null as tuvo_preregistro,
+    case when preregistro_id is not null then 'Con preregistro'
+         else 'Registro directo' end as via_de_ingreso,
     -- Estado de formación con tres valores. 'Sin iniciar' solo puede
     -- calcularse acá: si la mujer no tiene registro de formación, no
     -- existe en fct_formacion_rm y su ausencia es el dato.
