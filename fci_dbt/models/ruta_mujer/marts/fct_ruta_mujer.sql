@@ -16,6 +16,18 @@ with orientacion as (
         order by coalesce(fecha_formaci_n, fecha_curso) desc nulls last,
                  modified_time desc nulls last, id desc
     ) = 1
+), formacion_agg as (
+    -- Agrega ANTES del join para no romper el grano de persona.
+    -- Se usa max() en vez del registro más reciente: si una mujer tiene
+    -- varios registros de formación y al menos uno está completado,
+    -- cuenta como completada. El CTE `formacion` (dedup) sigue sirviendo
+    -- para traer atributos del último registro.
+    select documento,
+        count(*) as num_registros_formacion,
+        max(coalesce(formaci_n_completada in ('si','sí','true'), false)) as alguna_completada
+    from {{ ref('stg_formaci_n_colsubsidios') }}
+    where documento is not null
+    group by documento
 ), postvinculacion as (
     select * from {{ ref('stg_postvinculaci_n_colsub') }}
     qualify row_number() over (
@@ -72,6 +84,8 @@ with orientacion as (
         o.gestor_operativo as orientador, o.perfil_ocupacional,
         p.gestor_operativo as profesional_psicosocial,
         p.estado_actual_del_proceso as estado_psicosocial,
+        coalesce(fa.num_registros_formacion, 0) as num_registros_formacion,
+        coalesce(fa.alguna_completada, false) as alguna_formacion_completada,
         coalesce(i.num_intermediaciones, 0) as num_intermediaciones,
         i.ultima.estado as estado_intermediacion, i.ultima.intermediador,
         i.ultima.concepto_de_intermediacion as concepto_intermediacion,
@@ -116,7 +130,7 @@ with orientacion as (
         coalesce(r.inscripci_n_completada in ('si', 'sí', 'true'), false) as inscrita,
         coalesce(o.orientaci_n_sociocupacion_completada in ('si', 'sí', 'true'), false) as orientada,
         coalesce(p.acompa_amiento_psicosocial_completado in ('si', 'sí', 'true'), false) as psicosocial,
-        coalesce(f.formaci_n_completada in ('si', 'sí', 'true'), false) as formada,
+        coalesce(fa.alguna_completada, false) as formada,
         pv.fecha_llamada_seguimiento is not null as postvinculada,
         coalesce(i.ultima.intermediaci_n_completada in ('si', 'sí', 'true'), false) as intermediada,
         c.fecha_de_vinculaci_n_laboral is not null as colocada
@@ -124,6 +138,7 @@ with orientacion as (
     left join orientacion o on r.documento = o.documento
     left join psicosocial p on r.documento = p.documento
     left join formacion f on r.documento = f.documento
+    left join formacion_agg fa on r.documento = fa.documento
     left join postvinculacion pv on r.documento = pv.documento
     left join intermediacion_agg i on r.documento = i.documento
     left join colocacion c on r.documento = c.documento
@@ -131,6 +146,14 @@ with orientacion as (
     where r.documento is not null
 )
 select *,
+    -- Estado de formación con tres valores. 'Sin iniciar' solo puede
+    -- calcularse acá: si la mujer no tiene registro de formación, no
+    -- existe en fct_formacion_rm y su ausencia es el dato.
+    case
+        when num_registros_formacion = 0    then 'Sin iniciar'
+        when alguna_formacion_completada    then 'Completada'
+        else                                     'Pendiente'
+    end as estado_formacion_mujer,
     -- Rango etario para la pirámide del dashboard. El prefijo numérico
     -- garantiza el orden correcto en los ejes de Power BI sin tener que
     -- configurar "Ordenar por columna".

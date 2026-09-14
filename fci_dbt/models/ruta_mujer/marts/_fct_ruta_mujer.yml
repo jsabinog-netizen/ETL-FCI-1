@@ -3,7 +3,7 @@ models:
 - name: fct_ruta_mujer
   description: Una fila por mujer identificada por documento. Base deduplicada en
     staging. Flags de etapas completadas (si, sí, true); colocada requiere fecha de
-    vinculación. Etapa más avanzada del registro reciente. Documentos vacíos no representan
+    vinculación. Etapa más avanzada completada; formación considera todos sus registros. Documentos vacíos no representan
     una persona identificable y se excluyen.
   columns:
   - name: etapa_actual
@@ -20,8 +20,8 @@ models:
             severity: warn
   - name: formada
     description: >
-      TRUE si Formaci_n_Completada es si/sí/true en la formación más reciente
-      por fecha de formación (fecha de curso como alternativa), modificación e id.
+      TRUE si al menos un registro de formación tiene Formaci_n_Completada
+      en si/sí/true, aunque exista otro más reciente sin completar.
   - name: postvinculada
     description: >
       TRUE si el seguimiento seleccionado tiene fecha de llamada registrada,
@@ -65,3 +65,18 @@ models:
             values: ['1. Menor de 18', '2. 18-25', '3. 26-35', '4. 36-45', '5. 46-55', '6. 56 o más', '7. Sin dato']
           config:
             severity: warn
+
+  - name: estado_formacion_mujer
+    description: >
+      Sin iniciar / Pendiente / Completada. 'Sin iniciar' = la mujer
+      no tiene ningún registro en el módulo de formación.
+    tests:
+      - accepted_values:
+          arguments:
+            values: ['Sin iniciar', 'Pendiente', 'Completada']
+          config:
+            severity: warn
+  - name: num_registros_formacion
+    description: Cantidad de registros de formación de esa mujer. 0 si no tiene.
+  - name: alguna_formacion_completada
+    description: TRUE si algún registro de formación de la mujer está completado; FALSE si no tiene registros.
