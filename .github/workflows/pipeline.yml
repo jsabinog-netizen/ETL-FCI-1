@@ -70,4 +70,4 @@ jobs:
         run: |
           cd fci_dbt
           dbt deps
-          dbt build
+          python main.py colsubsidio
