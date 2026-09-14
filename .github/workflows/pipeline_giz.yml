@@ -5,6 +5,10 @@ on:
   schedule:
     - cron: "0 * * * *"   # cada hora en punto (UTC)
 
+concurrency:
+  group: pipeline-giz
+  cancel-in-progress: false
+
 jobs:
   run-pipeline:
     runs-on: ubuntu-latest
@@ -55,6 +59,9 @@ jobs:
           cd fci_dbt
           dbt deps
 
+      - name: Registrar inicio del pipeline
+        run: echo "PIPELINE_STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+
       - name: Correr pipeline completo GIZ
         env:
           ZOHO_GIZ_CLIENT_ID: ${{ secrets.ZOHO_GIZ_CLIENT_ID }}
@@ -62,3 +69,7 @@ jobs:
           ZOHO_GIZ_REFRESH_TOKEN: ${{ secrets.ZOHO_GIZ_REFRESH_TOKEN }}
         run: |
           python main.py giz
+      - name: Verificar frescura de los datos
+        # También auditar cuando main falla; su error original conserva el job rojo.
+        if: ${{ !cancelled() && env.PIPELINE_STARTED_AT != '' }}
+        run: python scripts/verificar_frescura.py giz
