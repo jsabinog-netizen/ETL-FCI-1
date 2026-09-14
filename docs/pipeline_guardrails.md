@@ -53,6 +53,15 @@ Estos son cambios locales en una rama. No se hizo push, merge ni dispatch de Act
 
 ## Pendientes y recomendaciones
 
+### Advertencias que requieren investigación de modelo
+
+Los 14 WARN corresponden al build combinado: 13 a GIZ y 1 a Colsubsidio. Se documentan sin corregir modelos:
+
+- **GIZ — unique_stg_postvinculacion_giz_documento (7 resultados):** documentos duplicados en un staging cuyo contrato declara documento único. El test unique devuelve grupos de claves duplicadas, por lo que 7 resultados no equivale necesariamente a solo 7 filas físicas. Revisar si el grano esperado es persona o seguimiento antes de decidir una deduplicación.
+- **GIZ — not_null_fct_ruta_giz_tiene_orientacion (18 filas):** un indicador Sí/No no debería quedar nulo según el contrato actual. Se había planteado un CASE incompleto como hipótesis; el SQL real expone `o.orientacion_completada AS tiene_orientacion` desde el join, sin CASE ni COALESCE en esa asignación. Hay que revisar registros sin orientación asociada y valores nulos en la fuente, y decidir la semántica de ausencia.
+- **Colsubsidio — relationships_fct_servicios_nit__nit__ref_dim_empresa_ (36 resultados):** servicios con NIT sin correspondencia en dim_empresa. El test está en `models/colsubsidio/marts/_fct_servicios.yml`, no en GIZ. Pueden quedar excluidos en cruces internos o filtros del dashboard, o aparecer bajo una categoría en blanco según el modelo de Power BI. El test por sí solo no demuestra que ya hayan desaparecido de un visual. Revisar integridad referencial y tratamiento de servicios huérfanos.
+
+
 - Existe una llamada equivalente a run_load() sin argumentos: main.py sin proyecto usa projects=None. Ahora se preserva la posibilidad de intentar ambos proyectos y se reportan sus fallos al terminar.
 - Los entrypoints directos de extractor.py y loader.py siguen apuntando a GIZ. Recomiendo exigir proyecto explícito si se desea conservar el uso independiente; no se cambiaron en esta tanda.
 - Un flag --modulos validado contra PROJECTS resulta útil para recargas puntuales. Sigue pendiente, sin implementación.
@@ -65,3 +74,68 @@ Estos son cambios locales en una rama. No se hizo push, merge ni dispatch de Act
 Modificados: loader.py, metadata.py, extractor.py, reconciliar.py, test_run_extraction.py, .github/workflows/pipeline.yml, .github/workflows/pipeline_giz.yml.
 
 Creados/incorporados: scripts/verificar_frescura.py, test_guardrails.py, CLAUDE.md (recuperado del contexto de ruta-mujer, con repositorio corregido), docs/pipeline_guardrails.md.
+
+## Diagnóstico de since previo al merge — 14-sep-2026
+
+Confirmado en la rama de guardrails y en `origin/main` recién consultado (854d51a). No se modificó código:
+
+1. El valor se calcula en **run_extraction**, no en extract_module:
+
+```python
+module_since = since or get_watermark(client, project_name, module_name, project_cfg["dataset_id"])
+registros = extract_module(auth, module_name, fields, since=module_since)
+```
+
+2. extract_module lo recibe y solo lo usa para escribir el mensaje de modo incremental. No lo reenvía:
+
+```python
+registros,mas_paginas,_token = request_with_backoff(
+    lambda:fetch_page(auth, module_name=module_name, fields=fields,page=page)
+)
+```
+
+3. fetch_page tiene since=None por defecto, por lo que no ejecuta este bloque:
+
+```python
+if since is not None:
+    parametros["sort_by"] = "Modified_Time"
+    parametros["sort_order"] = "asc"
+    headers["If-Modified-Since"] = since
+```
+
+La request es GET con fields/page/per_page; no hay body ni otro filtro temporal. ZohoAuth.get_header solo aporta Authorization. El error ya está en main remoto: la ruta habitual solicita registros sin filtro incremental aunque el log diga lo contrario.
+
+El cargador sigue calculando max(Modified_Time) y guardándolo mediante write_run(..., "success", ..., watermark). get_watermark lo consulta y lo entrega, pero el valor se pierde antes de la llamada HTTP. Por tanto, existen watermarks almacenados que no filtran las solicitudes.
+
+### Volumen observado
+
+Se consultaron las últimas cinco cargas success/empty por módulo y COUNT(*) actual de raw, sin extraer Zoho ni escribir tablas. La última secuencia de los 16 módulos terminó entre 2026-09-14 20:17:43 y 20:19:16 UTC: **1.071 filas cargadas frente a 1.076 filas raw**, con igualdad en **15/16 módulos**. La suma de los promedios por módulo de las últimas cinco cargas es 1.001,2 filas; no se atribuye a cinco corridas exactas porque metadata no tiene run_id.
+
+| Módulo | Última carga | Total raw | Mínimo–máximo últimas 5 cargas |
+| --- | --- | --- | --- |
+| Agenda_acompa_amiento | 379 | 379 | 328–379 |
+| Agenda_inscripci_n | 44 | 49 | 44–49 |
+| Asesor_a | 51 | 51 | 42–51 |
+| Asesor_a_vacantes | 84 | 84 | 75–84 |
+| Asistencia_Formaci_n_Com | 29 | 29 | 29–29 |
+| Asistencia_Formaci_n_LS | 32 | 32 | 32–32 |
+| Diagn_stico | 108 | 108 | 93–108 |
+| Intermediaci_n_RE | 31 | 31 | 31–31 |
+| Modulo_1 | 12 | 12 | 12–12 |
+| Modulo_2 | 12 | 12 | 12–12 |
+| Participantes_Bootcamps | 0 | 0 | 0–0 |
+| Productos_Componente_IV | 6 | 6 | 6–6 |
+| Profesional | 10 | 10 | 10–10 |
+| Registro_empresas | 147 | 147 | 133–147 |
+| Sensibilizaci_n | 124 | 124 | 102–124 |
+| Transferencia | 2 | 2 | 1–2 |
+
+Asistencia_Formaci_n_Com, Asistencia_Formaci_n_LS e Intermediaci_n_RE repiten 29, 32 y 31 registros respectivamente en las cinco últimas cargas; sus últimos watermarks siguen en 22-jul-2026. Esto respalda la repetición de datos sin cambios. Agenda_inscripci_n es la excepción (44 cargados frente a 49 raw); un MERGE sin borrado puede conservar registros históricos, pero no se determinó aquí la causa exacta de esas cinco filas.
+
+Raw no es una medición independiente del total vigente en Zoho. La igualdad de conteos es evidencia de apoyo; la confirmación de que no se aplica el filtro proviene del recorrido del código. La corrección debe priorizarse como un bug funcional del incremental, no solo como optimización. No se ejecutó el fix.
+
+### main.py sin argumentos y cambios locales
+
+Recomendación: exigir un proyecto explícito en main.py y, si se necesita ejecución global, ofrecer una opción deliberada como --all. No modificar el comportamiento implícito sin aprobación. Esta rama/main conoce dos proyectos; tras incorporar Ruta Mujer serán tres.
+
+Antes de este cambio documental, el workspace estaba limpio, en codex/pipeline-guardrails (1837313), con un único worktree registrado. No había cambios staged ni unstaged en pipeline.yml, extractor.py o loader.py. Los cambios de guardrails de esos archivos ya están en esta rama. No se pueden verificar buffers sin guardar del editor ni otro clon no registrado: de existir, guardar sus diferencias por archivo antes de sustituir o cambiar de rama. No usar reset --hard ni descartar copias locales para resolver el solapamiento. No se hizo merge ni push.
