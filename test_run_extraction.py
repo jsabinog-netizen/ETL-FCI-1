@@ -1,28 +1,22 @@
+"""La extracción continúa módulos, pero informa el fallo al terminar."""
+import unittest
+from unittest.mock import patch, mock_open
 from extractor import run_extraction
-from unittest.mock import patch, MagicMock
 
-def test_run_extraction_continua_si_un_modulo_falla():
-    modulos_de_prueba = {
-        "Modulo_OK_1": ["Name"],
-        "Modulo_FALLA": ["Name"],
-        "Modulo_OK_2": ["Name"],
-    }
 
-    with patch("extractor.ZohoAuth"), \
-        patch("extractor.MODULES_COLSUBSIDIO", modulos_de_prueba), \
-        patch("extractor.extract_module") as mock_extract, \
-        patch("extractor.open"), \
-        patch("extractor.os.makedirs"), \
-        patch("extractor.json.dump"):          # ← no escribe nada en disco
-        mock_extract.side_effect = [
-            [{"id": 1}],
-            Exception("módulo roto"),
-            [{"id": 2}],
-        ]
-        run_extraction(projects=["colsubsidio"])
-        assert mock_extract.call_count == 3
-    print("✓ test_run_extraction_continua_si_un_modulo_falla pasó")
+class RunExtractionTest(unittest.TestCase):
+    def test_continua_y_falla_al_final(self):
+        projects = {'colsubsidio': {'env_prefix':'ZOHO', 'dataset_id':'ds',
+                    'modules': {'OK_1':['Name'], 'FALLA':['Name'], 'OK_2':['Name']}}}
+        with patch('extractor.PROJECTS',projects), patch('extractor.ZohoAuth'), \
+             patch('extractor.get_client'), patch('extractor.ensure_metadata_table'), \
+             patch('extractor.write_run'), patch('extractor.get_watermark',return_value=None), \
+             patch('extractor.os.makedirs'), patch('builtins.open',mock_open()), \
+             patch('extractor.extract_module',side_effect=[[{'id':'1'}],RuntimeError('fallo'),[{'id':'2'}]]) as extract:
+            with self.assertRaisesRegex(RuntimeError,'colsubsidio.FALLA'):
+                run_extraction(projects=['colsubsidio'])
+            self.assertEqual(extract.call_count,3)
 
-if __name__ == "__main__":
-    test_run_extraction_continua_si_un_modulo_falla()
-    print("\n✓ Todos los tests pasaron")
+
+if __name__ == '__main__':
+    unittest.main()
