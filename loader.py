@@ -317,8 +317,7 @@ def load_module(client, module_name, fields,dataset, project_name="colsubsidio")
     # 1. Leer el JSON que dejó el extractor
     path = f"output/{project_name}/{module_name}.json"
     if not os.path.exists(path):
-        logger.error(f"{module_name}: no existe {path} — corré el extractor primero")
-        return
+        raise FileNotFoundError(f"{module_name}: no existe {path} — corré el extractor primero")
     with open(path, "r", encoding="utf-8") as f:
         records = json.load(f)
 
@@ -331,13 +330,9 @@ def load_module(client, module_name, fields,dataset, project_name="colsubsidio")
         write_run(client, project_name, module_name, "empty", 0, None, dataset_id=dataset)
         return
 
-    # 2. Guardrail: sin 'id' no hay MERGE seguro
-    if "id" not in records[0]:
-        logger.error(
-            f"{module_name}: los registros no traen 'id' de Zoho — "
-            f"no puedo hacer MERGE seguro. Revisá la extracción."
-        )
-        return
+    # Validar todos los ids antes de escribir: el MERGE depende de esta clave.
+    if any(not isinstance(r, dict) or not r.get("id") for r in records):
+        raise ValueError(f"{module_name}: registros sin id válido — carga abortada")
 
     # 3. Preparar filas y schemas
     rows = prepare_rows(records, fields)
@@ -379,6 +374,7 @@ def run_load(projects=None):
 
     client = get_client()
 
+    fallidos_por_proyecto = {}
     for project_name, project_cfg in projects.items():
         dataset  = project_cfg["dataset_id"]
         modules  = project_cfg["modules"]
@@ -392,9 +388,17 @@ def run_load(projects=None):
             except Exception as e:
                 logger.error(f"{module_name} FALLÓ — continúo: {e}")
                 fallidos.append(module_name)
+                try:
+                    write_run(client, project_name, module_name, "error", 0, None, dataset_id=dataset)
+                except Exception:
+                    logger.exception(f"{module_name}: tampoco se pudo registrar el fallo")
         logger.info(f"{project_name}: {exitosos} OK | {len(fallidos)} fallidos")
         if fallidos:
-            logger.warning(f"Fallidos: {fallidos}")
+            fallidos_por_proyecto[project_name] = fallidos
+
+    # Intentar todos los proyectos solicitados; fallar antes de que main ejecute dbt.
+    if fallidos_por_proyecto:
+        raise RuntimeError(f"Carga incompleta; módulos fallidos por proyecto: {fallidos_por_proyecto}")
 
 # PUNTO DE ENTRADA
 
