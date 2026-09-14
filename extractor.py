@@ -193,7 +193,8 @@ def extract_module(auth, module_name, fields, since=None):
     while has_more:
         #Jalar registros
         registros,mas_paginas,_token = request_with_backoff(
-            lambda:fetch_page(auth, module_name=module_name, fields=fields,page=page)
+            lambda: fetch_page(auth, module_name=module_name, fields=fields,
+                               page=page, since=since)
         )
         all_records.extend(registros) #Agregar nuevos registros
 
@@ -280,4 +281,5 @@ def run_extraction(projects=None, since=None, full_refresh=False):
 
 #Probar el modulo
 if __name__ == "__main__":
-    run_extraction(projects=["giz"])
+    from pipeline_cli import select_projects
+    run_extraction(projects=select_projects(PROJECTS))

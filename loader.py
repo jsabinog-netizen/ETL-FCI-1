@@ -422,4 +422,5 @@ def run_load(projects=None):
 # PUNTO DE ENTRADA
 
 if __name__ == "__main__":
-    run_load(["giz"])
+    from pipeline_cli import select_projects
+    run_load(select_projects(PROJECTS))
