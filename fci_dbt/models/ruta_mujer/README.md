@@ -37,7 +37,7 @@ de auditoría; no se exponen TIMESTAMP ni DATETIME.
 |---|---|
 | fct_ruta_mujer | Una mujer por documento |
 | fct_intermediacion_rm | Un evento por id; conserva todas las intermediaciones |
-| fct_formacion_rm | Una inscripción de formación por id; conserva los campos de cursos del registro Zoho |
+| fct_formacion_rm | Una inscripción a curso por `id_curso` (`id` de Zoho + slot 1–6); `documento` se repite por curso |
 | dim_vacantes_rm | Una vacante por id, enriquecida con empresa |
 | fct_agendamientos_rm | Una cita por id compuesto: tipo + id de origen |
 

@@ -1,22 +1,63 @@
 version: 2
 models:
-- name: fct_formacion_rm
-  description: Una fila por registro de inscripción a formación Zoho. Conserva los
-    campos de cursos del registro sin multiplicar filas.
-  columns:
-  - name: id
-    tests:
-    - unique:
-        config:
-          severity: warn
-    - not_null:
-        config:
-          severity: warn
-  - name: corte
-    description: Cohorte del programa (Corte 1 / Corte 2), normalizada a minúsculas en staging. Segmentación transversal del dashboard.
-    tests:
-      - accepted_values:
-          arguments:
-            values: ['corte 1', 'corte 2']
-          config:
-            severity: warn
+  - name: fct_formacion_rm
+    description: >
+      Una inscripción a curso por fila. El módulo de Zoho está en formato
+      ancho (un registro con hasta 6 cursos en columnas); acá se desanida
+      con UNION ALL. Cambio de grano en la tanda 2: antes era un registro
+      de Zoho por fila.
+      Para contar personas: DISTINCTCOUNT(documento).
+    columns:
+      - name: id_curso
+        description: Clave única del grano — id del registro + número de slot.
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: id_registro
+        description: Id del registro padre en Zoho. Se repite por cada curso.
+      - name: slot
+        description: Número de slot (1-6) del que salió este curso.
+        tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5, 6]
+                quote: false
+              config:
+                severity: warn
+      - name: tipo_curso
+        description: técnica o blandas, según el slot de origen.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['técnica', 'blandas']
+              config:
+                severity: warn
+      - name: documento
+        description: >
+          Documento de la participante. NO es único: se repite por cada
+          curso. Clave de relación con fct_ruta_mujer.
+        tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: curso
+        description: Nombre del curso.
+      - name: fecha_curso
+        description: Fecha de la jornada de ese curso.
+      - name: estado_formacion
+        description: >
+          Completada / Pendiente. LIMITACIÓN: deriva de
+          formaci_n_completada, que es un flag a nivel de registro y no
+          de curso. Se replica igual en todos los cursos de una mujer.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Completada', 'Pendiente']
+              config:
+                severity: warn
+      - name: corte
+        description: Cohorte del programa.
