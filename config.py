@@ -387,7 +387,7 @@ MODULES_RUTA_MUJER = {
         "Segundo_apellido","N_mero_de_celular_Principal","N_mero_de_celular_Opcional",
         "Email","Fecha_y_hora_de_agendamiento","Disponibilidad_Horario","Asunto_de_la_reuni_n",
         "Enlace_de_la_reuni_n","Estado","Modalidad","Municipio_o_localidad","Persona_que_realiza_el_reporte",
-        "Direcci_n_del_lugar"
+        "Direcci_n_del_lugar", "Observaciones_generales_agendamiento"
         
     ],
     "GE_Agendamiento": [
@@ -395,7 +395,8 @@ MODULES_RUTA_MUJER = {
         "Name","Created_Time","Modified_Time","Nombre_de_la_empresa","Fecha_y_hora",
         "Disponibilidad_Horario","Asunto_de_la_reuni_n","Enlace_de_la_reuni_n","Estado","Modalidad",
         "Invitador","Departamento","Municipio","Tipo_Actividad","Correo","Persona_de_contacto",
-        "Buscar_empresa","Sector_Econ_mico","Direcci_n_del_lugar"
+        "Buscar_empresa","Sector_Econ_mico","Direcci_n_del_lugar",
+        "Observaciones_generales_agendamiento"
     ],
     "Postvinculaci_n_Colsub": [
         "Name", "Created_Time", "Modified_Time",

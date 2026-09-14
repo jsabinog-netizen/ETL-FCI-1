@@ -15,6 +15,8 @@ select
     lower(trim(`Disponibilidad_Horario`)) as disponibilidad_horario,
     trim(`Asunto_de_la_reuni_n`) as asunto_de_la_reuni_n,
     trim(`Enlace_de_la_reuni_n`) as enlace_de_la_reuni_n,
+    -- Texto libre: conservar mayúsculas y legibilidad.
+    trim(`Observaciones_generales_agendamiento`) as observaciones_agendamiento,
     lower(trim(`Estado`)) as estado,
     lower(trim(`Modalidad`)) as modalidad,
     lower(trim(`Municipio_o_localidad`)) as municipio_o_localidad,

@@ -51,3 +51,5 @@ models:
                 values: ['corte 1', 'corte 2']
               config:
                 severity: warn
+      - name: observaciones_agendamiento
+        description: Observaciones generales registradas en el agendamiento.

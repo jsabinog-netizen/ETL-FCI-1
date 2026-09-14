@@ -34,6 +34,7 @@ select
     disponibilidad_horario,
     asunto_de_la_reuni_n as asunto,
     enlace_de_la_reuni_n as enlace,
+    observaciones_agendamiento,
     direcci_n_del_lugar as direccion_del_lugar,
     estado,
     modalidad,

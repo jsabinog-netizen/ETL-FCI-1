@@ -38,6 +38,7 @@ select
     disponibilidad_horario,
     asunto_de_la_reuni_n as asunto,
     enlace_de_la_reuni_n as enlace,
+    observaciones_agendamiento,
     estado,
     modalidad,
     municipio_o_localidad as municipio,
