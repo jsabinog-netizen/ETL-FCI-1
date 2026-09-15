@@ -2,6 +2,16 @@ name: Pipeline ELT Colsubsidio
 
 on:
   workflow_dispatch:
+  schedule:
+    # Colombia es UTC-5 sin horario de verano.
+    # Desfasados 10 min ANTES de Ruta Mujer: comparten cuenta de Zoho.
+    - cron: "10 13 * * *"   # 08:10 COL → objetivo 09:00
+    - cron: "40 14 * * *"   # 09:40 COL → objetivo 10:30
+    - cron: "10 16 * * *"   # 11:10 COL → objetivo 12:00
+    - cron: "10 18 * * *"   # 13:10 COL → objetivo 14:00
+    - cron: "10 20 * * *"   # 15:10 COL → objetivo 16:00
+    - cron: "10 22 * * *"   # 17:10 COL → objetivo 18:00
+    - cron: "10 0 * * *"   # 19:10 COL → objetivo 20:00
 
 concurrency:
   group: pipeline-colsubsidio
