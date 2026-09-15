@@ -1,0 +1,81 @@
+name: Pipeline ELT Ruta Mujer
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: pipeline-ruta-mujer
+  cancel-in-progress: false
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install dbt-bigquery==1.11.3
+
+      - name: Crear gcp-credentials.json
+        run: |
+          cat > gcp-credentials.json << 'CREDENTIAL_EOF'
+          ${{ secrets.GCP_CREDENTIALS_JSON }}
+          CREDENTIAL_EOF
+
+      - name: Crear profiles.yml de dbt
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml << 'EOF'
+          fci_dbt:
+            target: dev
+            outputs:
+              dev:
+                type: bigquery
+                method: service-account
+                project: zoho-bq-pipeline-492116
+                dataset: proyecto_ruta_mujer
+                location: US
+                keyfile: ${{ github.workspace }}/gcp-credentials.json
+                threads: 4
+                job_execution_timeout_seconds: 300
+                job_retries: 1
+                priority: interactive
+          EOF
+
+      # Migración aditiva e idempotente; solo necesita BigQuery.
+      - name: Migrar esquema de tablas raw
+        run: python scripts/migrar_esquema_ruta_mujer.py
+
+      - name: Instalar paquetes dbt
+        run: |
+          cd fci_dbt
+          dbt deps
+
+      - name: Registrar inicio del pipeline
+        id: pipeline_start
+        run: echo "started_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+
+      - name: Correr pipeline completo Ruta Mujer
+        env:
+          ZOHO_CLIENT_ID: ${{ secrets.ZOHO_CLIENT_ID }}
+          ZOHO_CLIENT_SECRET: ${{ secrets.ZOHO_CLIENT_SECRET }}
+          ZOHO_REFRESH_TOKEN: ${{ secrets.ZOHO_REFRESH_TOKEN }}
+        run: |
+          python main.py ruta_mujer
+      - name: Verificar frescura de los datos
+        # También auditar cuando main falla; su error original conserva el job rojo.
+        if: always()
+        env:
+          PIPELINE_STARTED_AT: ${{ steps.pipeline_start.outputs.started_at }}
+        run: python scripts/verificar_frescura.py ruta_mujer
