@@ -3,18 +3,23 @@ name: Pipeline ELT Colsubsidio
 on:
   workflow_dispatch:
   schedule:
-    - cron: "20 9 * * *"    # 4:20 COL → antes del refresh BI 5:00
-    - cron: "20 12 * * *"   # 7:20 COL → antes de 8:00
-    - cron: "20 14 * * *"   # 9:20 COL → antes de 10:00
-    - cron: "50 16 * * *"   # 11:50 COL → antes de 12:30
-    - cron: "20 18 * * *"   # 13:20 COL → antes de 14:00
-    - cron: "20 20 * * *"   # 15:20 COL → antes de 16:00
-    - cron: "20 22 * * *"   # 17:20 COL → antes de 18:00
-    - cron: "20 0 * * *"    # 19:20 COL → antes de 20:00
+    - cron: "10 12 * * *"
+    - cron: "40 13 * * *"
+    - cron: "10 14 * * *"
+    - cron: "10 16 * * *"
+    - cron: "10 18 * * *"
+    - cron: "10 20 * * *"
+    - cron: "10 22 * * *"
+    - cron: "10 0 * * *"
+
+concurrency:
+  group: pipeline-colsubsidio
+  cancel-in-progress: false
 
 jobs:
   run-pipeline:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
 
     steps:
       - name: Checkout del repositorio
@@ -29,7 +34,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install dbt-bigquery
+          pip install dbt-bigquery==1.11.3
 
       - name: Crear gcp-credentials.json
         run: |
@@ -57,17 +62,15 @@ jobs:
                 priority: interactive
           EOF
 
-      - name: Extraer y cargar (EL)
+      - name: Instalar paquetes dbt
+        run: |
+          cd fci_dbt
+          dbt deps
+
+      - name: Correr pipeline completo Colsubsidio
         env:
           ZOHO_CLIENT_ID: ${{ secrets.ZOHO_CLIENT_ID }}
           ZOHO_CLIENT_SECRET: ${{ secrets.ZOHO_CLIENT_SECRET }}
           ZOHO_REFRESH_TOKEN: ${{ secrets.ZOHO_REFRESH_TOKEN }}
         run: |
-          python extractor.py
-          python loader.py
-
-      - name: Transformar (dbt build)
-        run: |
-          cd fci_dbt
-          dbt deps
-          dbt build
+          python main.py colsubsidio
