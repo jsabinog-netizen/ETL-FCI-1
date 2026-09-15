@@ -67,6 +67,10 @@ jobs:
           cd fci_dbt
           dbt deps
 
+      - name: Registrar inicio del pipeline
+        id: pipeline_start
+        run: echo "started_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+
       - name: Correr pipeline completo Colsubsidio
         env:
           ZOHO_CLIENT_ID: ${{ secrets.ZOHO_CLIENT_ID }}
@@ -74,3 +78,9 @@ jobs:
           ZOHO_REFRESH_TOKEN: ${{ secrets.ZOHO_REFRESH_TOKEN }}
         run: |
           python main.py colsubsidio
+      - name: Verificar frescura de los datos
+        # También auditar cuando main falla; su error original conserva el job rojo.
+        if: ${{ !cancelled() && steps.pipeline_start.outputs.started_at != '' }}
+        env:
+          PIPELINE_STARTED_AT: ${{ steps.pipeline_start.outputs.started_at }}
+        run: python scripts/verificar_frescura.py colsubsidio

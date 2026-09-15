@@ -3,6 +3,8 @@ import subprocess
 import logging
 from extractor import run_extraction
 from loader import run_load
+from config import PROJECTS
+from pipeline_cli import select_projects
 
 logging.basicConfig(
     level=logging.INFO,
@@ -11,9 +13,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def main():
-    # sys.argv[0] es el nombre del script, [1:] son los argumentos
-    proyectos = sys.argv[1:] if len(sys.argv) > 1 else None
-    # None significa "todos" en run_extraction y run_load
+    # Ninguna llamada sin argumentos puede tocar proyectos de producción.
+    proyectos = select_projects(PROJECTS, allow_all=True)
 
     logger.info(f"Proyectos a procesar: {proyectos or 'todos'}")
 
@@ -28,10 +29,7 @@ def main():
     # 3. dbt
     logger.info("=== DBT BUILD ===")
 
-    # Si no se especificaron proyectos, correr todos
-    proyectos_dbt = proyectos if proyectos else ["colsubsidio", "giz"]
-
-    for proyecto in proyectos_dbt:
+    for proyecto in proyectos:
         logger.info(f"dbt build — {proyecto}")
         result = subprocess.run([
             "dbt", "build",

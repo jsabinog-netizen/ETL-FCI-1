@@ -244,7 +244,21 @@ def es_seguro_borrar(client, staging_fqn, raw_fqn, umbral_pct=0.8, tolerancia_ab
     return False, n_staging, n_raw
 
 
-def reconciliar_module(client, module_name, fields,dataset, project_name="colsubsidio", umbral_pct=0.8, tolerancia_abs=5):
+def reconciliar_module(client, module_name, fields, dataset, project_name="colsubsidio", umbral_pct=0.8, tolerancia_abs=5):
+    """Auditar cada salida y propagar fallos sin cambiar el guardrail de borrado."""
+    ensure_metadata_table(client, dataset)
+    try:
+        return _reconciliar_module(client, module_name, fields, dataset, project_name,
+                                  umbral_pct, tolerancia_abs)
+    except Exception:
+        try:
+            write_run(client, project_name, module_name, "reconcile_error", 0, None, dataset_id=dataset)
+        except Exception:
+            logger.exception(f"{module_name}: tampoco se pudo registrar el error de reconciliación")
+        raise
+
+
+def _reconciliar_module(client, module_name, fields,dataset, project_name="colsubsidio", umbral_pct=0.8, tolerancia_abs=5):
     """
     Modo RECONCILIACIÓN: carga full refresh + MERGE con borrado de los que
     ya no están en Zoho. Protegido por guardrail de conteo.
@@ -258,19 +272,18 @@ def reconciliar_module(client, module_name, fields,dataset, project_name="colsub
 
     path = f"output/{project_name}/{module_name}.json"
     if not os.path.exists(path):
-        logger.error(f"{module_name}: no existe {path} — corré el extractor en full refresh primero")
-        return
+        raise FileNotFoundError(f"{module_name}: no existe {path} — corré el extractor en full refresh primero")
     with open(path, "r", encoding="utf-8") as f:
         records = json.load(f)
 
     if not records:
         # CLAVE: vacío → NO borrar (podría ser extracción fallida, no un módulo realmente vacío).
         logger.warning(f"{module_name}: 0 registros — NO se reconcilia (posible extracción incompleta)")
-        return
+        write_run(client, project_name, module_name, "reconcile_skipped", 0, None, dataset_id=dataset)
+        return "reconcile_skipped"
 
-    if "id" not in records[0]:
-        logger.error(f"{module_name}: registros sin 'id' — abortado")
-        return
+    if any(not isinstance(r, dict) or not r.get("id") for r in records):
+        raise ValueError(f"{module_name}: registros sin id válido — reconciliación abortada")
 
     rows = prepare_rows(records, fields)
     raw_schema = build_raw_schema(fields)
@@ -287,7 +300,8 @@ def reconciliar_module(client, module_name, fields,dataset, project_name="colsub
             f"(caída sospechosa). Se hace MERGE normal SIN borrar."
         )
         client.query(build_merge_sql(raw_fqn, staging_fqn, raw_schema)).result()
-        return
+        write_run(client, project_name, module_name, "reconcile_blocked", n_staging, None, dataset_id=dataset)
+        return "reconcile_blocked"
 
     # Contar cuántos se van a borrar (para el log)
     q_borrados = f"""
@@ -301,6 +315,11 @@ def reconciliar_module(client, module_name, fields,dataset, project_name="colsub
     logger.info(f"{module_name}: reconciliación OK | staging={n_staging} raw_antes={n_raw} | BORRADOS={n_borrados}")
     if n_borrados > 0:
         logger.warning(f"{module_name}: se borraron {n_borrados} registros que ya no están en Zoho")
+
+    fechas = [r.get("Modified_Time") for r in records if r.get("Modified_Time")]
+    watermark = max(fechas) if fechas else None
+    write_run(client, project_name, module_name, "reconciled", len(records), watermark, dataset_id=dataset)
+    return "reconciled"
 
 
 # ORQUESTACIÓN POR MÓDULO
@@ -317,8 +336,7 @@ def load_module(client, module_name, fields,dataset, project_name="colsubsidio")
     # 1. Leer el JSON que dejó el extractor
     path = f"output/{project_name}/{module_name}.json"
     if not os.path.exists(path):
-        logger.error(f"{module_name}: no existe {path} — corré el extractor primero")
-        return
+        raise FileNotFoundError(f"{module_name}: no existe {path} — corré el extractor primero")
     with open(path, "r", encoding="utf-8") as f:
         records = json.load(f)
 
@@ -331,20 +349,14 @@ def load_module(client, module_name, fields,dataset, project_name="colsubsidio")
         write_run(client, project_name, module_name, "empty", 0, None, dataset_id=dataset)
         return
 
-    # 2. Guardrail: sin 'id' no hay MERGE seguro
-    if "id" not in records[0]:
-        logger.error(
-            f"{module_name}: los registros no traen 'id' de Zoho — "
-            f"no puedo hacer MERGE seguro. Revisá la extracción."
-        )
-        return
+    # Validar todos los ids antes de escribir: el MERGE depende de esta clave.
+    if any(not isinstance(r, dict) or not r.get("id") for r in records):
+        raise ValueError(f"{module_name}: registros sin id válido — carga abortada")
 
     # 3. Preparar filas y schemas
     rows = prepare_rows(records, fields)
     if project_name == "ruta_mujer" and module_name == "Postvinculaci_n_Colsub":
-        # Empresa es texto en el módulo reconstruido, pero la columna raw
-        # usa JSON por la convención compartida. Serializar como escalar JSON
-        # conserva el nombre sin cambiar los lookups de los demás proyectos.
+        # Empresa es texto en el módulo reconstruido, pero se usa json en el compartido
         for record, row in zip(records, rows):
             if isinstance(record.get("Empresa"), str):
                 row["Empresa"] = json.dumps(record["Empresa"], ensure_ascii=False)
@@ -386,6 +398,7 @@ def run_load(projects=None):
 
     client = get_client()
 
+    fallidos_por_proyecto = {}
     for project_name, project_cfg in projects.items():
         dataset  = project_cfg["dataset_id"]
         modules  = project_cfg["modules"]
@@ -399,11 +412,20 @@ def run_load(projects=None):
             except Exception as e:
                 logger.error(f"{module_name} FALLÓ — continúo: {e}")
                 fallidos.append(module_name)
+                try:
+                    write_run(client, project_name, module_name, "error", 0, None, dataset_id=dataset)
+                except Exception:
+                    logger.exception(f"{module_name}: tampoco se pudo registrar el fallo")
         logger.info(f"{project_name}: {exitosos} OK | {len(fallidos)} fallidos")
         if fallidos:
-            logger.warning(f"Fallidos: {fallidos}")
+            fallidos_por_proyecto[project_name] = fallidos
+
+    # Intentar todos los proyectos solicitados; fallar antes de que main ejecute dbt.
+    if fallidos_por_proyecto:
+        raise RuntimeError(f"Carga incompleta; módulos fallidos por proyecto: {fallidos_por_proyecto}")
 
 # PUNTO DE ENTRADA
 
 if __name__ == "__main__":
-    run_load(["ruta_mujer"])
+    from pipeline_cli import select_projects
+    run_load(select_projects(PROJECTS))

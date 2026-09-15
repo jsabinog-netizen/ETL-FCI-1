@@ -14,7 +14,7 @@ from auth import ZohoAuth
 from config import PROJECTS
 
 
-from metadata import get_watermark, ensure_metadata_table
+from metadata import get_watermark, ensure_metadata_table, write_run
 from loader import get_client
 
 #Configurar el logging
@@ -193,7 +193,8 @@ def extract_module(auth, module_name, fields, since=None):
     while has_more:
         #Jalar registros
         registros,mas_paginas,_token = request_with_backoff(
-            lambda:fetch_page(auth, module_name=module_name, fields=fields,page=page)
+            lambda: fetch_page(auth, module_name=module_name, fields=fields,
+                               page=page, since=since)
         )
         all_records.extend(registros) #Agregar nuevos registros
 
@@ -242,10 +243,12 @@ def run_extraction(projects=None, since=None, full_refresh=False):
 
     client = get_client()
 
+    fallidos = []
     #Recorre cada proyecto y cada módulo
     for project_name, project_cfg in projects.items():
         auth = ZohoAuth(env_prefix=project_cfg["env_prefix"])  # ← por proyecto
-        modules = project_cfg["modules"] 
+        modules = project_cfg["modules"]
+        ensure_metadata_table(client, project_cfg["dataset_id"])
         os.makedirs(f"output/{project_name}", exist_ok=True)
 
         ensure_metadata_table(client, project_cfg["dataset_id"]) #Crear la tabla si no existe
@@ -255,6 +258,10 @@ def run_extraction(projects=None, since=None, full_refresh=False):
             try:
                 if full_refresh:
                     #Ignora la marca de agua, si elegi traer todos los datos
+                    # Un checkpoint previo puede ser parcial o de otro modo de extracción.
+                    # Para borrar se exige comenzar una extracción completa nueva.
+                    if os.path.exists(f"checkpoints/{module_name}.json"):
+                        raise RuntimeError(f"{module_name}: checkpoint previo; no es seguro reconciliar")
                     module_since = None
                 else:
                     module_since = since or get_watermark(client, project_name, module_name, project_cfg["dataset_id"])
@@ -265,8 +272,17 @@ def run_extraction(projects=None, since=None, full_refresh=False):
                 logger.info(f"{module_name}: {len(registros)} registros extraídos")
             except Exception as e:
                 logger.error(f"{module_name} FALLÓ — no se extrajo: {e}")
-                continue
+                fallidos.append(f"{project_name}.{module_name}")
+                try:
+                    status = "reconcile_error" if full_refresh else "error"
+                    write_run(client, project_name, module_name, status, 0, None,
+                              dataset_id=project_cfg["dataset_id"])
+                except Exception:
+                    logger.exception(f"{module_name}: tampoco se pudo registrar el fallo")
+    if fallidos:
+        raise RuntimeError(f"Extracción incompleta; no cargar ni reconciliar: {fallidos}")
 
 #Probar el modulo
 if __name__ == "__main__":
-    run_extraction(projects=["ruta_mujer"])
+    from pipeline_cli import select_projects
+    run_extraction(projects=select_projects(PROJECTS))

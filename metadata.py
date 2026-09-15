@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 def ensure_metadata_table(client, dataset_id):
     """
     Crea pipeline_metadata si no existe. Una fila por módulo por corrida (historial).
-    - status:    success | empty | failed
+    - status:    success | empty | error | reconciled | reconcile_blocked | reconcile_skipped | reconcile_error
     - watermark: MAX(Modified_Time) de lo cargado en esa corrida; NULL si vacío/falló.
                  De acá sale el since incremental: MAX(watermark) por módulo.
     """
@@ -60,7 +60,7 @@ def write_run(client, project_name, module_name, status, records_loaded, waterma
     Agrega una fila de auditoría por corrida.
 
     Args:
-        status: "success" | "empty" | "failed"
+        status: success, empty, error o estados de reconciliación
         records_loaded: int
         watermark: string ISO 8601 (MAX Modified_Time) o None
 
@@ -78,6 +78,6 @@ def write_run(client, project_name, module_name, status, records_loaded, waterma
     }
     errors = client.insert_rows_json(METADATA_TABLE, [row])
     if errors:
-        logger.error(f"pipeline_metadata: error insertando fila de {module_name}: {errors}")
+        raise RuntimeError(f"pipeline_metadata: error insertando fila de {module_name}: {errors}")
     else:
         logger.info(f"pipeline_metadata: {module_name} | {status} | watermark={watermark}")
