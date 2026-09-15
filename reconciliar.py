@@ -59,6 +59,7 @@ def main():
 
     exitosos = 0
     fallidos = []
+    omitidos = []
     for p in proyectos_a_correr:
         config = PROJECTS[p]
         ensure_metadata_table(client, config["dataset_id"])
@@ -73,7 +74,9 @@ def main():
                     project_name=p,
                     umbral_pct=0.8
                 )
-                if status != "reconciled":
+                if status == "reconcile_skipped":
+                    omitidos.append(module_name)
+                elif status != "reconciled":
                     fallidos.append(f"{module_name} ({status})")
                     logger.warning(f"{module_name}: reconciliación incompleta ({status})")
                 else:
@@ -86,11 +89,19 @@ def main():
                 logger.error(f"{module_name} FALLÓ en reconciliación — continúo: {e}")
                 fallidos.append(module_name)
 
-    logger.info(f"=== RECONCILIACIÓN TERMINADA: {exitosos} OK | {len(fallidos)} fallidos ===")
+    logger.info(
+        f"=== RECONCILIACIÓN TERMINADA: {exitosos} OK | "
+        f"{len(omitidos)} omitidos | {len(fallidos)} fallidos ==="
+    )
 
-    # Corta antes de dbt a propósito: si algún módulo no se reconcilió,
-    # los marts quedarían mezclando datos reconciliados con datos viejos.
-    # Es preferible no propagar esa mezcla al dashboard.
+    # Un origen vacío puede ser legítimo (Participantes_Bootcamps nunca
+    # se usó); se informa sin bloquear dbt. Los errores y los bloqueos
+    # por caída sospechosa de volumen sí impiden continuar.
+    if omitidos:
+        logger.warning(
+            f"Módulos sin datos en origen ({len(omitidos)}): {omitidos}. "
+            "No es un fallo, pero revisá si alguno debería tener registros."
+        )
     if fallidos:
         raise RuntimeError(
             f"Reconciliación incompleta en '{proyecto}': "

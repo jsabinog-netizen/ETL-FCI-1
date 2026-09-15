@@ -169,8 +169,8 @@ class GuardrailsTest(unittest.TestCase):
                 if name in ('missing','invalid','empty'):
                     client.query.assert_not_called()
 
-    def test_reconcile_does_not_build_if_skipped_or_blocked(self):
-        for status in ('reconcile_skipped','reconcile_blocked'):
+    def test_reconcile_does_not_build_if_blocked_or_error(self):
+        for status in ('reconcile_blocked','reconcile_error'):
             with self.subTest(status=status), patch.object(sys,'argv',['reconciliar.py','giz']), \
                  patch('reconciliar.PROJECTS',PROJECTS), patch('reconciliar.run_extraction'), \
                  patch('reconciliar.get_client'), patch('reconciliar.ensure_metadata_table'), \
@@ -180,6 +180,16 @@ class GuardrailsTest(unittest.TestCase):
                     reconciliar.main()
                 self.assertEqual(reconcile.call_count,2)
                 dbt.assert_not_called()
+
+    def test_reconcile_skipped_allows_dbt(self):
+        with patch.object(sys,'argv',['reconciliar.py','colsubsidio']), \
+             patch('reconciliar.PROJECTS',PROJECTS), patch('reconciliar.run_extraction'), \
+             patch('reconciliar.get_client'), patch('reconciliar.ensure_metadata_table'), \
+             patch('reconciliar.reconciliar_module',side_effect=['reconciled','reconcile_skipped']), \
+             patch('reconciliar.subprocess.run',return_value=MagicMock(returncode=0)) as dbt:
+            reconciliar.main()
+            dbt.assert_called_once()
+            self.assertEqual(dbt.call_args.args[0][-1],'path:models/colsubsidio')
 
     def test_freshness_missing_error_and_old_fail(self):
         now=datetime.now(timezone.utc)
