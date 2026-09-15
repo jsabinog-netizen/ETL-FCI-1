@@ -2,6 +2,16 @@ name: Pipeline ELT Ruta Mujer
 
 on:
   workflow_dispatch:
+  schedule:
+    # Colombia es UTC-5 sin horario de verano.
+    # Desfasados 10 min DESPUÉS de Colsubsidio: comparten cuenta de Zoho.
+    - cron: "20 13 * * *"   # 08:20 COL → objetivo 09:00
+    - cron: "50 14 * * *"   # 09:50 COL → objetivo 10:30
+    - cron: "20 16 * * *"   # 11:20 COL → objetivo 12:00
+    - cron: "20 18 * * *"   # 13:20 COL → objetivo 14:00
+    - cron: "20 20 * * *"   # 15:20 COL → objetivo 16:00
+    - cron: "20 22 * * *"   # 17:20 COL → objetivo 18:00
+    - cron: "20 0 * * *"   # 19:20 COL → objetivo 20:00
 
 concurrency:
   group: pipeline-ruta-mujer
