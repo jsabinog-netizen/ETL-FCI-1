@@ -35,3 +35,5 @@ gcp-credentials.json
 logs/
 get_fields_giz.py
 ETL-FCI/
+
+.worktrees/
