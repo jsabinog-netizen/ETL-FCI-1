@@ -24,7 +24,7 @@ Soy Jorge Sabino, practicante en FCI, a cargo del área de datos y BI.
 Zoho CRM v8 (OAuth2) → Python → Google BigQuery → dbt → Power BI
 Orquestación: GitHub Actions
 GCP project: zoho-bq-pipeline-492116  ·  región US (multi)
-Repo: github.com/jsabinog-netizen/ETL-FCI-1
+Repo: github.com/Jorge0929/ETL-FCI
 dbt: 1.11.12 + dbt-bigquery 1.11.3 (pinneado; 1.12.0 rompe compat. binaria)
 ```
 
