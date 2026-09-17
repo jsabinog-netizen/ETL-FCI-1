@@ -16,7 +16,17 @@ select v.* replace (
     coalesce(e.sector_econ_mico, n.sector_econ_mico) as sector_economico_empresa,
     coalesce(e.tama_o_de_la_empresa, n.tama_o_de_la_empresa) as tamano_empresa,
     coalesce(e.departamento, n.departamento) as departamento_empresa,
-    coalesce(e.ciudad_municipio_principal, n.ciudad_municipio_principal) as municipio_empresa
+    coalesce(e.ciudad_municipio_principal, n.ciudad_municipio_principal) as municipio_empresa,
+    case
+        when v.edad_m_nima is null and v.edad_m_xima is null then '9. Sin restricción'
+        when v.edad_m_xima is null then concat('8. Desde ', cast(v.edad_m_nima as string))
+        when v.edad_m_nima is null then concat('7. Hasta ', cast(v.edad_m_xima as string))
+        when v.edad_m_xima <= 25 then '1. Hasta 25'
+        when v.edad_m_xima <= 35 then '2. Hasta 35'
+        when v.edad_m_xima <= 45 then '3. Hasta 45'
+        when v.edad_m_xima <= 55 then '4. Hasta 55'
+        else '5. Sin tope superior'
+    end as rango_etario_vacante
 from {{ ref('stg_ge_vacantes_colsubsidios') }} v
 left join empresas_id e on v.buscar_empresa_id = e.id
 left join empresas_nit n on e.id is null and v.buscar_empresa_nombre = n.nit

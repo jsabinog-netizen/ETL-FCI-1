@@ -20,3 +20,6 @@ models:
             values: ['corte 1', 'corte 2']
           config:
             severity: warn
+  - name: rango_etario_vacante
+    description: Categoría única ordenada de rango etario requerido por la vacante.
+

@@ -1,0 +1,27 @@
+version: 2
+models:
+  - name: dim_empresas_rm
+    description: >
+      Una fila por empresa deduplicada por NIT, enriquecida con información de vacantes,
+      intermediación y agendamientos comerciales.
+    columns:
+      - name: nit
+        description: NIT de la empresa, clave primaria de la dimensión.
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: etapa_empresa
+        description: >
+          Etapa del embudo empresarial (1. Solo registrada | 2. Agendada | 3. Con vacantes | 4. Intermediada).
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['1. Solo registrada', '2. Agendada', '3. Con vacantes', '4. Intermediada']
+              config:
+                severity: warn
+      - name: corte
+        description: Cohorte del programa.
