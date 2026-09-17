@@ -3,6 +3,10 @@
 select
     id,
     corte,
+    case
+        when date(fecha_y_hora, 'America/Bogota') >= '2026-09-01' then 'corte 2'
+        else 'corte 1'
+    end as corte_evento,
     nombre_agendamiento,      
     buscar_empresa_id as empresa_id,
     buscar_empresa_nombre as empresa_lookup,

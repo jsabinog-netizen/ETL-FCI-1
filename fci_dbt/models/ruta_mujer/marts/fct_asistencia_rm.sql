@@ -5,5 +5,9 @@ select * replace (
         date(last_activity_time) as last_activity_time,
         date(_loaded_at) as _loaded_at,
         date(modified_time) as modified_time
-    )
+    ),
+    case
+        when coalesce(fecha_curso, date(created_time)) >= '2026-09-01' then 'corte 2'
+        else 'corte 1'
+    end as corte_evento
 from {{ ref('stg_asist_pres_rutam') }}

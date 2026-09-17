@@ -1,6 +1,10 @@
 select
     id,
     corte,
+    case
+        when date(fecha_y_hora_de_agendamiento, 'America/Bogota') >= '2026-09-01' then 'corte 2'
+        else 'corte 1'
+    end as corte_evento,
     documento,
     date(fecha_y_hora_de_agendamiento, 'America/Bogota') as fecha_cita,
     format_timestamp('%H:%M:%S', fecha_y_hora_de_agendamiento, 'America/Bogota') as hora_cita,

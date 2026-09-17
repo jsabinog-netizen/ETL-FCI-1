@@ -85,6 +85,10 @@ select
     -- Atributos del registro padre, repetidos en cada curso
     f.documento,
     f.corte,
+    case
+        when coalesce(c.fecha_curso, f.fecha_formaci_n, date(f.created_time)) >= '2026-09-01' then 'corte 2'
+        else 'corte 1'
+    end as corte_evento,
     f.primer_nombre, f.segundo_nombre, f.primer_apellido, f.segundo_apellido,
     f.n_mero_de_celular,
     f.municipio, f.localidad,

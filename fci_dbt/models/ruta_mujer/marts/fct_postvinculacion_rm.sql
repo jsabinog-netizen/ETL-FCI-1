@@ -19,6 +19,11 @@ with base as (
     from {{ ref('stg_postvinculaci_n_colsub') }}
 )
 select *,
+    case
+        when coalesce(fecha_llamada_seguimiento, fecha_inicio_contrato, fecha_de_registro, date(created_time)) >= '2026-09-01' then 'corte 2'
+        else 'corte 1'
+    end as corte_evento,
+
     -- Estado calculado del hito de 20 días
     case
         when fecha_inicio_contrato is null then null

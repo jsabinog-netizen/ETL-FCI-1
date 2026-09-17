@@ -21,6 +21,11 @@ with base as (
     from {{ ref('stg_mitigaci_n_colsubsidios') }}
 )
 select *,
+    case
+        when coalesce(fecha_pago, fecha_registro, date(created_time)) >= '2026-09-01' then 'corte 2'
+        else 'corte 1'
+    end as corte_evento,
+
     -- Etapa de la ruta en la que se entregó el apoyo, derivada de
     -- los checks de dispersión.
     case

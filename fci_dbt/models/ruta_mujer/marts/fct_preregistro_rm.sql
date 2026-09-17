@@ -24,5 +24,9 @@ select *,
         when lower(trim(coalesce(preinscripci_n_completad, ''))) like '%no aplica%'
             then 'No aplica'
         else 'Pendiente'
-    end as estado_inscripcion_final
+    end as estado_inscripcion_final,
+    case
+        when created_time >= '2026-09-01' then 'corte 2'
+        else 'corte 1'
+    end as corte_evento
 from base
