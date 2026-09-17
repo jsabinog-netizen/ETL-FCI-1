@@ -27,8 +27,6 @@ WITH registro AS (
 ),
 
 orientacion AS (
-    -- Si existe riesgo de duplicados en orientación por errores de digitación, 
-    -- puedes aplicar un QUALIFY ROW_NUMBER() OVER(PARTITION BY cedula ORDER BY fecha_orientacion DESC) = 1
     SELECT 
         documento,
         orientacion_completada,
@@ -43,6 +41,10 @@ orientacion AS (
         barrera_externa,
         recomendado_vacante,
     FROM {{ ref('stg_orientacion_giz') }}
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY documento 
+        ORDER BY fecha_orientacion DESC NULLS LAST
+    ) = 1
 ),
 
 intermediacion_agg AS (
@@ -81,13 +83,13 @@ colocacion AS (
 ),
 
 mitigacion_colocacion AS (
-    SELECT documento
+    SELECT DISTINCT documento
     FROM {{ ref('stg_mitigacion_giz') }}
     WHERE tipo_mitigacion = 'pago_de_colocacion'
 ),
 
 mitigacion_formacion AS (
-    SELECT documento
+    SELECT DISTINCT documento
     FROM {{ ref('stg_mitigacion_giz') }}
     WHERE tipo_mitigacion = 'pago_de_formacion'
 ),

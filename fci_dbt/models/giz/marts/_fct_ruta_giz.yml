@@ -78,7 +78,7 @@ models:
               arguments:
                 values:
                   - '0. Sin completar'
-                  - '1. Registrado/a'
+                  - '1. Inscrito/a'
                   - '2. Orientado/a'
                   - '3. Intermediado/a'
                   - '4. Colocado/a'
