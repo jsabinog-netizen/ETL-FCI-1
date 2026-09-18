@@ -98,6 +98,8 @@ with orientacion as (
         c.nit_de_empresa_contratante_empleador as nit_empresa_colocacion,
         c.cargo_en_la_empresa as cargo, c.tipo_de_contrato as tipo_contrato,
         c.salario_despu_s_de_la_colocaci_n as salario,
+        -- ── Grupos poblacionales: campo ya parseado en el staging ──
+        r.grupos_poblacionales,
 
         -- ── Campos de Orientación agregados para replicar vw_fact_Colsubsidio ──
         o.concepto_de_orientaci_n,
@@ -173,15 +175,32 @@ select *,
         else '6. 56 o más'
     end as rango_etario,
 
-    -- Etapa más avanzada completada; no implica completar las anteriores.
-    case when postvinculada then '7. Postvinculación'
-         when colocada then '6. Colocación'
-         when intermediada then '5. Intermediación'
-         when formada then '4. Formación'
-         when psicosocial then '3. Atención Psicosocial'
-         when orientada then '2. Orientación'
-         when inscrita then '1. Registros'
-         else '0. Sin completar' end as etapa_actual,
+    -- Etapa más avanzada completada en la ruta (6 niveles; Formación es
+    -- un servicio transversal, no una etapa secuencial de la ruta).
+    case
+        when postvinculada  then '6. Postvinculación'
+        when colocada       then '5. Colocación'
+        when intermediada   then '4. Intermediación'
+        when psicosocial    then '3. Atención Psicosocial'
+        when orientada      then '2. Orientación'
+        when inscrita       then '1. Registros'
+        else                     '0. Sin completar'
+    end as etapa_actual,
+
+    -- ── Cortes por etapa: cada fecha de evento determina su propio corte ──
+    -- Permite a Análisis Metas filtrar inscripciones, orientaciones,
+    -- intermediaciones y colocaciones por corte independientemente.
+    case when fecha_inscripcion    >= '2026-09-01' then 'corte 2' else 'corte 1' end as corte_inscripcion,
+    case when fecha_orientacion    >= '2026-09-01' then 'corte 2'
+         when fecha_orientacion    is null         then null
+         else 'corte 1' end as corte_orientacion,
+    case when fecha_intermediacion >= '2026-09-01' then 'corte 2'
+         when fecha_intermediacion is null         then null
+         else 'corte 1' end as corte_intermediacion,
+    case when fecha_colocacion     >= '2026-09-01' then 'corte 2'
+         when fecha_colocacion     is null         then null
+         else 'corte 1' end as corte_colocacion,
+
     date_diff(fecha_colocacion, fecha_inscripcion, day) as dias_inscripcion_a_colocacion,
 
     case when inscrita then 'Sí' else 'No' end as tiene_inscripcion,

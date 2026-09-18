@@ -22,4 +22,7 @@ models:
             severity: warn
   - name: rango_etario_vacante
     description: Categoría única ordenada de rango etario requerido por la vacante.
-
+  - name: sector_normalizado
+    description: Sector de la empresa asociada a la vacante, normalizado a categorías estándar.
+  - name: corte_evento
+    description: Corte derivado de fecha_de_inicio_de_la_vacante (>= 2026-09-01 -> corte 2, else corte 1).

@@ -15,7 +15,7 @@ models:
     tests:
       - accepted_values:
           arguments:
-            values: ['0. Sin completar', '1. Registros', '2. Orientación', '3. Atención Psicosocial', '4. Formación', '5. Intermediación', '6. Colocación', '7. Postvinculación']
+            values: ['0. Sin completar', '1. Registros', '2. Orientación', '3. Atención Psicosocial', '4. Intermediación', '5. Colocación', '6. Postvinculación']
           config:
             severity: warn
   - name: formada

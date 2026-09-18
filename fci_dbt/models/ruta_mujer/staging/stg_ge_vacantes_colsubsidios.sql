@@ -59,30 +59,9 @@ select
     -- el mismo concepto de negocio.
     lower(trim(`Requiere_tarjeta_profesional`)) as titulo_homologado,
 
-    case
-        when coalesce(json_value(`Sector_econ_mico`, '$[0]'), `Sector_econ_mico`) is null
-             or trim(coalesce(json_value(`Sector_econ_mico`, '$[0]'), `Sector_econ_mico`)) = ''
-            then null
-        when regexp_contains(lower(coalesce(json_value(`Sector_econ_mico`, '$[0]'), `Sector_econ_mico`)),
-                r'transporte|almacenamiento')
-            then 'Transporte y almacenamiento'
-        when regexp_contains(lower(coalesce(json_value(`Sector_econ_mico`, '$[0]'), `Sector_econ_mico`)),
-                r'construcci[óo]n')
-            then 'Construcción'
-        when regexp_contains(lower(coalesce(json_value(`Sector_econ_mico`, '$[0]'), `Sector_econ_mico`)),
-                r'manufactur')
-            then 'Industrias manufactureras'
-        when regexp_contains(lower(coalesce(json_value(`Sector_econ_mico`, '$[0]'), `Sector_econ_mico`)),
-                r'textil')
-            then 'Fabricación de productos textiles'
-        when regexp_contains(lower(coalesce(json_value(`Sector_econ_mico`, '$[0]'), `Sector_econ_mico`)),
-                r'financier|seguros|pensiones')
-            then 'Actividades financieras y de seguros'
-        when regexp_contains(lower(coalesce(json_value(`Sector_econ_mico`, '$[0]'), `Sector_econ_mico`)),
-                r'tecnolog[íi]a|informaci[óo]n|comunicaciones')
-            then 'Información y comunicaciones'
-        else 'Otro'
-    end as sector_normalizado,
+    -- NOTA: Sector_econ_mico no existe en esta tabla de Zoho.
+    -- El sector de la vacante se resuelve en dim_vacantes_rm vía JOIN
+    -- con stg_pre_registro_empresarial (donde sí existe el campo).
 
     lower(trim(`Corte`)) as corte,
     safe_cast(_loaded_at as timestamp) as _loaded_at,
