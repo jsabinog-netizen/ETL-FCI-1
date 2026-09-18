@@ -71,7 +71,8 @@ select
     trim(`Respuesta_pregunta_seguridad`) as respuesta_pregunta_seguridad,
     lower(trim(`Seleccione_nivel_de_Sisb_n`)) as seleccione_nivel_de_sisb_n,
     lower(trim(`Tiene_alguna_de_estas_responsabilidades_de_cuidado`)) as tiene_alguna_de_estas_responsabilidades_de_cuidado,
-
+    lower(trim(`Sede_de_atenci_n`)) as sede,
+    lower(trim(`Validaci_n_habilitante`)) as validacion_habilitante,
 
 from {{ source('zoho_raw_ruta_mujer', 'inscripci_n_colsubsidios') }}
 qualify row_number() over (
