@@ -128,12 +128,14 @@ with orientacion as (
         r.respuesta_pregunta_seguridad,
         r.seleccione_nivel_de_sisb_n,
         r.tiene_alguna_de_estas_responsabilidades_de_cuidado,
+        r.sede,
+        r.validacion_habilitante,
 
         coalesce(r.inscripci_n_completada in ('si', 'sí', 'true'), false) as inscrita,
         coalesce(o.orientaci_n_sociocupacion_completada in ('si', 'sí', 'true'), false) as orientada,
         coalesce(p.acompa_amiento_psicosocial_completado in ('si', 'sí', 'true'), false) as psicosocial,
         coalesce(fa.alguna_completada, false) as formada,
-        pv.fecha_llamada_seguimiento is not null as postvinculada,
+        pv.permanencia_seguimiento is not null as postvinculada,
         coalesce(i.ultima.intermediaci_n_completada in ('si', 'sí', 'true'), false) as intermediada,
         c.fecha_de_vinculaci_n_laboral is not null as colocada
     from {{ ref('stg_inscripci_n_colsubsidios') }} r
