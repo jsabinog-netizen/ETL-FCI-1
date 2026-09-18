@@ -59,6 +59,10 @@ select
     -- el mismo concepto de negocio.
     lower(trim(`Requiere_tarjeta_profesional`)) as titulo_homologado,
 
+    -- ── Campos de enfoque de género (nuevos en CRM) ──
+    lower(trim(`Vacante_con_enfoque_de_g_nero`)) as vacante_con_enfoque_de_genero,
+    lower(trim(`Vacante_de_desmasculinizaci_n`)) as vacante_de_desmasculinizacion,
+
     -- NOTA: Sector_econ_mico no existe en esta tabla de Zoho.
     -- El sector de la vacante se resuelve en dim_vacantes_rm vía JOIN
     -- con stg_pre_registro_empresarial (donde sí existe el campo).
