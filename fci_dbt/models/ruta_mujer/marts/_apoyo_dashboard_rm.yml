@@ -1,0 +1,51 @@
+version: 2
+models:
+- name: dim_metas_convenio_rm
+  columns:
+  - name: indicador_id
+    data_tests:
+    - unique:
+        config:
+          severity: warn
+    - not_null:
+        config:
+          severity: warn
+- name: fct_resultados_vacante_rm
+  columns:
+  - name: vacante_id
+    data_tests:
+    - unique:
+        config:
+          severity: warn
+    - not_null:
+        config:
+          severity: warn
+- name: fct_cobertura_post_rm
+  columns:
+  - name: colocacion_id
+    data_tests:
+    - unique:
+        config:
+          severity: warn
+    - not_null:
+        config:
+          severity: warn
+- name: bridge_grupos_poblacionales_rm
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - documento
+        - grupo_poblacional
+      config:
+        severity: warn
+- name: fct_colocaciones_rm
+  columns:
+  - name: id
+    data_tests:
+    - unique:
+        config:
+          severity: warn
+    - not_null:
+        config:
+          severity: warn

@@ -1,0 +1,144 @@
+// Cada bloque es una medida independiente para Calculos (no pegar todo como una sola fórmula).
+// Aplicar después de importar los marts nuevos y corregir las relaciones según la guía.
+// Usar con pendientes_bi_actualizados.md. Validar en Desktop; no ejecutado en el motor DAX.
+// Las medidas de avance respetan el filtro actual: definir explícitamente convenio/cohorte/periodo.
+// Las columnas nuevas conservan snake_case.
+
+// Medida base sin corte fijo; usar el mismo alcance en numeradores y denominadores.
+Personas Colocadas =
+CALCULATE(DISTINCTCOUNT(fct_ruta_mujer[Documento]), fct_ruta_mujer[Colocada] = TRUE())
+
+Personas Formadas =
+CALCULATE(DISTINCTCOUNT(fct_formacion_rm[documento]), fct_formacion_rm[estado_formacion] = "Completada")
+
+Número Intermediaciones =
+CALCULATE(DISTINCTCOUNT(fct_intermediacion_rm[id]),
+    KEEPFILTERS(NOT ISBLANK(fct_intermediacion_rm[documento])),
+    KEEPFILTERS(NOT ISBLANK(fct_intermediacion_rm[buscar_vacante_id])))
+
+Mujeres con Remisión =
+CALCULATE(DISTINCTCOUNT(fct_intermediacion_rm[documento]),
+    KEEPFILTERS(NOT ISBLANK(fct_intermediacion_rm[documento])),
+    KEEPFILTERS(NOT ISBLANK(fct_intermediacion_rm[buscar_vacante_id])))
+
+Promedio Intermediaciones por Mujer =
+DIVIDE([Número Intermediaciones], [Mujeres con Remisión])
+
+Dias Inscripcion a Orientacion =
+AVERAGE(fct_ruta_mujer[dias_inscripcion_a_orientacion])
+
+Dias Orientacion a Intermediacion =
+AVERAGE(fct_ruta_mujer[dias_orientacion_a_intermediacion])
+
+Asistencias Registradas =
+DISTINCTCOUNT(fct_asistencia_rm[id])
+
+Personas Asistentes =
+CALCULATE(DISTINCTCOUNT(fct_asistencia_rm[documento]),
+    KEEPFILTERS(NOT ISBLANK(fct_asistencia_rm[documento])))
+
+Citas Presenciales Orientacion =
+CALCULATE(DISTINCTCOUNT(fct_agenda_orientacion_rm[id]),
+    fct_agenda_orientacion_rm[modalidad] = "presencial")
+
+Empresas Agendadas =
+CALCULATE(DISTINCTCOUNT(fct_agenda_comercial_rm[nit_empresa]),
+    KEEPFILTERS(NOT ISBLANK(fct_agenda_comercial_rm[nit_empresa])))
+
+Colocaciones Reportadas por Vacante =
+CALCULATE(DISTINCTCOUNT(fct_colocaciones_rm[id]),
+    KEEPFILTERS(NOT ISBLANK(fct_colocaciones_rm[fecha_de_vinculaci_n_laboral])))
+
+Vacantes con Enfoque de Género =
+VAR Informadas = CALCULATE(COUNTROWS(dim_vacantes_rm),
+    KEEPFILTERS(NOT ISBLANK(dim_vacantes_rm[es_enfoque_genero])))
+RETURN IF(Informadas = 0, BLANK(),
+    COALESCE(CALCULATE(DISTINCTCOUNT(dim_vacantes_rm[id]),
+        dim_vacantes_rm[es_enfoque_genero] == TRUE()),0))
+
+Vacantes de Desmasculinización =
+VAR Informadas = CALCULATE(COUNTROWS(dim_vacantes_rm),
+    KEEPFILTERS(NOT ISBLANK(dim_vacantes_rm[es_desmasculinizacion])))
+RETURN IF(Informadas = 0, BLANK(),
+    COALESCE(CALCULATE(DISTINCTCOUNT(dim_vacantes_rm[id]),
+        dim_vacantes_rm[es_desmasculinizacion] == TRUE()),0))
+
+Vacantes Activas Sin Remisión =
+CALCULATE(DISTINCTCOUNT(fct_resultados_vacante_rm[vacante_id]),
+    fct_resultados_vacante_rm[activa_sin_remision] = TRUE())
+
+Última Novedad por Vacante =
+SELECTEDVALUE(fct_resultados_vacante_rm[ultima_novedad])
+
+// Distribución de estados actuales; no mide el número histórico que pasó por cada fase.
+Remisiones En Proceso =
+CALCULATE([Número Intermediaciones], fct_intermediacion_rm[estado] = "asistió/está en proceso")
+
+Remisiones Contratadas =
+CALCULATE([Número Intermediaciones], fct_intermediacion_rm[estado] = "contratado")
+
+Postvinculaciones Pendientes =
+CALCULATE(DISTINCTCOUNT(fct_postvinculacion_rm[id]),
+    fct_postvinculacion_rm[estado_post_calculado] = "Pendiente por post")
+
+Colocaciones Sin Registro Post =
+CALCULATE(DISTINCTCOUNT(fct_cobertura_post_rm[colocacion_id]),
+    fct_cobertura_post_rm[estado_cobertura] = "Sin registro de postvinculación")
+
+Contratos Exigibles =
+CALCULATE(DISTINCTCOUNT(fct_cobertura_post_rm[colocacion_id]),
+    fct_cobertura_post_rm[seguimiento_exigible] = TRUE())
+
+Contratos Exigibles con Llamada =
+CALCULATE(DISTINCTCOUNT(fct_cobertura_post_rm[colocacion_id]),
+    fct_cobertura_post_rm[seguimiento_exigible] = TRUE(),
+    fct_cobertura_post_rm[estado_cobertura] = "Con llamada")
+
+% Cobertura Postvinculacion =
+DIVIDE([Contratos Exigibles con Llamada], [Contratos Exigibles])
+
+// Quita la antigua tabla manual Metas RM de los visuales antes de sustituir estas medidas.
+Meta RM =
+SELECTEDVALUE(dim_metas_convenio_rm[meta])
+
+Meta Orientación rm =
+CALCULATE(MAX(dim_metas_convenio_rm[meta]), REMOVEFILTERS(dim_metas_convenio_rm),
+    dim_metas_convenio_rm[indicador_id] = "C2_ORIENTACION")
+
+Meta Colocados rm =
+CALCULATE(MAX(dim_metas_convenio_rm[meta]), REMOVEFILTERS(dim_metas_convenio_rm),
+    dim_metas_convenio_rm[indicador_id] = "C2_COLOCACION")
+
+Meta Psicosocial =
+CALCULATE(MAX(dim_metas_convenio_rm[meta]), REMOVEFILTERS(dim_metas_convenio_rm),
+    dim_metas_convenio_rm[indicador_id] = "C2_PSICO_INDIVIDUAL")
+
+// No hay eventos acreditados de duración >=60 minutos en la fuente actual.
+Sesiones Psicosociales Acreditadas =
+BLANK()
+
+% Cumplimiento Psicosocial =
+DIVIDE([Sesiones Psicosociales Acreditadas], [Meta Psicosocial])
+
+Ejecutados Ruta Mujer =
+SWITCH(SELECTEDVALUE(dim_metas_convenio_rm[indicador_id]),
+    "C2_REGISTRO", [Personas Registradas],
+    "C2_ORIENTACION", [Personas Orientadas],
+    "C2_INTERMEDIACION", [Número Intermediaciones],
+    "C2_COLOCACION", [Personas Colocadas],
+    "C1_VACANTES_GENERO", [Vacantes con Enfoque de Género],
+    BLANK())
+
+Faltante Metas ruta =
+VAR Meta = [Meta RM]
+VAR Ejecutado = [Ejecutados Ruta Mujer]
+VAR Tipo = SELECTEDVALUE(dim_metas_convenio_rm[tipo_meta])
+RETURN IF(ISBLANK(Meta) || ISBLANK(Ejecutado) || Tipo = "maximo", BLANK(), MAX(Meta-Ejecutado,0))
+
+% Cumplimiento Orientación =
+DIVIDE([Personas Orientadas], [Meta Orientación rm])
+
+% Cumplimiento Colocados =
+DIVIDE([Personas Colocadas], [Meta Colocados rm])
+
+// Inactivo/no ejecutado en el motor DAX durante esta entrega. Validar en Desktop.

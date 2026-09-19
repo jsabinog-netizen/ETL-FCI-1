@@ -1,3 +1,5 @@
+-- Una cita por id, con NIT canónico para relacionar dim_empresas_rm.
+with agenda as (
 -- Grano: una cita comercial con empresa por id de Zoho.
 
 select
@@ -56,3 +58,13 @@ select
     date(_loaded_at) as fecha_carga
 
 from {{ ref('stg_ge_agendamiento') }}
+), empresas_id as (
+    select id, nit from {{ ref('stg_pre_registro_empresarial') }}
+    qualify row_number() over (partition by id order by modified_time desc nulls last, created_time desc nulls last) = 1
+), empresas_nit as (
+    select distinct nit from {{ ref('stg_pre_registro_empresarial') }} where nit is not null
+)
+select a.*, coalesce(e.nit,n.nit) as nit_empresa
+from agenda a
+left join empresas_id e on a.empresa_id=e.id
+left join empresas_nit n on e.nit is null and a.empresa_lookup=n.nit

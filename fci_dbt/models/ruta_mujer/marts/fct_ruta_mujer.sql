@@ -60,6 +60,8 @@ with orientacion as (
     ) = 1
 ), base as (
     select r.id as inscripcion_id, r.documento,
+        date(r._loaded_at) as fecha_carga_inscripcion,
+        current_date('America/Bogota') as fecha_transformacion,
         r.corte,
         r.primer_nombre, r.segundo_nombre, r.primer_apellido, r.segundo_apellido,
         trim(concat(coalesce(r.primer_nombre, ''), ' ', coalesce(r.segundo_nombre, ''), ' ',
@@ -128,6 +130,8 @@ with orientacion as (
         r.respuesta_pregunta_seguridad,
         r.seleccione_nivel_de_sisb_n,
         r.tiene_alguna_de_estas_responsabilidades_de_cuidado,
+        r.sede,
+        r.validacion_habilitante,
 
         coalesce(r.inscripci_n_completada in ('si', 'sí', 'true'), false) as inscrita,
         coalesce(o.orientaci_n_sociocupacion_completada in ('si', 'sí', 'true'), false) as orientada,
@@ -201,6 +205,10 @@ select *,
          when fecha_colocacion     is null         then null
          else 'corte 1' end as corte_colocacion,
 
+    case when fecha_orientacion >= fecha_inscripcion
+         then date_diff(fecha_orientacion, fecha_inscripcion, day) end as dias_inscripcion_a_orientacion,
+    case when fecha_intermediacion >= fecha_orientacion
+         then date_diff(fecha_intermediacion, fecha_orientacion, day) end as dias_orientacion_a_intermediacion,
     date_diff(fecha_colocacion, fecha_inscripcion, day) as dias_inscripcion_a_colocacion,
 
     case when inscrita then 'Sí' else 'No' end as tiene_inscripcion,

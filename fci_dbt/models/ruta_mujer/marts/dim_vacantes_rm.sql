@@ -10,6 +10,14 @@ select v.* replace (
         date(v._loaded_at) as _loaded_at,
         date(v.modified_time) as modified_time
     ),
+    case when lower(trim(v.vacante_con_enfoque_de_genero)) in ('sí','si','true') then true
+         when lower(trim(v.vacante_con_enfoque_de_genero)) in ('no','false') then false end as es_enfoque_genero,
+    case when lower(trim(v.vacante_de_desmasculinizacion)) in ('sí','si','true') then true
+         when lower(trim(v.vacante_de_desmasculinizacion)) in ('no','false') then false end as es_desmasculinizacion,
+    case when nullif(trim(v.ciudad_municipio_de_la_vacante), '') is not null
+         then concat(v.ciudad_municipio_de_la_vacante,
+                     if(nullif(trim(v.departamento_de_la_vacante),'') is null, '', concat(', ', v.departamento_de_la_vacante)), ', Colombia')
+    end as ubicacion_mapa,
     coalesce(e.id, n.id) as empresa_id,
     coalesce(e.nit, n.nit, v.buscar_empresa_nombre) as nit_empresa,
     coalesce(e.nombre_de_la_empresa, n.nombre_de_la_empresa, v.nombre_de_la_empresa_1, v.nombre_de_la_empresa) as empresa,

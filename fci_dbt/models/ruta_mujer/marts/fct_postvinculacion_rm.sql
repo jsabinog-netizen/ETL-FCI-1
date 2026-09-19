@@ -6,7 +6,7 @@
 -- reales para saber la verdad. La discrepancia entre ambos es en sí
 -- misma un indicador de calidad de gestión.
 --
--- Regla de negocio: el hito de seguimiento es a los 20 días
+-- Regla de negocio: el hito de seguimiento es a los 15 días
 -- calendario desde el inicio del contrato.
 with base as (
     select * replace (
@@ -24,20 +24,16 @@ select *,
         else 'corte 1'
     end as corte_evento,
 
-    -- Estado calculado del hito de 20 días
+    -- Estado calculado del hito de 15 días
     case
         when fecha_inicio_contrato is null then null
         when fecha_llamada_seguimiento is not null then 'Post realizada'
-        when dias_transcurridos_contrato >= 20 then 'Pendiente por post'
+        when dias_transcurridos_contrato >= 15 then 'Pendiente por post'
         else 'En plazo'
     end as estado_post_calculado,
 
     -- Alerta operativa: pasó el hito sin llamada registrada
-    coalesce(
-        dias_transcurridos_contrato >= 20
-        and fecha_llamada_seguimiento is null,
-        false
-    ) as alerta_vencida,
+    {{ rm_post_vencida('dias_transcurridos_contrato', 'fecha_llamada_seguimiento') }} as alerta_vencida,
 
     -- Escalamiento sugerido en el requerimiento (25-30 días)
     coalesce(
@@ -47,9 +43,9 @@ select *,
     ) as alerta_escalada,
 
     -- Días entre el hito y la llamada efectiva. Negativo = se
-    -- gestionó antes de los 20 días.
+    -- gestionó antes de los 15 días.
     case
         when fecha_llamada_seguimiento is not null
-            then date_diff(fecha_llamada_seguimiento, fecha_inicio_contrato, day) - 20
+            then date_diff(fecha_llamada_seguimiento, fecha_inicio_contrato, day) - 15
     end as dias_desviacion_hito
 from base

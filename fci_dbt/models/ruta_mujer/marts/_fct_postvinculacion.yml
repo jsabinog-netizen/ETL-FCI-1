@@ -5,7 +5,7 @@ models:
     description: >
       Un seguimiento post-vinculación por id de Zoho. Grano de evento:
       una participante puede tener más de un proceso en el tiempo.
-      Incluye columnas calculadas del hito de 20 días, en paralelo a
+      Incluye columnas calculadas del hito de 15 días, en paralelo a
       los campos manuales de Zoho (sufijo _zoho) para poder comparar
       lo reportado contra lo real.
     columns:
@@ -37,7 +37,7 @@ models:
       - name: fecha_inicio_contrato
         description: >
           Fecha de inicio real del contrato. Base del cálculo del
-          hito de 20 días.
+          hito de 15 días.
       - name: dias_transcurridos_contrato
         description: >
           Días calendario entre fecha_inicio_contrato y hoy.
@@ -45,7 +45,7 @@ models:
       - name: estado_post_calculado
         description: >
           En plazo / Pendiente por post / Post realizada, derivado
-          del hito de 20 días. Comparar contra estado_post_zoho.
+          del hito de 15 días. Comparar contra estado_post_zoho.
         tests:
           - accepted_values:
               arguments:
@@ -56,7 +56,7 @@ models:
         description: Campo manual de Zoho. Puede diferir del calculado.
       - name: alerta_vencida
         description: >
-          TRUE si pasaron 20 días o más sin llamada registrada.
+          TRUE si pasaron 15 días o más sin llamada registrada.
           KPI operativo principal de esta tabla.
       - name: alerta_escalada
         description: TRUE si pasaron 25 días o más sin llamada.

@@ -280,6 +280,7 @@ MODULES_RUTA_MUJER = {
         "Tiene_hijos", "Pre_registro", "Desea_generar_acompa_amiento_psicosocial", "D_nde_te_enteraste_de_esta_vacante",
         "Naturaleza_del_estrato_socioecon_mico", "Ultimo_nivel_educativo_alcanzado", "Pregunta_de_seguridad",
         "Respuesta_pregunta_seguridad", "Seleccione_nivel_de_Sisb_n", "Tiene_alguna_de_estas_responsabilidades_de_cuidado",
+        "Sede_de_atenci_n", "Validaci_n_habilitante",
     ],
     "Orientaci_n_Colsubsidios": [
         "Corte",
@@ -347,10 +348,9 @@ MODULES_RUTA_MUJER = {
         "Municipio","Localidad","Profesional_de_orientaci_n",
     ],
     "GE_Vacantes_Colsubsidios": [
-        "Corte",
-        "Name","Created_Time","Modified_Time","Nombre_vacante","N_mero_de_puestos_de_trabajo",
+        "Corte","Name","Modified_Time","Nombre_vacante","N_mero_de_puestos_de_trabajo",
         "Tipo_de_contrato","Estado_de_la_vacante","Ciudad_Municipio_de_la_vacante",
-        "Departamento_de_la_vacante","Departamento","Municipio","Rango_salarial",
+        "Departamento","Municipio","Rango_salarial",
         "Tiempo_de_experiencia_requerido_meses","Jornada_laboral","Horario_de_trabajo","Buscar_empresa",
         "Nombre_de_la_empresa_1","Nombre_de_la_empresa","Ocupaci_n_CUOC_2","Ocupaci_n_CUOC_3",
         "Email_de_Contacto","Nombre_de_contacto","Fecha_de_inicio_de_la_vacante","Fecha_final_de_la_vacante",
@@ -361,7 +361,7 @@ MODULES_RUTA_MUJER = {
         "Proceso_confidencial", "Puede_estar_estudiando", "Requiere_qu_cuente_con_veh_culo", 
         "Requiere_licencia_para_conducir_carro", "Requiere_licencia_para_conducir_moto", "Requiere_manejar_alg_n_idioma",
         "Requiere_disponibilidad_para_viajar", "Requiere_vivir_en_barrio_zona_espec_fica", "Tiene_personas_a_cargo",
-        "Fecha_compromiso", "Requiere_tarjeta_profesional"
+        "Fecha_compromiso", "Requiere_tarjeta_profesional", "Vacante_con_enfoque_de_g_nero", "Vacante_de_desmasculinizaci_n"
     ],
     "Pre_registro_Empresarial": [
         "Corte",
