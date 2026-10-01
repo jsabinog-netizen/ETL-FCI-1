@@ -281,6 +281,26 @@ MODULES_RUTA_MUJER = {
         "Naturaleza_del_estrato_socioecon_mico", "Ultimo_nivel_educativo_alcanzado", "Pregunta_de_seguridad",
         "Respuesta_pregunta_seguridad", "Seleccione_nivel_de_Sisb_n", "Tiene_alguna_de_estas_responsabilidades_de_cuidado",
         "Sede_de_atenci_n", "Validaci_n_habilitante",
+        # SAE - Información General / Habilitantes
+        "Orientacion_Sexual", "Etnia", "Si_es_hombre_Tiene_libreta_militar",
+        "Categor_a_Licencia_para_carro", "Propiedad_de_medio_de_transporte",
+        "Autoriza_el_uso_de_sus_datos_personales", "Autoriza_el_cambio_de_prestador_a_Colsubsidio",
+        # SAE - Psicosocial / Discapacidad / Subsidios
+        "Tipo_de_discapacidad", "Cuenta_con_documento_acreditativo_de_discapacidad",
+        "Es_el_jefe_o_jefa_de_hogar", "Cuantas_personas_dependen_econ_micamente_de_uste",
+        "Ha_recibido_alg_n_subsidio_del_gobierno",
+        # SAE - Educación
+        "Estado_de_estudio", "Tiene_t_tulo_o_certificaci_n_de_estudios",
+        "Nombre_de_la_instituci_n", "En_qu_Pa_s_realiz_sus_ultimos_estudios",
+        "Nombre_de_carrera_o_curso_que_actualmente_cursa",
+        "Tienes_formaci_n_t_cnica_o_certificaciones_espec",
+        "Cursos_habilidades_terminados_en_ltimos_24_meses",
+        "Usa_computador_u_otros_dispositivos", "Utiliza_internet",
+        # SAE - Experiencia Laboral
+        "Nombre_de_la_empresa_1", "Sector_u_ocupaci_n_principal_de_tu_ltimo_empleo",
+        "Tipo_de_vinculaci_n", "Fecha_de_inicio_experiencia_laboral",
+        "Fecha_de_finalizaci_n_experiencia", "Pa_s_de_la_empresa",
+        "Funciones_y_logros_en_la_empresa",
     ],
     "Orientaci_n_Colsubsidios": [
         "Corte",
@@ -291,7 +311,35 @@ MODULES_RUTA_MUJER = {
         "Sientes_que_actualmente_necesitas_apoyo_adicional", "N_mero_de_celular_Principal",
         "Municipio_de_residencia", "Localidad", "Actitud_y_disposici_n", "Inter_s_Laboral",
         "Actualmente_cu_l_es_su_ocupaci_n",
-        "rea_de_Experiencia_Laboral_experiencia_2","Tiempo_de_experiencia_Laboral", "Sector_o_Area_del_cargo_que_desempe_o_1"
+        "rea_de_Experiencia_Laboral_experiencia_2","Tiempo_de_experiencia_Laboral", "Sector_o_Area_del_cargo_que_desempe_o_1",
+        # SAE - General / Identidad / Tipo de población
+        "G_nero", "Tipo_de_poblaci_n", "Hace_parte_de_poblaci_n_focalizada",
+        "Pregunta_de_seguridad",
+        # SAE - Discapacidad
+        "Cuenta_con_documento_que_acredite_su_discapacidad",
+        "Grado_de_discapacidad", "Origen_de_la_discapacidad",
+        "Vigencia_de_la_condici_n_de_discapacidad",
+        "Cargue_el_documento_de_discapacidad",
+        # SAE - Tarjeta Profesional
+        "Tarjeta_profesional", "Numero_de_tarjeta", "Fecha_de_expedici_n_de_la_tarjeta",
+        # SAE - Formación complementaria y competencias
+        "Nombre_de_la_formaci_n_complementaria", "Nombre_de_la_instituci_n_complementaria",
+        "Fecha_final_formaci_n_complementaria", "Certificados_por_competencias_SENA",
+        "Describa_el_programa_certificado_por_competencias",
+        "Adicione_el_archivo_del_certificado_por_competenci",
+        # SAE - Idiomas y competencias
+        "Conocimientos_de_idiomas_diferentes_al_nativo", "Maneja_paquetes_de_Office",
+        # SAE - Experiencia y antecedentes
+        "Cargo_que_desempe_o_en_el_cargo_Cuoc", "Trabaja_actualmente_en_la_empresa",
+        "Cu_l_fue_el_motivo_de_retiro_de_su_empleo_anterior", "Ultimo_Ingreso_Laboral",
+        # SAE - Situación ocupacional y expectativas laborales
+        "Situaci_n_Actual", "Cu_nto_tiempo_lleva_buscando_empleo",
+        "Medios_que_usa_para_la_b_squeda_de_trabajo", "Qu_dificultades_ha_tenido_para_conseguir_empleo",
+        "Describa_y_ampl_e_las_dificultades_previas", "Perfil_capacidades",
+        "Disponibilidad_para_la_jornada_laboral", "Posibilidad_de_trasladarse",
+        "Posibilidad_de_Viajar", "Tiene_Inter_s_en_ofertas_de_Teletrabajo",
+        "Aspiraci_n_salarial", "Interes_Ocupacional_Cuoc",
+        "Esta_interesado_en_realizar_practica_empresarial", "Clasificaci_n",
     ],
     "Psicosocial_RutaM": [
         "Corte",
