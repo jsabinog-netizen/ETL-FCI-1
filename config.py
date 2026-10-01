@@ -291,7 +291,7 @@ MODULES_RUTA_MUJER = {
         "Sientes_que_actualmente_necesitas_apoyo_adicional", "N_mero_de_celular_Principal",
         "Municipio_de_residencia", "Localidad", "Actitud_y_disposici_n", "Inter_s_Laboral",
         "Actualmente_cu_l_es_su_ocupaci_n",
-        "rea_de_Experiencia_Laboral_experiencia_2","Tiempo_de_experiencia_Laboral"
+        "rea_de_Experiencia_Laboral_experiencia_2","Tiempo_de_experiencia_Laboral", "Sector_o_Area_del_cargo_que_desempe_o_1"
     ],
     "Psicosocial_RutaM": [
         "Corte",
@@ -304,7 +304,8 @@ MODULES_RUTA_MUJER = {
         "Estrategia_para_la_superaci_n_de_la_barrera","Cuenta_con_una_segunda_barrera",
         "Seleccione_el_tipo_de_barrera_2","Estrategia_para_la_superaci_n_de_la_barrera_2",
         "Cuenta_con_una_tercera_barrera","Seleccione_el_tipo_de_barrera_3",
-        "Estrategia_para_la_superaci_n_de_la_barrera_3","Tipificaci_n_Mujer", "Evoluci_n"
+        "Estrategia_para_la_superaci_n_de_la_barrera_3","Tipificaci_n_Mujer", "Evoluci_n",
+        "Fecha_Fecha_de_inicio_acompa_amiento_SC_1", "Fecha_final_acompa_amiento_SC1"
     ],
     "Intermediaci_n_Ruta_M": [
         "Corte",

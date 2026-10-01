@@ -11,6 +11,8 @@ select
     trim(`Primer_apellido`) as primer_apellido,
     trim(`Segundo_apellido`) as segundo_apellido,
     date(safe_cast(`Fecha_de_nacimiento` as timestamp)) as fecha_de_nacimiento,
+    date(safe_cast(`Fecha_Fecha_de_inicio_acompa_amiento_SC_1` as timestamp)) as fecha_inicio_acompanamiento_sc_1,
+    date(safe_cast(`Fecha_final_acompa_amiento_SC1` as timestamp)) as fecha_final_acompanamiento_sc_1,
     lower(trim(`Acompa_amiento_Psicosocial_Completado`)) as acompa_amiento_psicosocial_completado,
     lower(trim(`Estado_actual_del_proceso`)) as estado_actual_del_proceso,
     trim(`Concepto_de_orientaci_n`) as concepto_de_orientaci_n,

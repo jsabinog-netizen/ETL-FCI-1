@@ -19,3 +19,7 @@ models:
     description: Modified_Time de Zoho convertido de forma segura a TIMESTAMP.
   - name: corte
     description: Cohorte del programa (Corte 1 / Corte 2), normalizada a minúsculas en staging. Segmentación transversal del dashboard.
+  - name: fecha_inicio_acompanamiento_sc_1
+    description: Fecha de inicio del acompañamiento psicosocial (Sesión Corta 1) de Zoho convertida a DATE.
+  - name: fecha_final_acompanamiento_sc_1
+    description: Fecha final del acompañamiento psicosocial (Sesión Corta 1) de Zoho convertida a DATE.

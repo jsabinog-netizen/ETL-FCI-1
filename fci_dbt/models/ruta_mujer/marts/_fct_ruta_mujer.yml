@@ -94,3 +94,17 @@ models:
             severity: warn
   - name: tuvo_preregistro
     description: TRUE si la mujer tiene registro en Pre_registro_RutaM.
+  - name: fecha_inicio_acompanamiento_sc_1
+    description: Fecha de inicio del acompañamiento psicosocial de la participante; DATE.
+  - name: fecha_final_acompanamiento_sc_1
+    description: Fecha final del acompañamiento psicosocial de la participante; DATE.
+  - name: corte_psicosocial
+    description: >
+      Cohorte de la atención psicosocial calculada a partir de la fecha de acompañamiento
+      (>= 2026-09-01 para corte 2). Null si la mujer no tiene fecha de inicio.
+    tests:
+      - accepted_values:
+          arguments:
+            values: ['corte 1', 'corte 2']
+          config:
+            severity: warn

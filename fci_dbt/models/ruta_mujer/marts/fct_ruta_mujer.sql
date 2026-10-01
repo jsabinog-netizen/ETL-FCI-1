@@ -7,7 +7,9 @@ with orientacion as (
 ), psicosocial as (
     select * from {{ ref('stg_psicosocial_rutam') }}
     qualify row_number() over (
-        partition by documento order by modified_time desc nulls last, created_time desc nulls last, id desc
+        partition by documento order by fecha_inicio_acompanamiento_sc_1 desc nulls last, 
+        fecha_final_acompanamiento_sc_1 desc nulls last, modified_time desc nulls last, 
+        created_time desc nulls last, id desc
     ) = 1
 ), formacion as (
     select * from {{ ref('stg_formaci_n_colsubsidios') }}
@@ -75,6 +77,8 @@ with orientacion as (
         date(r.fecha_de_registro) as fecha_inscripcion,
         date(o.fecha_de_orientaci_n) as fecha_orientacion,
         date(p.created_time) as fecha_registro_psicosocial,
+        p.fecha_inicio_acompanamiento_sc_1 as fecha_inicio_acompanamiento_sc_1,
+        p.fecha_final_acompanamiento_sc_1 as fecha_final_acompanamiento_sc_1, 
         coalesce(f.fecha_formaci_n, f.fecha_curso) as fecha_formacion,
         pv.fecha_llamada_seguimiento as fecha_postvinculacion,
         date(i.ultima.fecha_intermediacion) as fecha_intermediacion,
@@ -109,6 +113,7 @@ with orientacion as (
         o.modalidad_orientacion,
         o.ocupacion_actual,
         o.area_experiencia,
+        o.area_experiencia_2,
         o.tiempo_de_experiencia_laboral,
 
         -- ── Campos de Psicosocial agregados para replicar vw_fact_Colsubsidio ──
@@ -204,7 +209,11 @@ select *,
     case when fecha_colocacion     >= '2026-09-01' then 'corte 2'
          when fecha_colocacion     is null         then null
          else 'corte 1' end as corte_colocacion,
+    CASE WHEN fecha_inicio_acompanamiento_sc_1 >= '2026-09-01' THEN 'corte 2' 
+         WHEN fecha_inicio_acompanamiento_sc_1 is null         THEN null
+         ELSE 'corte 1' END as corte_psicosocial,  
 
+    date_diff(fecha_inicio_acompanamiento_sc_1, fecha_inscripcion, day) as dias_inscripcion_a_psicosocial,
     case when fecha_orientacion >= fecha_inscripcion
          then date_diff(fecha_orientacion, fecha_inscripcion, day) end as dias_inscripcion_a_orientacion,
     case when fecha_intermediacion >= fecha_orientacion
