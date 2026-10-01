@@ -103,9 +103,22 @@ def prepare_rows(records, fields):
 # OPERACIONES BIGQUERY
 
 def ensure_table(client, table_fqn, schema):
-    """Crea la tabla con schema explícito si no existe. Si ya existe, no la toca."""
-    table = bigquery.Table(table_fqn, schema=schema)
-    client.create_table(table, exists_ok=True)
+    """
+    Crea la tabla con schema explícito si no existe.
+    Si ya existe, añade las columnas que falten de forma aditiva.
+    """
+    try:
+        table = client.get_table(table_fqn)
+        existing = {f.name.lower(): f for f in table.schema}
+        added = [f for f in schema if f.name.lower() not in existing]
+        if added:
+            table.schema = list(table.schema) + added
+            client.update_table(table, ["schema"])
+            logger.info(f"{table_fqn}: agregadas {len(added)} columnas al schema")
+    except Exception:
+        table = bigquery.Table(table_fqn, schema=schema)
+        client.create_table(table, exists_ok=True)
+
 
 
 def load_to_staging(client, rows, staging_schema, staging_fqn):
