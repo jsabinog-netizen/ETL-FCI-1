@@ -151,9 +151,60 @@ def fetch_page(auth, module_name, fields, page, per_page=200, since=None, _retri
         logger.warning(f"{response.status_code} en {module_name} — reintentando con backoff")
         raise Exception(f"HTTP {response.status_code} en {module_name}")
 
+def _extract_single_chunk(auth, module_name, fields, since=None, checkpoint_suffix=""):
+    """Extrae registros para un único lote de campos respetando paginación y checkpoints."""
+    os.makedirs("checkpoints", exist_ok=True)
+    checkpoint_file = f"checkpoints/{module_name}{checkpoint_suffix}.json"
+
+    # Validar si existe un checkpoint previo para este lote
+    if os.path.exists(checkpoint_file):
+        with open(checkpoint_file, "r") as f:
+            estado = json.load(f)
+        page = estado["page"]
+        all_records = estado["records"]
+        logger.info(f"{module_name}{checkpoint_suffix}: reanudando desde página {page} con {len(all_records)} registros previos")
+    else:
+        all_records = []
+        page = 1
+        logger.info(f"Iniciando extracción de {module_name}{checkpoint_suffix}...")
+        if since is not None:
+            logger.info(f"Modo Incremental desde {since}")
+        else:
+            logger.info("Modo Full refresh")
+
+    has_more = True
+    start_time = datetime.now()
+    paginas_procesadas = 0
+    while has_more:
+        registros, mas_paginas, _token = request_with_backoff(
+            lambda: fetch_page(auth, module_name=module_name, fields=fields,
+                               page=page, since=since)
+        )
+        all_records.extend(registros)
+
+        estado = {"page": page, "records": all_records}
+        with open(checkpoint_file, "w") as f:
+            json.dump(estado, f)
+        
+        logger.info(f"{module_name}{checkpoint_suffix} página {page} | {len(registros)} registros | {len(all_records)} acumulados")
+
+        paginas_procesadas += 1
+        page += 1
+        has_more = mas_paginas
+
+    duracion = (datetime.now() - start_time).total_seconds()
+    logger.info(f"{module_name}{checkpoint_suffix} completado | {len(all_records)} registros | {paginas_procesadas} páginas | {duracion:.1f}s")
+
+    if os.path.exists(checkpoint_file):
+        os.remove(checkpoint_file)
+    return all_records
+
+
 def extract_module(auth, module_name, fields, since=None):
     """
     Extrae TODOS los registros de un módulo de Zoho con paginación.
+    Si la lista de campos supera 45, divide automáticamente en lotes (chunks)
+    de máximo 40 campos y fusiona los resultados por 'id' para respetar el límite de 50 de Zoho CRM.
 
     Args:
         auth: instancia de ZohoAuth
@@ -162,60 +213,30 @@ def extract_module(auth, module_name, fields, since=None):
         since: si se pasa, solo extrae registros modificados después de esta fecha
 
     Returns:
-        list: todos los registros del módulo
+        list: todos los registros del módulo consolidados
     """
-
-    #Verificar que la carpeta exista 
     os.makedirs("checkpoints", exist_ok=True)
-    checkpoint_file = f"checkpoints/{module_name}.json"
+    if len(fields) <= 45:
+        return _extract_single_chunk(auth, module_name, fields, since=since, checkpoint_suffix="")
 
-    #Validar si existe un checkpoint antes
-    if os.path.exists(checkpoint_file):
-        with open(checkpoint_file, "r") as f:
-            estado = json.load(f)
-        #Tomar la pagina y los registros del checkpoint
-        page = estado["page"]
-        all_records = estado["records"]
-        logger.info(f"{module_name}: reanudando desde página {page} con {len(all_records)} registros previos")
-    else:
-        all_records = []
-        page = 1
-        #Loggear el inicio de la extracción
-        logger.info(f"Iniciando extracción de {module_name}...")
-        if since is not None:
-            logger.info(f"Modo Incremental desde {since}")
-        else:
-            logger.info("Modo Full refresh")
-    #Asignar la variable y el tiempo de inicio
-    has_more = True
-    start_time = datetime.now()
-    paginas_procesadas=0
-    while has_more:
-        #Jalar registros
-        registros,mas_paginas,_token = request_with_backoff(
-            lambda: fetch_page(auth, module_name=module_name, fields=fields,
-                               page=page, since=since)
-        )
-        all_records.extend(registros) #Agregar nuevos registros
+    max_chunk_size = 40
+    chunks = [fields[i:i + max_chunk_size] for i in range(0, len(fields), max_chunk_size)]
+    logger.info(f"{module_name}: {len(fields)} campos divididos en {len(chunks)} lotes (límite Zoho <= 50)")
 
-        #Guardar la pagina y los records de este intento
-        estado = {"page": page, "records": all_records}
-        with open(checkpoint_file, "w") as f:
-            json.dump(estado, f)
-        
-        logger.info(f"{module_name} página {page} | {len(registros)} registros | {len(all_records)} acumulados")
+    records_by_id = {}
+    for idx, chunk in enumerate(chunks, 1):
+        logger.info(f"{module_name}: Extrayendo lote {idx}/{len(chunks)} ({len(chunk)} campos)...")
+        chunk_records = _extract_single_chunk(auth, module_name, chunk, since=since, checkpoint_suffix=f"_chunk_{idx}")
+        for r in chunk_records:
+            rid = str(r.get("id"))
+            if rid not in records_by_id:
+                records_by_id[rid] = r
+            else:
+                records_by_id[rid].update(r)
 
-        paginas_procesadas+=1
-        page+=1
-        has_more= mas_paginas
-    
-    duracion = (datetime.now() - start_time).total_seconds()
-    logger.info(f"{module_name} completado | {len(all_records)} registros | {paginas_procesadas} páginas | {duracion:.1f}s")
-
-    #Eliminar el checkpoint si la extracción es un exito
-    if os.path.exists(checkpoint_file):
-        os.remove(checkpoint_file)
-    return all_records
+    merged_records = list(records_by_id.values())
+    logger.info(f"{module_name}: Fusión de {len(chunks)} lotes completada con {len(merged_records)} registros consolidados")
+    return merged_records
 
 def run_extraction(projects=None, since=None, full_refresh=False):
     """
@@ -260,7 +281,10 @@ def run_extraction(projects=None, since=None, full_refresh=False):
                     #Ignora la marca de agua, si elegi traer todos los datos
                     # Un checkpoint previo puede ser parcial o de otro modo de extracción.
                     # Para borrar se exige comenzar una extracción completa nueva.
-                    if os.path.exists(f"checkpoints/{module_name}.json"):
+                    checkpoint_existe = os.path.exists(f"checkpoints/{module_name}.json") or any(
+                        os.path.exists(f"checkpoints/{module_name}_chunk_{i}.json") for i in range(1, 10)
+                    )
+                    if checkpoint_existe:
                         raise RuntimeError(f"{module_name}: checkpoint previo; no es seguro reconciliar")
                     module_since = None
                 else:
