@@ -37,6 +37,15 @@ select v.* replace (
         when v.edad_m_xima <= 55 then '4. Hasta 55'
         else '5. Sin tope superior'
     end as rango_etario_vacante,
+    -- Rango de tiempo de experiencia requerida
+    case
+        when v.tiempo_de_experiencia_requerido_meses is null then '9. Sin información'
+        when v.tiempo_de_experiencia_requerido_meses = 0 then '1. Sin experiencia (0 meses)'
+        when v.tiempo_de_experiencia_requerido_meses <= 12 then '2. 1 a 12 meses'
+        when v.tiempo_de_experiencia_requerido_meses <= 24 then '3. 13 a 24 meses'
+        when v.tiempo_de_experiencia_requerido_meses <= 60 then '4. 25 a 60 meses'
+        else '5. Más de 60 meses'
+    end as rango_experiencia_vacante,
     -- Corte de la vacante basado en su fecha de inicio
     case
         when coalesce(v.fecha_de_inicio_de_la_vacante, date(v.created_time)) >= '2026-09-01' then 'corte 2'
