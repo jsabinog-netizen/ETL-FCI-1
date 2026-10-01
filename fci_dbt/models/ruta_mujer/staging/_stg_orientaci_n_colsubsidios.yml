@@ -19,3 +19,5 @@ models:
     description: Modified_Time de Zoho convertido de forma segura a TIMESTAMP.
   - name: corte
     description: Cohorte del programa (Corte 1 / Corte 2), normalizada a minúsculas en staging. Segmentación transversal del dashboard.
+  - name: area_experiencia_normalizada
+    description: Sector o área funcional de experiencia laboral previa normalizada en categorías homogéneas.

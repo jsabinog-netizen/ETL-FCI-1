@@ -113,6 +113,7 @@ with orientacion as (
         o.modalidad_orientacion,
         o.ocupacion_actual,
         o.area_experiencia,
+        o.area_experiencia_normalizada,
         o.area_experiencia_2,
         o.tiempo_de_experiencia_laboral,
 

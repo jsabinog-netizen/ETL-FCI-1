@@ -108,3 +108,5 @@ models:
             values: ['corte 1', 'corte 2']
           config:
             severity: warn
+  - name: area_experiencia_normalizada
+    description: Sector o área funcional de experiencia laboral previa de la participante, normalizada en categorías homogéneas.

@@ -25,6 +25,51 @@ select
     lower(trim(`Municipio_de_residencia`)) as municipio_de_residencia,
     lower(trim(`rea_de_Experiencia_Laboral_experiencia_2`)) as area_experiencia_2,
     lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)) as area_experiencia,
+    case
+        when nullif(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`), '') is null or lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)) in ('nan', '') 
+            then 'Sin información'
+        when lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)) in ('n/a', 'no aplica') 
+            then 'No aplica / Sin experiencia'
+        when regexp_contains(lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)), r'¿otro\?|otra$|^otro$') 
+            then 'Otro / Por clasificar'
+        when regexp_contains(lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)), r'comercio|venta|comercial|tienda|cajer|impulsador|recaudo|caja|retail|cliente|papeler[íi]a') 
+            then 'Comercio y Ventas'
+        when regexp_contains(lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)), r'administra|secretari|recepci|digitador|archivo|archivista|facturaci|documentaci|asistente|reclutamiento|informaci|investigaci') 
+            then 'Servicios Administrativos y Oficina'
+        when regexp_contains(lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)), r'alimento|bebida|comida|helader|restaurante|ec[óo]nomo|alimentaci') 
+            then 'Alimentos y Gastronomía'
+        when regexp_contains(lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)), r'manufactur|producci|operari|operativ|metalmec|carpinter|empaque|icopor') 
+            then 'Industria y Manufactura'
+        when regexp_contains(lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)), r'contact center|call center|bpo|teleoperad') 
+            then 'Contact Center y BPO'
+        when regexp_contains(lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)), r'domestico|doméstico|limpieza|aseador|conserje|jardiner|servicios generales') 
+            then 'Servicios Generales y Limpieza'
+        when regexp_contains(lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)), r'transporte|logistic|logístic|almacen|almacén|bodega|conductor|mensajer') 
+            then 'Transporte y Logística'
+        when regexp_contains(lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)), r'financier|finanza|contab|auditor|credit|crédit|tesorer|poliza|cobranza') 
+            then 'Finanzas y Contabilidad'
+        when regexp_contains(lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)), r'salud|farmac|medicamento|hospital|droger|laborat') 
+            then 'Salud y Farmacia'
+        when regexp_contains(lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)), r'textil|confecci|moda|prenda|tapete') 
+            then 'Textil y Confección'
+        when regexp_contains(lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)), r'tecnolog|software|sofware|sistema|telecomunicac|tic|soporte') 
+            then 'Tecnología y Telecomunicaciones'
+        when regexp_contains(lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)), r'seguridad|vigilanc') 
+            then 'Seguridad y Vigilancia'
+        when regexp_contains(lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)), r'arte|diseño|diseñ|comunicaci|publicidad') 
+            then 'Artes, Diseño y Comunicación'
+        when regexp_contains(lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)), r'belleza|estilista|esteticista|cosmetic') 
+            then 'Belleza y Cuidado Personal'
+        when regexp_contains(lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)), r'educaci|social|psicolog|antropolog|infancia|empleabilidad|cuidador|sena') 
+            then 'Educación y Social'
+        when regexp_contains(lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)), r'agropecuari|agricola|agrícola|verde|ambiental|flor') 
+            then 'Agropecuario y Ambiental'
+        when regexp_contains(lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)), r'construcci|mantenimiento|reparaci|mecanic|mecánic|repuesto|ingenier') 
+            then 'Construcción y Mantenimiento'
+        when lower(trim(`Sector_o_Area_del_cargo_que_desempe_o_1`)) = 'servicios temporales' 
+            then 'Servicios Temporales'
+        else 'Otro / Por clasificar'
+    end as area_experiencia_normalizada,
     trim(`Tiempo_de_experiencia_Laboral`) as tiempo_de_experiencia_laboral,
     lower(trim(`Localidad`)) as localidad,
     lower(trim(`Actitud_y_disposici_n`)) as actitud_y_disposici_n,
