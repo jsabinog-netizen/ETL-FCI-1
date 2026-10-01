@@ -1,0 +1,20 @@
+version: 2
+models:
+- name: fct_registro_sae_rm
+  description: >
+    Consolidado de información para el Formulario SAE (Servicio Público de Empleo)
+    con 95 campos cubriendo Información General, Psicosocial, Educación, Experiencia Laboral
+    y Expectativas Ocupacionales. Fuente exclusiva de participantes registradas en Ruta Mujer
+    (Inscripción Colsubsidios, Orientación Colsubsidios y Psicosocial), sin depender de Pre_registro_RutaM.
+  columns:
+  - name: numero_de_documento
+    description: Documento de identidad de la participante.
+    tests:
+    - not_null:
+        config:
+          severity: warn
+    - unique:
+        config:
+          severity: warn
+  - name: corte
+    description: Cohorte del programa (corte 1 / corte 2).

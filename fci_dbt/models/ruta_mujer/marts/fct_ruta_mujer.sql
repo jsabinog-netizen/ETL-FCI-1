@@ -139,6 +139,21 @@ with orientacion as (
         r.sede,
         r.validacion_habilitante,
 
+        -- ── Campos Habilitantes SAE (Power BI) ──
+        r.orientacion_sexual,
+        o.genero_identifica,
+        r.libreta_militar,
+        r.categoria_licencia_carro as licencia,
+        r.propiedad_medio_transporte as vehiculo,
+        r.etnia,
+        r.es_jefe_hogar,
+        r.personas_a_cargo,
+        r.ha_recibido_subsidio_gobierno,
+        r.tipo_de_discapacidad,
+        r.cuenta_con_documento_discapacidad,
+        r.autoriza_uso_datos_personales,
+        r.autoriza_cambio_prestador,
+
         coalesce(r.inscripci_n_completada in ('si', 'sí', 'true'), false) as inscrita,
         coalesce(o.orientaci_n_sociocupacion_completada in ('si', 'sí', 'true'), false) as orientada,
         coalesce(p.acompa_amiento_psicosocial_completado in ('si', 'sí', 'true'), false) as psicosocial,
