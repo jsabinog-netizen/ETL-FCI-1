@@ -36,6 +36,8 @@ fct_formacion as (
         f.nombre_curso,
         f.gestor_formacion,
         f.formacion_completada,
+        f.total_habilidades_socioemocionales,
+        f.total_habilidades_tecnicas,
 
         -- calidad diplomas
         f.validacion_diploma_tecnico,
@@ -44,8 +46,7 @@ fct_formacion as (
         -- flags archivos
         f.tiene_diploma_tecnico,
         f.tiene_diploma_blando,
-        f.tiene_certificado_bancario,
-
+        f.tiene_certificado_bancario, 
         -- flag derivado
         case
             when f.validacion_diploma_tecnico    = 'aprobado'

@@ -12,12 +12,20 @@ select
     lower(trim(Gestor_formaci_n))                       as gestor_formacion,
 
     -- estado
-    CASE LOWER(TRIM(Formaci_n_Completadas))
-        WHEN 'sí' THEN 'si'
-        WHEN 'si' THEN 'si'
-        WHEN 'no' THEN 'no'
-        ELSE NULL
-    END                                                 as formacion_completada,
+    safe_cast(trim(Nombre_Diploma_Habilidades_para_el_trabajo) as int64) as total_habilidades_socioemocionales,
+    safe_cast(trim(Nombre_del_curso_T_cnico) as int64) as total_habilidades_tecnicas,
+    case 
+        when safe_cast(trim(Nombre_Diploma_Habilidades_para_el_trabajo) as int64) >= 70 
+         and safe_cast(trim(Nombre_del_curso_T_cnico) as int64) >= 70 
+            then 'si'
+        when safe_cast(trim(Nombre_Diploma_Habilidades_para_el_trabajo) as int64) is null 
+         and safe_cast(trim(Nombre_del_curso_T_cnico) as int64) is null 
+            then 'Sin iniciar formación'
+        when safe_cast(trim(Nombre_Diploma_Habilidades_para_el_trabajo) as int64) < 70 
+          or safe_cast(trim(Nombre_del_curso_T_cnico) as int64) < 70 
+            then 'no'
+        else 'En proceso de formación'
+    end as formacion_completada,
 
     -- calidad diplomas
     CASE LOWER(TRIM(Validaci_n_Diploma_T_cnicas))

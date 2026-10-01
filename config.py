@@ -234,7 +234,7 @@ MODULES_GIZ = {
         "Url_certificado_bancario", "Certificado_Bancario", "Observaci_n_diploma_Habilidades_para_el_trabajo",
         "Observaci_n_Diploma_T_cnicas", "Nombre_del_curso_T_cnico", "Diploma_T_cnicas", "Diploma_Blandas", 
         "Url_Diploma_T_cnicas", "Url_diploma_Blandas", "Nombre_del_Beneficiario_de_la_cuenta", "Primer_Nombre",
-        "N_Cuenta_bancaria", "Segundo_Nombre", "Primer_Apellido", "Segundo_Apellido", 
+        "N_Cuenta_bancaria", "Segundo_Nombre", "Primer_Apellido", "Segundo_Apellido",
         "Nombre_Diploma_Habilidades_para_el_trabajo", "Validaci_n_diploma_Habilidades_para_el_trabajo", 
         "Validaci_n_Diploma_T_cnicas", "Entidad_Bancaria", "Formaci_n_Completadas", "Tipo_de_cuenta", "Gestor_formaci_n"
         ],
