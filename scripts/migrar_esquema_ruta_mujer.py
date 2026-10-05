@@ -10,11 +10,47 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from google.api_core.exceptions import NotFound
 from google.cloud import bigquery
+import requests
+from auth import ZohoAuth
 from config import MODULES_RUTA_MUJER, PROJECT_ID
 from loader import build_raw_schema, get_client
 
 
+def validate_fields_against_zoho(modules_dict, env_prefix="ZOHO"):
+    """
+    Valida que todos los campos definidos en config.py existan realmente en Zoho CRM.
+    Si algún campo no existe, detiene la ejecución inmediatamente para evitar contaminar BigQuery.
+    """
+    auth = ZohoAuth(env_prefix=env_prefix)
+    headers = auth.get_header()
+    base_url = "https://www.zohoapis.com/crm/v8/settings/fields"
+    invalid = {}
+
+    for module, fields in modules_dict.items():
+        resp = requests.get(f"{base_url}?module={module}", headers=headers)
+        if resp.status_code != 200:
+            raise RuntimeError(f"Error consultando metadata de Zoho para {module}: {resp.status_code} - {resp.text}")
+        zoho_api_names = {f["api_name"] for f in resp.json().get("fields", [])}
+        resp_unused = requests.get(f"{base_url}?module={module}&type=unused", headers=headers)
+        if resp_unused.status_code == 200:
+            zoho_api_names |= {f["api_name"] for f in resp_unused.json().get("fields", [])}
+
+        missing = [f for f in fields if f not in zoho_api_names]
+        if missing:
+            invalid[module] = missing
+
+    if invalid:
+        msg_lines = ["❌ VALIDACIÓN FALLIDA: Los siguientes api_names en config.py NO existen en Zoho CRM:"]
+        for mod, mis in invalid.items():
+            msg_lines.append(f"  • Módulo {mod}: {mis}")
+        raise ValueError("\n".join(msg_lines))
+    print("Validacion Zoho CRM exitosa: Todos los api_names existen en Zoho.")
+
+
 def main():
+    # Validar primero contra Zoho CRM antes de tocar BigQuery
+    validate_fields_against_zoho(MODULES_RUTA_MUJER, env_prefix="ZOHO")
+
     client = get_client()
     for module, fields in MODULES_RUTA_MUJER.items():
         table_id = f"{PROJECT_ID}.proyecto_ruta_mujer.{module.lower()}"

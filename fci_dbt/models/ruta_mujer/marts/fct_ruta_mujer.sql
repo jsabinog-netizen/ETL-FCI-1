@@ -68,7 +68,7 @@ with orientacion as (
         r.primer_nombre, r.segundo_nombre, r.primer_apellido, r.segundo_apellido,
         trim(concat(coalesce(r.primer_nombre, ''), ' ', coalesce(r.segundo_nombre, ''), ' ',
                     coalesce(r.primer_apellido, ''), ' ', coalesce(r.segundo_apellido, ''))) as nombre_completo,
-        r.tipo_de_documento as tipo_documento, r.edad, r.sexo_al_nacer,
+        r.tipo_de_documento as tipo_documento, r.edad, r.rango_joven, r.sexo_al_nacer,
         r.nacionalidad, r.tipificaci_n_mujer as tipificacion_mujer,
         r.municipio_de_residencia1 as municipio, r.localidad,
         r.email, r.n_mero_de_celular as celular,

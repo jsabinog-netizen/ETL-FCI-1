@@ -18,3 +18,31 @@ models:
           severity: warn
   - name: corte
     description: Cohorte del programa (corte 1 / corte 2).
+  - name: tiene_clasificacion_de_sisben
+    description: Indicador de si la participante cuenta con clasificación Sisbén.
+  - name: tipo_de_poblacion_subsidio
+    description: Tipo de población asociada a subsidio (proveniente del campo Zoho Tipo de población (Subsidio)).
+  - name: brecha_o_barrera_identificada
+    description: Brecha o barrera identificada en el proceso de orientación/psicosocial.
+  - name: tiene_discapacidad
+    description: Indicador calculado (si/no) de si la participante tiene alguna discapacidad (no si es null o none).
+  - name: url_de_discapacidad
+    description: Enlace al documento o certificado de discapacidad cargado.
+  - name: url_tratamiento_de_datos
+    description: Enlace al documento de autorización de tratamiento de datos personales.
+  - name: nucleo_de_conocimiento
+    description: Núcleo de conocimiento derivado de Área/Sector de formación o carrera/curso actual.
+  - name: fecha_fin_formacion
+    description: Fecha de finalización de formación derivada de Fecha del grado.
+  - name: tipo_de_capacitacion_o_certificacion
+    description: Tipo de capacitación o certificación obtenida.
+  - name: estado_formacion_complementaria
+    description: Estado de la formación complementaria.
+  - name: programas_que_maneja
+    description: Concatenación de habilidades de software (Excel, Word, Paquete Office, otros programas tecnológicos).
+  - name: profundice_barrera_o_brecha
+    description: Detalle o profundización de la barrera o brecha identificada.
+  - name: contruccion_de_concepto_de_entrevista
+    description: Construcción de concepto de entrevista emitido en orientación o psicosocial.
+  - name: rango_joven
+    description: Clasificación de juventud ('Joven (18-24)' / 'No joven') según edad de la participante.

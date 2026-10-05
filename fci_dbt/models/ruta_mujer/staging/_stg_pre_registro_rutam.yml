@@ -19,3 +19,11 @@ models:
     description: Modified_Time de Zoho convertido de forma segura a TIMESTAMP.
   - name: corte
     description: Cohorte del programa (Corte 1 / Corte 2), normalizada a minúsculas en staging. Segmentación transversal del dashboard.
+  - name: sexo
+    description: Sexo registrado en el formulario de preregistro.
+  - name: actualmente_te_encuentras
+    description: Situación u ocupación actual declarada en el preregistro.
+  - name: rango_joven
+    description: Clasificación de juventud según edad entre 18 y 24 años ('Joven (18-24)' / 'No joven').
+  - name: municipio
+    description: Municipio agrupado en tres categorías ('Bogotá', 'Soacha', 'Otros municipios').

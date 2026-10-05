@@ -10,8 +10,14 @@ select
     trim(`Segundo_apellido`) as segundo_apellido,
     date(safe_cast(`Fecha_de_nacimiento` as timestamp)) as fecha_de_nacimiento,
     safe_cast(`Edad` as int64) as edad,
+    case
+        when safe_cast(`Edad` as int64) between 18 and 24 then 'Joven (18-24)'
+        when safe_cast(`Edad` as int64) is not null then 'No joven'
+        else null
+    end as rango_joven,
     lower(trim(`Tipo_de_documento`)) as tipo_de_documento,
     trim(`N_mero_de_tel_fono_celular`) as n_mero_de_tel_fono_celular,
+    lower(trim(`Sexo`)) as sexo,
     lower(trim(`Nacionalidad`)) as nacionalidad,
     trim(`Otra_nacionalidad`) as otra_nacionalidad,
     lower(trim(`Modalidad_de_atenci_n`)) as modalidad_de_atenci_n,
@@ -19,6 +25,12 @@ select
     trim(`Ruta_Mujer`) as ruta_mujer,
     lower(trim(`Preinscripci_n_completad`)) as preinscripci_n_completad,
     lower(trim(`Municipio_de_residencia1`)) as municipio_de_residencia1,
+    case
+        when regexp_contains(lower(trim(`Municipio_de_residencia1`)), r'soacha') then 'Soacha'
+        when regexp_contains(lower(trim(`Municipio_de_residencia1`)), r'bogot[aá]') then 'Bogotá'
+        when `Municipio_de_residencia1` is not null and lower(trim(`Municipio_de_residencia1`)) not in ('', 'nan', 'none') then 'Otros municipios'
+        else null
+    end as municipio,
     lower(trim(`Municipio_de_nacimiento`)) as municipio_de_nacimiento,
     trim(`Otro_municipio_de_nacimiento`) as otro_municipio_de_nacimiento,
     lower(trim(`Departamento_de_nacimiento`)) as departamento_de_nacimiento,

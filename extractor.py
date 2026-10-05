@@ -200,6 +200,34 @@ def _extract_single_chunk(auth, module_name, fields, since=None, checkpoint_suff
     return all_records
 
 
+def validate_module_fields(auth, module_name, fields):
+    """
+    Valida que todos los api_names configurados existan en el módulo de Zoho CRM
+    (incluyendo campos activos y campos en desuso/unused del módulo).
+    Lanza ValueError inmediato si hay campos que realmente no existen en Zoho CRM.
+    """
+    base_url = "https://www.zohoapis.com/crm/v8/settings/fields"
+    headers = auth.get_header()
+    resp = requests.get(f"{base_url}?module={module_name}", headers=headers)
+    if resp.status_code == 200:
+        zoho_api_names = {f["api_name"] for f in resp.json().get("fields", [])}
+        # Zoho separa los campos que no están en el layout activo bajo type=unused
+        resp_unused = requests.get(f"{base_url}?module={module_name}&type=unused", headers=headers)
+        if resp_unused.status_code == 200:
+            zoho_api_names |= {f["api_name"] for f in resp_unused.json().get("fields", [])}
+
+        invalid = [f for f in fields if f not in zoho_api_names]
+        if invalid:
+            raise ValueError(
+                f"❌ Error de configuración en {module_name}: "
+                f"los siguientes api_names NO existen en Zoho CRM: {invalid}"
+            )
+    else:
+        logger.warning(
+            f"No se pudo validar metadata de campos en Zoho para {module_name} (HTTP {resp.status_code})"
+        )
+
+
 def extract_module(auth, module_name, fields, since=None):
     """
     Extrae TODOS los registros de un módulo de Zoho con paginación.
@@ -215,6 +243,7 @@ def extract_module(auth, module_name, fields, since=None):
     Returns:
         list: todos los registros del módulo consolidados
     """
+    validate_module_fields(auth, module_name, fields)
     os.makedirs("checkpoints", exist_ok=True)
     if len(fields) <= 45:
         return _extract_single_chunk(auth, module_name, fields, since=since, checkpoint_suffix="")

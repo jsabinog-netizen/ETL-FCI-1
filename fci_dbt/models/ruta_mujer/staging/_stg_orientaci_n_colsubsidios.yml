@@ -21,3 +21,21 @@ models:
     description: Cohorte del programa (Corte 1 / Corte 2), normalizada a minúsculas en staging. Segmentación transversal del dashboard.
   - name: area_experiencia_normalizada
     description: Sector o área funcional de experiencia laboral previa normalizada en categorías homogéneas.
+  - name: brecha_o_barrera_identificada
+    description: Brecha o barrera identificada en orientación.
+  - name: tipo_de_capacitacion_o_certificacion
+    description: Tipo de capacitación o certificación indicada en orientación.
+  - name: estado_formacion_complementaria
+    description: Estado de la formación complementaria indicada en orientación.
+  - name: excel
+    description: Nivel de manejo de Excel.
+  - name: word
+    description: Nivel de manejo de Word.
+  - name: maneja_programa_tecnologico_diferente
+    description: Indicador si maneja un programa tecnológico diferente.
+  - name: otro_programa_tecnologico
+    description: Nombre del otro programa tecnológico que maneja.
+  - name: profundice_la_barrera_o_brecha_identificada
+    description: Detalle o profundización de la barrera o brecha identificada.
+  - name: construccion_concepto_entrevista
+    description: Texto de construcción de concepto de entrevista.

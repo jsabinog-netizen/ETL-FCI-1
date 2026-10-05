@@ -263,7 +263,7 @@ MODULES_RUTA_MUJER = {
         "Corte",
         "Name", "Created_Time", "Modified_Time", "Primer_nombre", "Segundo_nombre", "Primer_apellido",
         "Segundo_apellido", "Fecha_de_nacimiento", "Edad", "Tipo_de_documento", "N_mero_de_tel_fono_celular",
-        "Nacionalidad", "Otra_nacionalidad", "Modalidad_de_atenci_n", "Tipo_de_poblaci_n", "Ruta_Mujer",
+        "Nacionalidad", "Otra_nacionalidad", "Sexo", "Modalidad_de_atenci_n", "Tipo_de_poblaci_n", "Ruta_Mujer",
         "Preinscripci_n_completad", "Municipio_de_residencia1", "Municipio_de_nacimiento",
         "Otro_municipio_de_nacimiento", "Departamento_de_nacimiento", "Localidad", "Direcci_n_de_residencia",
         "Actualmente_te_encuentras", "Nivel_educativo_alcanzado", "Ha_tenido_empleo_con_caja_de_compensaci_n",
@@ -280,22 +280,29 @@ MODULES_RUTA_MUJER = {
         "Tiene_hijos", "Pre_registro", "Desea_generar_acompa_amiento_psicosocial", "D_nde_te_enteraste_de_esta_vacante",
         "Naturaleza_del_estrato_socioecon_mico", "Ultimo_nivel_educativo_alcanzado", "Pregunta_de_seguridad",
         "Respuesta_pregunta_seguridad", "Seleccione_nivel_de_Sisb_n", "Tiene_alguna_de_estas_responsabilidades_de_cuidado",
-        "Sede_de_atenci_n", "Validaci_n_habilitante",
+        "Sede_de_atenci_n", "Validaci_n_habilitante", "Modelo_de_vehiculo",
         # SAE - Información General / Habilitantes
         "Orientacion_Sexual", "Etnia", "Si_es_hombre_Tiene_libreta_militar",
-        "Categor_a_Licencia_para_carro", "Propiedad_de_medio_de_transporte",
+        "Tiene_licencia_de_conducci_n_para_carro", "Categor_a_Licencia_para_carro",
+        "Tiene_licencia_de_conducci_n_para_moto", "Categor_a_Licencia_para_moto",
+        "Propiedad_de_medio_de_transporte", 
         "Autoriza_el_uso_de_sus_datos_personales", "Autoriza_el_cambio_de_prestador_a_Colsubsidio",
+        "Tipo_de_poblaci_n1", "Url_tratamiento_de_datos","Barrio_de_residencia",
         # SAE - Psicosocial / Discapacidad / Subsidios
         "Tipo_de_discapacidad", "Cuenta_con_documento_acreditativo_de_discapacidad",
+        "Certificado_de_discapacidad", "Tiene_clasificaci_n_Sisb_n","Url_discapacidad",
         "Es_el_jefe_o_jefa_de_hogar", "Cuantas_personas_dependen_econ_micamente_de_uste",
-        "Ha_recibido_alg_n_subsidio_del_gobierno",
+        "Ha_recibido_alg_n_subsidio_del_gobierno", "Certificado_prestador",
+
         # SAE - Educación
         "Estado_de_estudio", "Tiene_t_tulo_o_certificaci_n_de_estudios",
         "Nombre_de_la_instituci_n", "En_qu_Pa_s_realiz_sus_ultimos_estudios",
         "Nombre_de_carrera_o_curso_que_actualmente_cursa",
+        "rea_Sector_de_formaci_n", "Otra_rea_de_formaci_n_si_no_se_encuentra_arriba", "Fecha_del_grado",
         "Tienes_formaci_n_t_cnica_o_certificaciones_espec",
         "Cursos_habilidades_terminados_en_ltimos_24_meses",
         "Usa_computador_u_otros_dispositivos", "Utiliza_internet",
+        "Sus_t_tulos_o_diplomas_se_encuentran_convalidados",
         # SAE - Experiencia Laboral
         "Nombre_de_la_empresa_1", "Sector_u_ocupaci_n_principal_de_tu_ltimo_empleo",
         "Tipo_de_vinculaci_n", "Fecha_de_inicio_experiencia_laboral",
@@ -310,12 +317,13 @@ MODULES_RUTA_MUJER = {
         "Gestor_operativo", "Perfil_Ocupacional", "Grupos_poblacionales", "Nivel_de_necesidad_de_acompa_amiento_psicosocial",
         "Sientes_que_actualmente_necesitas_apoyo_adicional", "N_mero_de_celular_Principal",
         "Municipio_de_residencia", "Localidad", "Actitud_y_disposici_n", "Inter_s_Laboral",
-        "Actualmente_cu_l_es_su_ocupaci_n",
+        "Actualmente_cu_l_es_su_ocupaci_n", "Pa_s",
         "rea_de_Experiencia_Laboral_experiencia_2","Tiempo_de_experiencia_Laboral", "Sector_o_Area_del_cargo_que_desempe_o_1",
         # SAE - General / Identidad / Tipo de población
         "G_nero", "Tipo_de_poblaci_n", "Hace_parte_de_poblaci_n_focalizada",
-        "Pregunta_de_seguridad",
+        "Pregunta_de_seguridad","Cantidad_de_horas",
         # SAE - Discapacidad
+        "Tipo_de_discapacidad",
         "Cuenta_con_documento_que_acredite_su_discapacidad",
         "Grado_de_discapacidad", "Origen_de_la_discapacidad",
         "Vigencia_de_la_condici_n_de_discapacidad",
@@ -325,10 +333,12 @@ MODULES_RUTA_MUJER = {
         # SAE - Formación complementaria y competencias
         "Nombre_de_la_formaci_n_complementaria", "Nombre_de_la_instituci_n_complementaria",
         "Fecha_final_formaci_n_complementaria", "Certificados_por_competencias_SENA",
-        "Describa_el_programa_certificado_por_competencias",
-        "Adicione_el_archivo_del_certificado_por_competenci",
+        "Describa_el_programa_certificado_por_competencias", "url_certificado_sena",
+        "Adicione_el_archivo_del_certificado_por_competenci", "Power_Point",
+        "Tipo_de_capacitaci_n_o_certificaci_n", "Estado", "Otra_rea_de_formaci_n",
         # SAE - Idiomas y competencias
         "Conocimientos_de_idiomas_diferentes_al_nativo", "Maneja_paquetes_de_Office",
+        "Excel", "Word", "Maneja_alg_n_programa_tecnol_gico_diferente", "Otro_programa_tecn_logico",
         # SAE - Experiencia y antecedentes
         "Cargo_que_desempe_o_en_el_cargo_Cuoc", "Trabaja_actualmente_en_la_empresa",
         "Cu_l_fue_el_motivo_de_retiro_de_su_empleo_anterior", "Ultimo_Ingreso_Laboral",
@@ -340,6 +350,9 @@ MODULES_RUTA_MUJER = {
         "Posibilidad_de_Viajar", "Tiene_Inter_s_en_ofertas_de_Teletrabajo",
         "Aspiraci_n_salarial", "Interes_Ocupacional_Cuoc",
         "Esta_interesado_en_realizar_practica_empresarial", "Clasificaci_n",
+        # SAE - Resultado socio-ocupacional / Barreras y concepto
+        "Brecha_o_barrera_identificada", "Profundice_la_barrera_o_brecha_identificada",
+        "Construcci_n_de_concepto_de_entrevista",
     ],
     "Psicosocial_RutaM": [
         "Corte",

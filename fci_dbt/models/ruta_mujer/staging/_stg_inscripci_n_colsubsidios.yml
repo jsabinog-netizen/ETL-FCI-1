@@ -22,3 +22,15 @@ models:
     description: Modified_Time de Zoho convertido de forma segura a TIMESTAMP.
   - name: corte
     description: Cohorte del programa (Corte 1 / Corte 2), normalizada a minúsculas en staging. Segmentación transversal del dashboard.
+  - name: tipo_de_poblacion_subsidio
+    description: Tipo de población (Subsidio) de Zoho.
+  - name: tiene_clasificacion_sisben
+    description: Clasificación Sisbén proveniente del campo ¿Tiene clasificación Sisbén?.
+  - name: rea_sector_de_formaci_n
+    description: Área o sector de formación de la participante.
+  - name: fecha_del_grado
+    description: Fecha del grado académico de la participante.
+  - name: url_tratamiento_de_datos
+    description: Enlace al documento de tratamiento de datos personales.
+  - name: certificado_discapacidad_url
+    description: Enlace o certificado acreditativo de discapacidad.

@@ -48,3 +48,26 @@ models:
                 values: ['corte 1', 'corte 2']
               config:
                 severity: warn
+      - name: rango_joven
+        description: Clasificación de juventud según edad entre 18 y 24 años ('Joven (18-24)' / 'No joven').
+      - name: municipio
+        description: Municipio clasificado en 'Bogotá', 'Soacha' y 'Otros municipios'.
+      - name: tiene_inscripcion
+        description: TRUE si la mujer cuenta con registro en Inscripción Colsubsidios.
+      - name: tiene_orientacion
+        description: TRUE si la mujer cuenta con atención en Orientación Colsubsidios.
+      - name: tiene_psicosocial
+        description: TRUE si la mujer cuenta con atención en Psicosocial Ruta Mujer.
+      - name: tiene_formacion
+        description: TRUE si la mujer tiene registros en Formación Colsubsidios.
+      - name: tiene_intermediacion
+        description: TRUE si la mujer ha tenido intermediaciones laborales.
+      - name: tiene_colocacion
+        description: TRUE si la mujer cuenta con fecha de vinculación laboral (colocada).
+      - name: tiene_postvinculacion
+        description: TRUE si la mujer cuenta con seguimiento post-vinculación.
+      - name: etapa_actual
+        description: Etapa máxima alcanzada en la ruta (0. Solo preregistro, 1. Inscripción, 2. Orientación, etc.).
+      - name: siguiente_fase_pendiente
+        description: Sugerencia de priorización según la siguiente fase pendiente en la ruta.
+
