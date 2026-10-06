@@ -48,8 +48,12 @@ def validate_fields_against_zoho(modules_dict, env_prefix="ZOHO"):
 
 
 def main():
-    # Validar primero contra Zoho CRM antes de tocar BigQuery
-    validate_fields_against_zoho(MODULES_RUTA_MUJER, env_prefix="ZOHO")
+    # Validar primero contra Zoho CRM antes de tocar BigQuery (si las credenciales están configuradas)
+    import os
+    if os.getenv("ZOHO_CLIENT_ID") and os.getenv("ZOHO_REFRESH_TOKEN"):
+        validate_fields_against_zoho(MODULES_RUTA_MUJER, env_prefix="ZOHO")
+    else:
+        print("⚠️ Credenciales ZOHO no detectadas en el entorno; omitiendo validación contra Zoho CRM.")
 
     client = get_client()
     for module, fields in MODULES_RUTA_MUJER.items():

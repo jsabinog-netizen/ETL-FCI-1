@@ -28,7 +28,7 @@ MODULES_COLSUBSIDIO = {
         "Owner", "Created_By", "Modified_By",
     ],
     "Agenda_inscripci_n": [
-        "field", "Owner", "Cluster", "Connected_To__s", "Email", "Correo_electr_nico_2", 
+        "field", "Owner", "Cluster", "Email", "Correo_electr_nico_2", 
         "Secondary_Email", "Created_By", "Empresa", "Estado_de_la_ruta", "Tag", 
         "Fecha_en_que_se_realiza_la_solicitud", "Modified_By", "Name", "Email_Opt_Out", 
         "Nombre_Completo", "Nombre_Completo_2", "Nombre_del_asesoro_a_que_solicita_el_servicio", 
@@ -36,53 +36,53 @@ MODULES_COLSUBSIDIO = {
         "Rol", "Rol_2", "Seleccione_el_m_dulo", "Seleccione_fecha","Seleccione_fecha_2","Sesi_n_1","Sesi_n_2"
     ],
     "Diagn_stico":[
-        "Profesional_asignado","Agenda_origen","Connected_To__s","Email","Secondary_Email",
+        "Profesional_asignado","Agenda_origen","Email","Secondary_Email",
         "Created_By","Owner","Empresa","Estado_del_diagnostico","Tag","Fecha_y_hora_fin",
         "Fecha_y_hora_inicio","Informe_PDF","Modified_By","Email_Opt_Out","Name",
         "Conclusiones","Profesional_asignado1","Record_Image","Recomendaciones","Tipo_de_sesi_n"
     ],
     "Asesor_a":[
-        "Profesional_asignado", "Agenda","Owner", "Connected_To__s", "Email",
+        "Profesional_asignado", "Agenda","Owner", "Email",
         "Secondary_Email", "Created_By","Empresa", "Estado_de_la_asesor_a",
         "Tag", "Fecha_y_hora_fin", "Fecha_y_hora_inicio", "Informe_PDF",
         "Modified_By", "Email_Opt_Out", "Name", "Conclusiones", "Profesional_asignado1",
         "Record_Image", "Recomendaciones"
     ],
     "Asesor_a_vacantes":[
-        "Profesional_asignado","Agenda","Owner", "Connected_To__s", "Email",
+        "Profesional_asignado","Agenda","Owner", "Email",
         "Secondary_Email", "Created_By","Empresa", "Estado_de_la_asesor_a", "Tag",
         "Fecha_y_hora_fin", "Fecha_y_hora_inicio", "Informe_PDF", "Modified_By",
         "Email_Opt_Out", "Name", "Observaciones", "Profesional_asignado1", "Record_Image",
         "Cantidad_de_vacantes_creadas"
     ],
     "Sensibilizaci_n":[
-        "Profesional_asignado","Agenda", "Connected_To__s", "Email",
+        "Profesional_asignado","Agenda", "Email",
         "Secondary_Email", "Created_By","Empresa", "Estado_de_la_sensibilizaci_n", "Tag", 
         "Fecha_y_hora_fin", "Fecha_y_hora_inicio", "Informe_PDF", "Modified_By", 
         "Email_Opt_Out", "Name", "Conclusiones", "Profesional_asignado1", "Record_Image",
         "Recomendaciones", "Owner","Tipo_de_sesi_n"
     ],
     "Transferencia":[
-        "Profesional_asignado","Agenda", "Connected_To__s", "Email", "Secondary_Email",
+        "Profesional_asignado","Agenda", "Email", "Secondary_Email",
         "Created_By","Empresa", "Estado_de_la_transferencia", "Tag", "Fecha_y_hora_fin", 
         "Fecha_y_hora_inicio", "Informe_PDF", "Modified_By", "Email_Opt_Out", "Name", 
         "Conclusiones", "Profesional_asignado1", "Record_Image", "Recomendaciones", "Owner"
     ],
     "Profesional":[
-        "Jornada_fin", "Jornada_de_inicio", "Cargo_Rol", "Connected_To__s", "Email", 
+        "Jornada_fin", "Jornada_de_inicio", "Cargo_Rol", "Email", 
         "Secondary_Email", "Created_By", "D_as_disponibles", "Estado", "Tag", 
         "Jornada_de_inicio1", "Jornada_fin1", "M_ximo_citas_por_d_a", "Modalidad", 
         "Modified_By", "Email_Opt_Out", "Name", "Record_Image", "Owner"
     ],
     "Participantes_Bootcamps":[
-        "Agendamiento_grupal_origen","Connected_To__s", "Email", "Secondary_Email", "Created_By","Empresa", 
+        "Agendamiento_grupal_origen", "Email", "Secondary_Email", "Created_By","Empresa", 
         "Estado_del_bootcamp", "Tag", "Modified_By", "Name", "Email_Opt_Out","Nombre_Completo", "N_mero_de_documento",
         "Record_Image", "Owner", "Rol",
     ],
     "Modulo_1": [
         "Asistencia_participante_2", "Asistencia_participante_1",
         "Agendamiento_grupal_origen", "Asistencia_participante_11",
-        "Asistencia_participante_21", "Cluster", "Connected_To__s", "Email",
+        "Asistencia_participante_21", "Cluster", "Email",
         "Correo_electr_nico_1", "Correo_electr_nico_2", "Secondary_Email",
         "Created_By", "Empresa", "Estado_del_m_dulo", "Tag", "Evidencia",
         "Fecha_m_dulo", "Modified_By", "Email_Opt_Out", "Nombre_Completo", 
@@ -94,7 +94,7 @@ MODULES_COLSUBSIDIO = {
     "Modulo_2": [
         "Asistencia_participante_2", "Asistencia_participante_1",
         "Agendamiento_grupal_origen", "Asistencia_participante_11",
-        "Asistencia_participante_21", "Cluster", "Connected_To__s", "Email",
+        "Asistencia_participante_21", "Cluster", "Email",
         "Correo_electr_nico_1", "Correo_electr_nico_2", "Secondary_Email",
         "Created_By", "Empresa", "Estado_del_m_dulo", "Tag", "Evidencia",
         "Fecha_m_dulo", "Modified_By", "Email_Opt_Out", "Nombre_Completo",
@@ -106,7 +106,7 @@ MODULES_COLSUBSIDIO = {
     "Intermediaci_n_RE": [
         "Asistencia", "Asistencia_2", "Asistencia_3", "Asistencia_4",
         "Asistencia_5", "Asistencia_6", "Asistencia_7", "Asistencia_8",
-        "Cargo", "Connected_To__s", "Email", "Secondary_Email", "Created_By",
+        "Cargo", "Email", "Secondary_Email", "Created_By",
         "Tag", "Fecha_sesi_n", "Fecha_sesi_n_2", "Fecha_sesi_n_3",
         "Fecha_sesi_n_4", "Fecha_sesi_n_5", "Fecha_sesi_n_6", "Fecha_sesi_n_7",
         "Fecha_sesi_n_8", "Modified_By", "Email_Opt_Out", "Nombre_Completo",
@@ -116,24 +116,24 @@ MODULES_COLSUBSIDIO = {
     "Asistencia_Formaci_n_LS": [
         "Asistencia", "Asistencia_2", "Asistencia_3", "Asistencia_4",
         "Asistencia_5", "Asistencia_6", "Asistencia_7", "Asistencia_8",
-        "Cargo", "Connected_To__s", "Email", "Secondary_Email", "Created_By",
-        "Tag", "Fecha_sesi_n", "Fecha_sesi_n_2", "Fecha_sesi_n_3",
-        "Fecha_sesi_n_4", "Fecha_sesi_n_5", "Fecha_sesi_n_6", "Fecha_sesi_n_7",
-        "Fecha_sesi_n_8", "Modified_By", "Email_Opt_Out", "Nombre_Completo",
+        "Cargo", "Email", "Secondary_Email", "Created_By",
+        "Tag", "Fecha_de_sesi_n", "Fecha_de_sesi_n_2", "Fecha_de_sesi_n_3",
+        "Fecha_de_sesi_n_4", "Fecha_de_sesi_n_5", "Fecha_de_sesi_n_6", "Fecha_de_sesi_n_7",
+        "Fecha_de_sesi_n_8", "Modified_By", "Email_Opt_Out", "Nombre_Completo",
         "Name", "Observaciones", "Record_Image", "Owner", "Sede","Evaluaci_n_1",
         "Evaluaci_n_2","Estado_del_curso"
     ],
     "Asistencia_Formaci_n_Com":[
         "Asistencia", "Asistencia_2", "Asistencia_3", "Asistencia_4",
-        "Cargo", "Connected_To__s", "Email", "Secondary_Email", "Created_By",
+        "Cargo", "Email", "Secondary_Email", "Created_By",
         "Tag", "Fecha_sesi_n", "Fecha_sesi_n_2", "Fecha_sesi_n_3",
         "Fecha_sesi_n_4", "Modified_By", "Email_Opt_Out", "Nombre_Completo",
-        "Name", "Observaciones", "Record_Image", "Owner", "Sede","Estado_del_curso", 
+        "Name", "Observaciones", "Record_Image", "Owner", "Estado_del_curso", 
         "Evaluaci_n_1"
     ],
     "Productos_Componente_IV":[
         "de_avance", "Cantidad_en_proceso", "Cantidad_finalizada", "Cantidad_sin_iniciar",
-        "Cantidad_total", "Connected_To__s", "Email", "Secondary_Email", "Created_By",
+        "Cantidad_total", "Email", "Secondary_Email", "Created_By",
         "Estado", "Tag", "Fecha_compromiso", "Modified_By", "Email_Opt_Out", "Name",
         "Observaciones", "Record_Image", "Owner", "Tipo_de_producto"
     ]
@@ -143,7 +143,7 @@ MODULES_GIZ = {
     "Registro_Giz":[
         "Cu_ntas_personas_est_n_a_tu_cargo" ,"Es_jefe_a_del_hogar", "Inscripci_n_Completada",
         "Tiene_convalidados_sus_t_tulos_acad_micos", "Tiene_hijos", "Ciudad_de_nacimiento", 
-        "Connected_To__s", "Email", "Secondary_Email", "Created_By", "Departamento_de_residencia",
+        "Email", "Secondary_Email", "Created_By", "Departamento_de_residencia",
         "Direcci_n_de_residencia", "Documento_de_identidad", "Edad", "Tag", "Etnia", 
         "Fecha_de_nacimiento", "G_nero", "Gestor_operativo", "Modified_By", "Municipio_de_residencia",
         "Nacionalidad", "Email_Opt_Out", "Name", "Observaci_n_Calidad", "Pa_s_de_nacimiento",
@@ -167,12 +167,12 @@ MODULES_GIZ = {
         "Presenta_barreras_de_pre_vinculaci_n", "Barreras_interna_de_previnculaci_n", 
         "Barrera_externa_de_pre_vinculaci_n", "Estrategia_para_la_superaci_n_de_barreras", 
         "Remisi_n_atenci_n_psic_social", "Tiene_medio_de_transporte", "Cu_ntas_personas_est_n_a_tu_cargo",
-        "Registro_Giz", "Owner", "Tag", "Connected_To__s", "Observaci_n_Calidad", "Validaci_n_Calidad", "Metas",
+        "Registro_Giz", "Owner", "Tag", "Observaci_n_Calidad", "Validaci_n_Calidad", "Metas",
         "Name"
     ],
     "Intermediaci_n_Giz":[
         "Desea_hacer_otra_intermediaci_n", "C_digo_de_la_vacante", "C_digo_de_la_vacante_2", 
-        "Connected_To__s", "Email", "Secondary_Email", "Created_By", "Empresa", "Empresa_2",
+        "Email", "Secondary_Email", "Created_By", "Empresa", "Empresa_2",
         "Estado", "Estado_2", "Tag", "Fecha_de_intermediaci_n", "Fecha_de_intermediaci_n_2",
         "Modified_By", "Nit_de_la_empresa", "Nit_de_la_empresa_2", "Email_Opt_Out", 
         "Nombre_de_la_vacante", "Nombre_de_la_vacante_2", "N_mero_de_celular", "Name", 
@@ -182,7 +182,7 @@ MODULES_GIZ = {
     ],
     "Colocaci_n_Giz":[
         "Adjuntar_certificado_laboral", "Campo_Calidad_de_la_data", "Campo_Ocupacional", 
-        "Cargo_en_la_empresa", "Colocaci_n_Completada", "Connected_To__s", "Email",
+        "Cargo_en_la_empresa", "Colocaci_n_Completada", "Email",
         "Secondary_Email", "Created_By", "Encargado_Colocaci_n", "Es_un_empleo_verde",
         "Tag", "Fecha_de_vinculaci_n", "Modified_By", "NIT_de_empresa_contratante_empleador", 
         "Email_Opt_Out", "Name", "Nombre_de_empresa_contratante_empleador", "N_mero_de_celular", 
@@ -191,14 +191,14 @@ MODULES_GIZ = {
         "Segundo_apellido", "Segundo_nombre", "Tipo_de_contrato", "Whatsapp_de_contacto"
     ], 
     "Empresa_Giz": [
-        "Connected_To__s", "Secondary_Email", "Email", "Created_By", "D_gito_de_verificaci_n",
+        "Secondary_Email", "Email", "Created_By", "D_gito_de_verificaci_n",
         "Tag", "Modified_By", "Name", "Email_Opt_Out", "Nombre_Contacto", "Nombre_de_la_empresa",
         "Record_Image", "Owner", "Rut", "Sector_al_que_pertenece", 
     ], 
     "Vacantes_Giz":[
         "Qu_curso_requiere", "Qu_idioma", "Requiere_alg_n_curso", "Requiere_licencia_de_carro",
         "Requiere_licencia_de_moto", "Requiere_manejo_de_alg_n_idioma", 
-        "Ciudad_Municipio_de_la_vacante", "Name", "Connected_To__s", "Email", "Secondary_Email", 
+        "Ciudad_Municipio_de_la_vacante", "Name", "Email", "Secondary_Email", 
         "Correo_envio_hoja_de_vida", "Created_By", "Departamendo_de_la_vacante", 
         "Descripci_n_del_salario", "D_gito_de_verificaci_n", "Tag", 
         "Fecha_de_finalizaci_n_de_la_vacante", "Fecha_de_inicio_de_la_vacante", "Modified_By",
@@ -219,7 +219,7 @@ MODULES_GIZ = {
             "Fecha_de_pago_de_la_mitigaci_n", "Gestor_Mitigaci_n"
         ],
     "Calidad_Giz":[
-        "Colocaci_n", "Connected_To__s", "Email", "Secondary_Email", "Created_By", 
+        "Colocaci_n", "Email", "Secondary_Email", "Created_By", 
         "Departamento_de_residencia", "Direcci_n_de_residencia", "Estado_de_calidad", 
         "Tag","Etnia", "Fecha_de_nacimiento", "Fecha_de_revisi_n", "G_nero", "Intermediaci_n", 
         "Modified_By", "Municipio_de_residencia", "Email_Opt_Out", "Name", "N_mero_de_tel_fono",

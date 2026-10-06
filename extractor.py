@@ -208,11 +208,13 @@ def validate_module_fields(auth, module_name, fields):
     """
     base_url = "https://www.zohoapis.com/crm/v8/settings/fields"
     headers = auth.get_header()
-    resp = requests.get(f"{base_url}?module={module_name}", headers=headers)
+    resp = request_with_backoff(lambda: requests.get(f"{base_url}?module={module_name}", headers=headers))
     if resp.status_code == 200:
         zoho_api_names = {f["api_name"] for f in resp.json().get("fields", [])}
         # Zoho separa los campos que no están en el layout activo bajo type=unused
-        resp_unused = requests.get(f"{base_url}?module={module_name}&type=unused", headers=headers)
+        resp_unused = request_with_backoff(
+            lambda: requests.get(f"{base_url}?module={module_name}&type=unused", headers=headers)
+        )
         if resp_unused.status_code == 200:
             zoho_api_names |= {f["api_name"] for f in resp_unused.json().get("fields", [])}
 

@@ -63,8 +63,12 @@ jobs:
                 priority: interactive
           EOF
 
-      # Migración aditiva e idempotente; solo necesita BigQuery.
+      # Migración aditiva e idempotente; valida contra Zoho CRM y evoluciona BigQuery.
       - name: Migrar esquema de tablas raw
+        env:
+          ZOHO_CLIENT_ID: ${{ secrets.ZOHO_CLIENT_ID }}
+          ZOHO_CLIENT_SECRET: ${{ secrets.ZOHO_CLIENT_SECRET }}
+          ZOHO_REFRESH_TOKEN: ${{ secrets.ZOHO_REFRESH_TOKEN }}
         run: python scripts/migrar_esquema_ruta_mujer.py
 
       - name: Instalar paquetes dbt
