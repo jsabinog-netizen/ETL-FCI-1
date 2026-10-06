@@ -49,7 +49,7 @@ models:
               config:
                 severity: warn
       - name: rango_joven
-        description: Clasificación de juventud según edad entre 18 y 24 años ('Joven (18-24)' / 'No joven').
+        description: Agrupación de edad ('18-28', '29-35', '36-45', '46 o más').
       - name: municipio
         description: Municipio clasificado en 'Bogotá', 'Soacha' y 'Otros municipios'.
       - name: tiene_inscripcion

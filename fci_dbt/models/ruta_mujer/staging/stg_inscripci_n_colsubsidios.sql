@@ -12,8 +12,10 @@ select
     date(safe_cast(`Fecha_de_nacimiento` as timestamp)) as fecha_de_nacimiento,
     safe_cast(`Edad` as int64) as edad,
     case
-        when safe_cast(`Edad` as int64) between 18 and 24 then 'Joven (18-24)'
-        when safe_cast(`Edad` as int64) is not null then 'No joven'
+        when safe_cast(`Edad` as int64) between 18 and 28 then '18-28'
+        when safe_cast(`Edad` as int64) between 29 and 35 then '29-35'
+        when safe_cast(`Edad` as int64) between 36 and 45 then '36-45'
+        when safe_cast(`Edad` as int64) >= 46 then '46 o más'
         else null
     end as rango_joven,
     lower(trim(`Tipo_de_documento`)) as tipo_de_documento,
@@ -24,7 +26,10 @@ select
     trim(`Otra_nacionalidad`) as otra_nacionalidad,
     lower(trim(`Tipificaci_n_Mujer`)) as tipificaci_n_mujer,
     `Grupos_poblacionales` as grupos_poblacionales_json,
-    lower(trim(json_value(`Grupos_poblacionales`, '$[0]'))) as grupos_poblacionales,
+    case
+        when starts_with(trim(`Grupos_poblacionales`), '[') then lower(trim(json_value(`Grupos_poblacionales`, '$[0]')))
+        else lower(trim(`Grupos_poblacionales`))
+    end as grupos_poblacionales,
     lower(trim(`Tipo_de_poblaci_n`)) as tipo_de_poblacion_subsidio,
     lower(trim(`Tipo_de_poblaci_n1`)) as tipo_de_poblacion,
     lower(trim(`Tipo_de_poblaci_n1`)) as tipo_de_poblaci_n,

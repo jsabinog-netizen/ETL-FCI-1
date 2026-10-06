@@ -11,8 +11,10 @@ select
     date(safe_cast(`Fecha_de_nacimiento` as timestamp)) as fecha_de_nacimiento,
     safe_cast(`Edad` as int64) as edad,
     case
-        when safe_cast(`Edad` as int64) between 18 and 24 then 'Joven (18-24)'
-        when safe_cast(`Edad` as int64) is not null then 'No joven'
+        when safe_cast(`Edad` as int64) between 18 and 28 then '18-28'
+        when safe_cast(`Edad` as int64) between 29 and 35 then '29-35'
+        when safe_cast(`Edad` as int64) between 36 and 45 then '36-45'
+        when safe_cast(`Edad` as int64) >= 46 then '46 o más'
         else null
     end as rango_joven,
     lower(trim(`Tipo_de_documento`)) as tipo_de_documento,

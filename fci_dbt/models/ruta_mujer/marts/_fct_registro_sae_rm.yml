@@ -45,4 +45,4 @@ models:
   - name: contruccion_de_concepto_de_entrevista
     description: Construcción de concepto de entrevista emitido en orientación o psicosocial.
   - name: rango_joven
-    description: Clasificación de juventud ('Joven (18-24)' / 'No joven') según edad de la participante.
+    description: Agrupación de edad ('18-28', '29-35', '36-45', '46 o más').

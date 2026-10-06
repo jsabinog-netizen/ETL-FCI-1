@@ -23,7 +23,7 @@ models:
   - name: rango_etario_vacante
     description: Categoría única ordenada de rango etario requerido por la vacante.
   - name: rango_experiencia_vacante
-    description: Categoría ordenada de experiencia laboral requerida en meses (Sin experiencia, 1 a 12, 13 a 24, 25 a 60, Más de 60).
+    description: Categoría ordenada de experiencia laboral requerida en meses (0 a 12, 12 a 24, 24 a 60, más de 60).
   - name: sector_normalizado
     description: Sector de la empresa asociada a la vacante, normalizado a categorías estándar.
   - name: corte_evento

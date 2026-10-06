@@ -116,6 +116,9 @@ with orientacion as (
         o.area_experiencia_normalizada,
         o.area_experiencia_2,
         o.tiempo_de_experiencia_laboral,
+        o.tiempo_busqueda_empleo,
+        o.brecha_o_barrera_identificada,
+        o.profundice_la_barrera_o_brecha_identificada,
 
         -- ── Campos de Psicosocial agregados para replicar vw_fact_Colsubsidio ──
         p.seleccione_el_tipo_de_barrera,

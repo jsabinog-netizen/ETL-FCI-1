@@ -18,7 +18,10 @@ select
     trim(`Gestor_operativo`) as gestor_operativo,
     trim(`Perfil_Ocupacional`) as perfil_ocupacional,
     `Grupos_poblacionales` as grupos_poblacionales_json,
-    lower(trim(json_value(`Grupos_poblacionales`, '$[0]'))) as grupos_poblacionales,
+    case
+        when starts_with(trim(`Grupos_poblacionales`), '[') then lower(trim(json_value(`Grupos_poblacionales`, '$[0]')))
+        else lower(trim(`Grupos_poblacionales`))
+    end as grupos_poblacionales,
     lower(trim(`Nivel_de_necesidad_de_acompa_amiento_psicosocial`)) as nivel_de_necesidad_de_acompa_amiento_psicosocial,
     trim(`Sientes_que_actualmente_necesitas_apoyo_adicional`) as sientes_que_actualmente_necesitas_apoyo_adicional,
     trim(`N_mero_de_celular_Principal`) as n_mero_de_celular_principal,
