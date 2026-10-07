@@ -134,11 +134,14 @@ with orientacion as (
         r.departamento_de_nacimiento,
         r.ultimo_nivel_educativo_alcanzado,
         r.nivel_educativo_normalizado,
-        r.tipo_de_poblaci_n,
+        coalesce(r.tipo_de_poblacion, o.tipo_de_poblacion_orientacion) as tipo_de_poblacion,
+        r.tipo_de_poblacion_subsidio,
         r.pregunta_de_seguridad,
         r.respuesta_pregunta_seguridad,
         r.seleccione_nivel_de_sisb_n,
         r.tiene_alguna_de_estas_responsabilidades_de_cuidado,
+        r.estado_civil,
+        r.tiene_hijos,
         r.sede,
         r.validacion_habilitante,
 
@@ -202,6 +205,25 @@ select *,
         when edad between 46 and 55 then '5. 46-55'
         else '6. 56 o más'
     end as rango_etario,
+
+    -- ── Flags Sí/No para segmentadores rápidos de Power BI ──
+    case when es_jefe_hogar in ('si', 'sí', 'true') then 'Sí' else 'No' end as es_jefa_hogar_txt,
+    case when tiene_alguna_de_estas_responsabilidades_de_cuidado is not null
+              and tiene_alguna_de_estas_responsabilidades_de_cuidado not in ('no', 'ninguna', '')
+         then 'Sí' else 'No' end as tiene_cuidado_txt,
+    case when tiene_hijos in ('si', 'sí', 'true') then 'Sí' else 'No' end as tiene_hijos_txt,
+
+    -- ── Jerarquía territorial: Bogotá (por localidades) vs Otros Municipios ──
+    case
+        when regexp_contains(lower(trim(municipio)), r'bogot[aá]') or localidad is not null
+            then '1. Bogotá D.C.'
+        else '2. Otros Municipios'
+    end as region_territorial,
+    case
+        when regexp_contains(lower(trim(municipio)), r'bogot[aá]') or localidad is not null
+            then coalesce(initcap(localidad), 'Sin localidad')
+        else coalesce(initcap(municipio), 'Sin municipio')
+    end as subdivision_territorial,
 
     -- Etapa más avanzada completada en la ruta (6 niveles; Formación es
     -- un servicio transversal, no una etapa secuencial de la ruta).

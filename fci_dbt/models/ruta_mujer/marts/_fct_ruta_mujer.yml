@@ -118,4 +118,55 @@ models:
     description: Brecha o barrera identificada durante la orientación laboral de la participante.
   - name: profundice_la_barrera_o_brecha_identificada
     description: Detalle o profundización de la brecha o barrera identificada.
-
+  - name: tipo_de_poblacion
+    description: >
+      Tipo de población general de la participante (campo SAE), priorizando el valor registrado
+      en Inscripción Colsubsidios y complementando con Orientación Colsubsidios.
+  - name: tipo_de_poblacion_subsidio
+    description: Tipo de población asociada a subsidio (proveniente del campo Zoho Tipo de población (Subsidio)).
+  - name: estado_civil
+    description: Estado civil de la participante (soltero, casado, unión libre, etc.).
+  - name: tiene_hijos
+    description: Indica si la participante tiene hijos (si/no del campo Zoho).
+  - name: es_jefa_hogar_txt
+    description: >
+      Flag Sí/No para segmentadores de Power BI. Sí cuando es_jefe_hogar = si/sí/true.
+    tests:
+      - accepted_values:
+          arguments:
+            values: ['Sí', 'No']
+          config:
+            severity: warn
+  - name: tiene_cuidado_txt
+    description: >
+      Flag Sí/No para segmentadores de Power BI. Sí cuando la participante tiene
+      responsabilidades de cuidado distintas de 'no' o 'ninguna'.
+    tests:
+      - accepted_values:
+          arguments:
+            values: ['Sí', 'No']
+          config:
+            severity: warn
+  - name: tiene_hijos_txt
+    description: >
+      Flag Sí/No para segmentadores de Power BI. Sí cuando tiene_hijos = si/sí/true.
+    tests:
+      - accepted_values:
+          arguments:
+            values: ['Sí', 'No']
+          config:
+            severity: warn
+  - name: region_territorial
+    description: >
+      Jerarquía territorial nivel 1: '1. Bogotá D.C.' si el municipio contiene 'bogotá' o
+      la localidad no es nula; '2. Otros Municipios' para el resto.
+    tests:
+      - accepted_values:
+          arguments:
+            values: ['1. Bogotá D.C.', '2. Otros Municipios']
+          config:
+            severity: warn
+  - name: subdivision_territorial
+    description: >
+      Jerarquía territorial nivel 2: la localidad (Suba, Bosa, Kennedy, etc.) para
+      Bogotá D.C., o el municipio (Soacha, Funza, Mosquera, etc.) para Otros Municipios.

@@ -20,3 +20,59 @@ models:
             values: ['corte 1', 'corte 2']
           config:
             severity: warn
+  - name: estado_normalizado
+    description: >
+      Estado macro del proceso de intermediación para embudos y gráficos ejecutivos
+      (1. Remitida, 2. En proceso de selección, 3. Contratada, 4. No vinculada, 5. Sin información).
+    tests:
+      - accepted_values:
+          arguments:
+            values:
+              - '1. Remitida (Envío HV)'
+              - '2. En proceso de selección'
+              - '3. Contratada'
+              - '4. No vinculada'
+              - '5. Sin información'
+          config:
+            severity: warn
+  - name: etapa_embudo
+    description: >
+      Etapa secuencial del embudo de intermediación diseñada para gráficos de funnel en Power BI.
+      Ordena las etapas cronológicas desde el envío de hoja de vida hasta la contratación o salida.
+    tests:
+      - accepted_values:
+          arguments:
+            values:
+              - '1. Remitida'
+              - '2. No vinculada'
+              - '3. Sin retroalimentación'
+              - '4. En proceso de selección'
+              - '5. En entrevista'
+              - '6. Contratada'
+              - '7. Sin información'
+          config:
+            severity: warn
+  - name: subetapa_seleccion
+    description: >
+      Subetapa detallada dentro de cada macro-estado. Desglosa "En proceso de selección"
+      en fases concretas (entrevista, exámenes médicos, firma de contrato), remisiones sin
+      contacto/retroalimentación de empresa, y "No vinculada" en motivos específicos. Permite drill-down.
+    tests:
+      - accepted_values:
+          arguments:
+            values:
+              - '1a. Remitida - En espera'
+              - '1b. Sin retroalimentación / Nunca contactada por empresa'
+              - '2a. En entrevista / proceso activo'
+              - '2b. Fase médica / pre-ingreso'
+              - '2c. Pendiente firma de contrato'
+              - '3a. Contratada'
+              - '4a. No superó el proceso'
+              - '4b. No asistió a la citación'
+              - '4c. No le interesa la vacante'
+              - '4d. Ya consiguió trabajo'
+              - '4e. Salario no se ajusta'
+              - '4f. Otro motivo'
+              - '5a. Sin información'
+          config:
+            severity: warn

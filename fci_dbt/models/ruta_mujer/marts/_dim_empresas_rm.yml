@@ -3,7 +3,9 @@ models:
   - name: dim_empresas_rm
     description: >
       Una fila por empresa deduplicada por NIT, enriquecida con información de vacantes,
-      intermediación y agendamientos comerciales.
+      intermediación y agendamientos comerciales. Incluye matriz ejecutiva con métricas
+      de vacantes (aportadas, activas, cerradas por intermediación vs gestión directa)
+      y de participantes (remitidas, contratadas).
     columns:
       - name: nit
         description: NIT de la empresa, clave primaria de la dimensión.
@@ -25,3 +27,31 @@ models:
                 severity: warn
       - name: corte
         description: Cohorte del programa.
+      - name: vacantes_aportadas
+        description: Número total de vacantes que la empresa ha registrado en el programa.
+      - name: puestos_de_trabajo_aportados
+        description: Suma de puestos de trabajo ofertados en todas las vacantes de la empresa.
+      - name: vacantes_activas
+        description: Vacantes con estado 'activa' actualmente.
+      - name: vacantes_cerradas
+        description: Total de vacantes con estado 'cerrada'.
+      - name: vacantes_cerradas_intermediacion
+        description: >
+          Vacantes cerradas que tienen al menos 1 participante con estado 'contratado'.
+          Indica que el cierre se debió a intermediación exitosa del programa.
+      - name: vacantes_cerradas_gestion_directa
+        description: >
+          Vacantes cerradas sin ninguna participante contratada a través del programa.
+          Indica que la empresa cubrió la vacante por sus propios medios o la canceló.
+      - name: mujeres_remitidas
+        description: Número de mujeres únicas (por documento) remitidas a esta empresa vía intermediación.
+      - name: mujeres_contratadas
+        description: Número de mujeres únicas (por documento) con estado 'contratado' en intermediación con esta empresa.
+      - name: pct_vacantes_cerradas_intermediacion
+        description: >
+          Porcentaje (0.0 a 1.0) de vacantes cerradas atribuibles a la intermediación del programa
+          (vacantes_cerradas_intermediacion / vacantes_cerradas).
+      - name: tasa_colocacion_mujeres
+        description: >
+          Tasa de éxito de colocación (0.0 a 1.0), calculada como mujeres contratadas sobre
+          el total de mujeres remitidas a la empresa.
