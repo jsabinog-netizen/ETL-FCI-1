@@ -22,7 +22,7 @@ select v.* replace (
     coalesce(e.nit, n.nit, v.buscar_empresa_nombre) as nit_empresa,
     coalesce(e.nombre_de_la_empresa, n.nombre_de_la_empresa, v.nombre_de_la_empresa_1, v.nombre_de_la_empresa) as empresa,
     -- Sector: proviene de la empresa asociada, no de la vacante (campo inexistente en Zoho vacantes)
-    coalesce(e.sector_normalizado, n.sector_normalizado) as sector_normalizado,
+    coalesce(e.sector_normalizado, n.sector_normalizado, 'Sin información') as sector_normalizado,
     coalesce(e.sector_econ_mico, n.sector_econ_mico) as sector_economico_empresa,
     coalesce(e.tama_o_de_la_empresa, n.tama_o_de_la_empresa) as tamano_empresa,
     coalesce(e.departamento, n.departamento) as departamento_empresa,

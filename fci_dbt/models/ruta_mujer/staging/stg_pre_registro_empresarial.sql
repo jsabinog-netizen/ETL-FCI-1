@@ -32,7 +32,7 @@ select
     case
         when split(`Sector_econ_mico`, '|')[safe_offset(0)] is null
              or trim(split(`Sector_econ_mico`, '|')[safe_offset(0)]) = ''
-            then null
+            then 'Sin información'
         when regexp_contains(lower(trim(split(`Sector_econ_mico`, '|')[safe_offset(0)])),
                 r'transporte|almacenamiento')
             then 'Transporte y almacenamiento'
@@ -61,9 +61,9 @@ select
                 r'hogares')
             then 'Actividades de los hogares'
         when regexp_contains(lower(trim(split(`Sector_econ_mico`, '|')[safe_offset(0)])),
-                r'otras actividades de servicios')
-            then 'Otras actividades de servicios'
-        else 'Otro'
+                r'otro|otras')
+            then 'Otros'
+        else 'Otros'
     end as sector_normalizado,
 
     lower(trim(`Tama_o_de_la_empresa`)) as tama_o_de_la_empresa,

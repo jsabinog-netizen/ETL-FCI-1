@@ -87,7 +87,8 @@ base as (
             date(e.created_time) as created_time,
             date(e._loaded_at) as _loaded_at,
             date(e.modified_time) as modified_time,
-            date(e.last_activity_time) as last_activity_time
+            date(e.last_activity_time) as last_activity_time,
+            coalesce(nullif(trim(e.sector_normalizado), ''), 'Sin información') as sector_normalizado
         ),
         -- ── Indicadores booleanos ──
         coalesce(v.vacantes_aportadas > 0, false) as tiene_vacantes,
