@@ -6,7 +6,7 @@ with eventos as (
         count(distinct documento) as num_mujeres,
         countif(estado = 'envío de hoja de vida') as num_envios_actuales,
         countif(estado = 'asistió/está en proceso') as num_en_proceso,
-        countif(estado = 'contratado') as num_contratadas,
+        countif(estado = 'contratado' or lower(estado) like '%contratad%') as num_contratadas,
         countif(estado in ('asistió/no superó el proceso', 'la asignación salarial no se ajusta a sus necesidades', 'no interesado por otro motivo ¿cual?')) as num_no_paso,
         countif(estado is null or estado not in ('envío de hoja de vida','asistió/está en proceso','contratado','asistió/no superó el proceso','la asignación salarial no se ajusta a sus necesidades','no interesado por otro motivo ¿cual?')) as num_otros_estados
     from {{ ref('stg_intermediaci_n_ruta_m') }} group by buscar_vacante_id
@@ -24,6 +24,15 @@ select v.id as vacante_id, v.codigo_vacante, v.nombre_vacante, v.nit_empresa, v.
     coalesce(e.num_envios_actuales,0) as num_envios_actuales,
     coalesce(e.num_en_proceso,0) as num_en_proceso, coalesce(e.num_contratadas,0) as num_contratadas,
     coalesce(e.num_no_paso,0) as num_no_paso, coalesce(e.num_otros_estados,0) as num_otros_estados,
+    case
+        when v.estado_de_la_vacante = 'cerrada' and coalesce(e.num_contratadas, 0) > 0
+            then 'Cerrada por intermediación'
+        when v.estado_de_la_vacante = 'cerrada' and coalesce(e.num_contratadas, 0) = 0
+            then 'Cerrada por gestión directa'
+        when v.estado_de_la_vacante = 'activa'
+            then 'Activa'
+        else coalesce(v.estado_de_la_vacante, 'Sin información')
+    end as tipo_cierre_vacante,
     v.estado_de_la_vacante = 'activa' and coalesce(e.num_remisiones,0) = 0 as activa_sin_remision,
     n.id as ultima_novedad_evento_id, n.fecha_intermediaci_n as ultima_novedad_fecha,
     n.novedad_intermediaci_n as ultima_novedad,
