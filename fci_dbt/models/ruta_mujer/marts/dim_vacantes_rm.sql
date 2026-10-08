@@ -10,10 +10,8 @@ select v.* replace (
         date(v._loaded_at) as _loaded_at,
         date(v.modified_time) as modified_time
     ),
-    case when lower(trim(v.vacante_con_enfoque_de_genero)) in ('sí','si','true') then true
-         when lower(trim(v.vacante_con_enfoque_de_genero)) in ('no','false') then false end as es_enfoque_genero,
-    case when lower(trim(v.vacante_de_desmasculinizacion)) in ('sí','si','true') then true
-         when lower(trim(v.vacante_de_desmasculinizacion)) in ('no','false') then false end as es_desmasculinizacion,
+    case when lower(trim(v.vacante_con_enfoque_de_genero)) in ('sí','si','true') then 'Sí' else 'No' end as es_enfoque_genero,
+    case when lower(trim(v.vacante_de_desmasculinizacion)) in ('sí','si','true') then 'Sí' else 'No' end as es_desmasculinizacion,
     case when nullif(trim(v.ciudad_municipio_de_la_vacante), '') is not null
          then concat(v.ciudad_municipio_de_la_vacante,
                      if(nullif(trim(v.departamento_de_la_vacante),'') is null, '', concat(', ', v.departamento_de_la_vacante)), ', Colombia')

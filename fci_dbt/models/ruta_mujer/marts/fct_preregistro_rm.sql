@@ -63,7 +63,8 @@ base as (
         p.* replace (
             date(p.created_time) as created_time,
             date(p._loaded_at) as _loaded_at,
-            date(p.modified_time) as modified_time
+            date(p.modified_time) as modified_time,
+            coalesce(nullif(trim(p.tipo_de_poblaci_n), ''), 'Pendiente de tipificación en inscripción') as tipo_de_poblaci_n
         ),
         -- ── Indicadores por fase de la ruta (booleanos internos) ──
         ins.documento is not null as se_inscribio,

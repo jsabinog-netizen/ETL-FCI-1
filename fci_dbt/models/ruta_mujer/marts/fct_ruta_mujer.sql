@@ -87,44 +87,74 @@ with orientacion as (
         o.id as orientacion_id, p.id as psicosocial_id,
         f.id as formacion_id, pv.id as postvinculacion_id,
         i.ultima.id as intermediacion_id, c.id as colocacion_id, pr.id as preregistro_id,
-        o.gestor_operativo as orientador, o.perfil_ocupacional,
+        o.gestor_operativo as orientador,
+        case
+            when o.id is null then 'Aún no realizada la orientación'
+            else coalesce(o.perfil_ocupacional, 'No diligenciado')
+        end as perfil_ocupacional,
         p.gestor_operativo as profesional_psicosocial,
         p.estado_actual_del_proceso as estado_psicosocial,
         coalesce(fa.num_registros_formacion, 0) as num_registros_formacion,
         coalesce(fa.alguna_completada, false) as alguna_formacion_completada,
         coalesce(i.num_intermediaciones, 0) as num_intermediaciones,
-        i.ultima.estado as estado_intermediacion, i.ultima.intermediador,
-        i.ultima.concepto_de_intermediacion as concepto_intermediacion,
+        case
+            when coalesce(i.num_intermediaciones, 0) = 0 then 'No ha llegado a intermediación'
+            else coalesce(i.ultima.estado, 'No diligenciado')
+        end as estado_intermediacion,
+        case
+            when coalesce(i.num_intermediaciones, 0) = 0 then 'No ha llegado a intermediación'
+            else coalesce(i.ultima.intermediador, 'No diligenciado')
+        end as intermediador,
+        case
+            when coalesce(i.num_intermediaciones, 0) = 0 then 'No ha llegado a intermediación'
+            else coalesce(i.ultima.concepto_de_intermediacion, 'No diligenciado')
+        end as concepto_intermediacion,
         i.ultima.buscar_vacante_id as ultima_vacante_id,
-        i.ultima.nombre_vacante as ultima_vacante,
+        case
+            when coalesce(i.num_intermediaciones, 0) = 0 then 'No ha llegado a intermediación'
+            else coalesce(i.ultima.nombre_vacante, 'No diligenciado')
+        end as ultima_vacante,
         -- ── Empresa de la última intermediación (expuesta desde el STRUCT `ultima`) ──
-        i.ultima.nit_de_la_empresa as nit_empresa_intermediacion,
-        i.ultima.nombre_de_la_empresa_1 as empresa_intermediacion,
-        c.nombre_de_empresa_contratante_empleador as empresa_colocacion,
-        c.nit_de_empresa_contratante_empleador as nit_empresa_colocacion,
-        c.cargo_en_la_empresa as cargo, c.tipo_de_contrato as tipo_contrato,
-        c.salario_despu_s_de_la_colocaci_n as salario,
+        case
+            when coalesce(i.num_intermediaciones, 0) = 0 then 'No ha llegado a intermediación'
+            else coalesce(i.ultima.nit_de_la_empresa, 'No diligenciado')
+        end as nit_empresa_intermediacion,
+        case
+            when coalesce(i.num_intermediaciones, 0) = 0 then 'No ha llegado a intermediación'
+            else coalesce(i.ultima.nombre_de_la_empresa_1, 'No diligenciado')
+        end as empresa_intermediacion,
+        coalesce(c.nombre_de_empresa_contratante_empleador, 'No colocada') as empresa_colocacion,
+        coalesce(c.nit_de_empresa_contratante_empleador, 'No colocada') as nit_empresa_colocacion,
+        coalesce(c.cargo_en_la_empresa, 'No colocada') as cargo,
+        coalesce(c.tipo_de_contrato, 'No colocada') as tipo_contrato,
+        coalesce(cast(c.salario_despu_s_de_la_colocaci_n as string), 'No colocada') as salario,
         -- ── Grupos poblacionales: campo ya parseado en el staging ──
         r.grupos_poblacionales,
 
         -- ── Campos de Orientación agregados para replicar vw_fact_Colsubsidio ──
-        o.concepto_de_orientaci_n,
-        o.inter_s_laboral,
-        o.modalidad_orientacion,
-        o.ocupacion_actual,
-        o.area_experiencia,
-        o.area_experiencia_normalizada,
-        o.area_experiencia_2,
-        o.tiempo_de_experiencia_laboral,
-        o.tiempo_busqueda_empleo,
-        o.brecha_o_barrera_identificada,
-        o.profundice_la_barrera_o_brecha_identificada,
+        case
+            when o.id is null then 'Aún no realizada la orientación'
+            else coalesce(o.concepto_de_orientaci_n_colsubsidio, o.concepto_de_orientaci_n, 'No diligenciado')
+        end as concepto_de_orientaci_n,
+        case
+            when o.id is null then 'Aún no realizada la orientación'
+            else coalesce(o.inter_s_laboral, 'No diligenciado')
+        end as inter_s_laboral,
+        coalesce(o.modalidad_orientacion, 'Sin información') as modalidad_orientacion,
+        coalesce(o.ocupacion_actual, 'Sin información') as ocupacion_actual,
+        coalesce(o.area_experiencia, 'No aplica / Sin experiencia') as area_experiencia,
+        coalesce(o.area_experiencia_normalizada, 'No aplica / Sin experiencia') as area_experiencia_normalizada,
+        coalesce(o.area_experiencia_2, 'No aplica / Sin experiencia') as area_experiencia_2,
+        coalesce(o.tiempo_de_experiencia_laboral, 'Sin información') as tiempo_de_experiencia_laboral,
+        coalesce(o.tiempo_busqueda_empleo, 'Sin información') as tiempo_busqueda_empleo,
+        coalesce(o.brecha_o_barrera_identificada, 'Sin información') as brecha_o_barrera_identificada,
+        coalesce(o.profundice_la_barrera_o_brecha_identificada, 'Sin información') as profundice_la_barrera_o_brecha_identificada,
 
         -- ── Campos de Psicosocial agregados para replicar vw_fact_Colsubsidio ──
-        p.seleccione_el_tipo_de_barrera,
-        p.seleccione_el_tipo_de_barrera_2,
-        p.seleccione_el_tipo_de_barrera_3,
-        p.evoluci_n,
+        coalesce(p.seleccione_el_tipo_de_barrera, 'Sin información') as seleccione_el_tipo_de_barrera,
+        coalesce(p.seleccione_el_tipo_de_barrera_2, 'Sin información') as seleccione_el_tipo_de_barrera_2,
+        coalesce(p.seleccione_el_tipo_de_barrera_3, 'Sin información') as seleccione_el_tipo_de_barrera_3,
+        coalesce(p.evoluci_n, 'Sin evolución registrada') as evoluci_n,
 
         -- ── Campos de Inscripción agregados para replicar vw_fact_Colsubsidio ──
         r.estrato,
@@ -134,15 +164,19 @@ with orientacion as (
         r.departamento_de_nacimiento,
         r.ultimo_nivel_educativo_alcanzado,
         r.nivel_educativo_normalizado,
-        coalesce(r.tipo_de_poblacion, o.tipo_de_poblacion_orientacion) as tipo_de_poblacion,
+        coalesce(r.tipo_de_poblacion, o.tipo_de_poblacion_orientacion, 'Sin información') as tipo_de_poblacion,
         r.tipo_de_poblacion_subsidio,
         r.pregunta_de_seguridad,
         r.respuesta_pregunta_seguridad,
-        r.seleccione_nivel_de_sisb_n,
+        case
+            when lower(trim(coalesce(r.tiene_clasificacion_sisben, ''))) in ('no', 'false') then 'No aplica'
+            when r.seleccione_nivel_de_sisb_n is null or trim(r.seleccione_nivel_de_sisb_n) = '' then 'Sin información'
+            else r.seleccione_nivel_de_sisb_n
+        end as seleccione_nivel_de_sisb_n,
         r.tiene_alguna_de_estas_responsabilidades_de_cuidado,
         r.estado_civil,
         r.tiene_hijos,
-        r.sede,
+        coalesce(nullif(trim(r.sede), ''), 'Sin diligenciar') as sede,
         r.validacion_habilitante,
 
         -- ── Campos Habilitantes SAE (Power BI) ──
