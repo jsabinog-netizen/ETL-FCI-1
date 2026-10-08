@@ -88,7 +88,44 @@ base as (
             date(e._loaded_at) as _loaded_at,
             date(e.modified_time) as modified_time,
             date(e.last_activity_time) as last_activity_time,
-            coalesce(nullif(trim(e.sector_normalizado), ''), 'Sin información') as sector_normalizado
+            coalesce(nullif(trim(e.sector_normalizado), ''), 'Sin información') as sector_normalizado,
+            coalesce(nullif(trim(e.nombre_completo), ''), 'No diligenciado') as nombre_completo,
+            coalesce(nullif(trim(e.cargo), ''), 'No diligenciado') as cargo,
+            coalesce(nullif(trim(e.email), ''), 'No diligenciado') as email,
+            coalesce(nullif(trim(e.tel_fono_de_contacto_fijo_o_celular), ''), 'No diligenciado') as tel_fono_de_contacto_fijo_o_celular,
+            coalesce(nullif(trim(e.n_mero_de_whatsapp), ''), 'No diligenciado') as n_mero_de_whatsapp,
+            coalesce(nullif(trim(e.rea), ''), 'No diligenciado') as rea,
+            case when lower(trim(e.cuenta_con_un_segundo_contacto)) in ('si', 'sí', 'true') then 'Sí' else 'No' end as cuenta_con_un_segundo_contacto,
+            case
+                when lower(trim(e.cuenta_con_un_segundo_contacto)) in ('si', 'sí', 'true')
+                    then coalesce(nullif(trim(e.nombre_completo_2), ''), 'No diligenciado')
+                else 'No aplica'
+            end as nombre_completo_2,
+            case
+                when lower(trim(e.cuenta_con_un_segundo_contacto)) in ('si', 'sí', 'true')
+                    then coalesce(nullif(trim(e.cargo_2), ''), 'No diligenciado')
+                else 'No aplica'
+            end as cargo_2,
+            case
+                when lower(trim(e.cuenta_con_un_segundo_contacto)) in ('si', 'sí', 'true')
+                    then coalesce(nullif(trim(e.correo_electr_nico_2), ''), 'No diligenciado')
+                else 'No aplica'
+            end as correo_electr_nico_2,
+            case
+                when lower(trim(e.cuenta_con_un_segundo_contacto)) in ('si', 'sí', 'true')
+                    then coalesce(nullif(trim(e.tel_fono_de_contacto_fijo_o_celular_2), ''), 'No diligenciado')
+                else 'No aplica'
+            end as tel_fono_de_contacto_fijo_o_celular_2,
+            case
+                when lower(trim(e.cuenta_con_un_segundo_contacto)) in ('si', 'sí', 'true')
+                    then coalesce(nullif(trim(e.n_mero_de_whatsapp_2), ''), 'No diligenciado')
+                else 'No aplica'
+            end as n_mero_de_whatsapp_2,
+            case
+                when lower(trim(e.cuenta_con_un_segundo_contacto)) in ('si', 'sí', 'true')
+                    then coalesce(nullif(trim(e.rea_2), ''), 'No diligenciado')
+                else 'No aplica'
+            end as rea_2
         ),
         -- ── Indicadores booleanos ──
         coalesce(v.vacantes_aportadas > 0, false) as tiene_vacantes,
@@ -121,7 +158,9 @@ base as (
     left join agenda_por_empresa a on e.nit = a.nit
 )
 select
-    *,
+    * except (sector_econ_mico_principal),
+    sector_econ_mico as sector_economico,
+    sector_normalizado as sector_economico_normalizado,
     case
         when fue_intermediada then '4. Intermediada'
         when tiene_vacantes   then '3. Con vacantes'
