@@ -268,6 +268,7 @@ MODULES_RUTA_MUJER = {
         "Otro_municipio_de_nacimiento", "Departamento_de_nacimiento", "Localidad", "Direcci_n_de_residencia",
         "Actualmente_te_encuentras", "Nivel_educativo_alcanzado", "Ha_tenido_empleo_con_caja_de_compensaci_n",
         "A_os_totales_de_experiencia_laboral", "D_nde_te_enteraste_de_esta_vacante", "Cu_l_de_nuestras_vacantes_llam_tu_atenci_n",
+        "Cu_l_de_nuestras_vacantes_llam_tu_atenci_n_Cu_ntan",
     ],
     "Inscripci_n_Colsubsidios": [
         "Corte",
@@ -423,7 +424,10 @@ MODULES_RUTA_MUJER = {
         "Proceso_confidencial", "Puede_estar_estudiando", "Requiere_qu_cuente_con_veh_culo", 
         "Requiere_licencia_para_conducir_carro", "Requiere_licencia_para_conducir_moto", "Requiere_manejar_alg_n_idioma",
         "Requiere_disponibilidad_para_viajar", "Requiere_vivir_en_barrio_zona_espec_fica", "Tiene_personas_a_cargo",
-        "Fecha_compromiso", "Requiere_tarjeta_profesional", "Vacante_con_enfoque_de_g_nero", "Vacante_de_desmasculinizaci_n"
+        "Fecha_compromiso", "Requiere_tarjeta_profesional", "Vacante_con_enfoque_de_g_nero", "Vacante_de_desmasculinizaci_n",
+        "Departamento_de_la_vacante", "Describa_Nivel_educativo", "Sector_Econ_mico_de_la_empresa",
+        "Cargo_de_contacto", "Telefono_Contacto", "Descripci_n_del_salario",
+        "Formaci_n_acad_mica", "Observaci_n_del_gestor", "Herramientas_ofimaticas"
     ],
     "Pre_registro_Empresarial": [
         "Corte",
