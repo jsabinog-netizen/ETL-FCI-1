@@ -52,20 +52,23 @@ select
     lower(trim(`Requiere_vivir_en_barrio_zona_espec_fica`)) as requiere_vivir_en_barrio_zona_espec_fica,
     lower(trim(`Tiene_personas_a_cargo`)) as tiene_personas_a_cargo,
 
-    -- Titulo_Homologado (C2M) no tiene equivalente exacto en Zoho.
-    -- Se usa Requiere_tarjeta_profesional como aproximación disponible:
-    -- ambos apuntan a validación de credenciales educativas/profesionales
-    -- de la vacante. Pendiente confirmar con el equipo si esto cubre
-    -- el mismo concepto de negocio.
-    lower(trim(`Requiere_tarjeta_profesional`)) as titulo_homologado,
+    -- Titulo_Homologado real de Zoho CRM (Describa_Nivel_educativo) con fallback a Requiere_tarjeta_profesional
+    coalesce(trim(`Describa_Nivel_educativo`), lower(trim(`Requiere_tarjeta_profesional`))) as titulo_homologado,
 
     -- ── Campos de enfoque de género (nuevos en CRM) ──
     lower(trim(`Vacante_con_enfoque_de_g_nero`)) as vacante_con_enfoque_de_genero,
     lower(trim(`Vacante_de_desmasculinizaci_n`)) as vacante_de_desmasculinizacion,
 
-    -- NOTA: Sector_econ_mico no existe en esta tabla de Zoho.
-    -- El sector de la vacante se resuelve en dim_vacantes_rm vía JOIN
-    -- con stg_pre_registro_empresarial (donde sí existe el campo).
+    -- ── Sector propio de la vacante en Zoho CRM ──
+    lower(trim(`Sector_Econ_mico_de_la_empresa`)) as sector_economico_vacante,
+
+    -- ── Contacto y condiciones adicionales registradas en CRM ──
+    trim(`Cargo_de_contacto`) as cargo_de_contacto,
+    trim(`Telefono_Contacto`) as telefono_contacto,
+    trim(`Descripci_n_del_salario`) as descripcion_del_salario,
+    trim(`Formaci_n_acad_mica`) as formacion_academica,
+    trim(`Observaci_n_del_gestor`) as observacion_del_gestor,
+    lower(trim(`Herramientas_ofimaticas`)) as herramientas_ofimaticas,
 
     lower(trim(`Corte`)) as corte,
     safe_cast(_loaded_at as timestamp) as _loaded_at,
