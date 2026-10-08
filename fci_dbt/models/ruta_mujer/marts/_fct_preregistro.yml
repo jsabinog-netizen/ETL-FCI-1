@@ -53,19 +53,19 @@ models:
       - name: municipio
         description: Municipio clasificado en 'Bogotá', 'Soacha' y 'Otros municipios'.
       - name: tiene_inscripcion
-        description: TRUE si la mujer cuenta con registro en Inscripción Colsubsidios.
+        description: Flag texto ('Sí'/'No') si la participante cuenta con registro en Inscripción Colsubsidios.
       - name: tiene_orientacion
-        description: TRUE si la mujer cuenta con atención en Orientación Colsubsidios.
+        description: Flag texto ('Sí'/'No') si la participante cuenta con atención en Orientación Colsubsidios.
       - name: tiene_psicosocial
-        description: TRUE si la mujer cuenta con atención en Psicosocial Ruta Mujer.
+        description: Flag texto ('Sí'/'No') si la participante cuenta con atención en Psicosocial Ruta Mujer.
       - name: tiene_formacion
-        description: TRUE si la mujer tiene registros en Formación Colsubsidios.
+        description: Flag texto ('Sí'/'No') si la participante tiene registros en Formación Colsubsidios.
       - name: tiene_intermediacion
-        description: TRUE si la mujer ha tenido intermediaciones laborales.
+        description: Flag texto ('Sí'/'No') si la participante ha tenido intermediaciones laborales.
       - name: tiene_colocacion
-        description: TRUE si la mujer cuenta con fecha de vinculación laboral (colocada).
+        description: Flag texto ('Sí'/'No') si la participante cuenta con fecha de vinculación laboral (colocada).
       - name: tiene_postvinculacion
-        description: TRUE si la mujer cuenta con seguimiento post-vinculación.
+        description: Flag texto ('Sí'/'No') si la participante cuenta con seguimiento post-vinculación.
       - name: etapa_actual
         description: Etapa máxima alcanzada en la ruta (0. Solo preregistro, 1. Inscripción, 2. Orientación, etc.).
       - name: siguiente_fase_pendiente

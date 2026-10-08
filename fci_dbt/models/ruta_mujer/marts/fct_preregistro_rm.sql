@@ -65,28 +65,28 @@ base as (
             date(p._loaded_at) as _loaded_at,
             date(p.modified_time) as modified_time
         ),
-        -- ── Indicadores por fase de la ruta ──
+        -- ── Indicadores por fase de la ruta (booleanos internos) ──
         ins.documento is not null as se_inscribio,
-        ins.documento is not null as tiene_inscripcion,
-        coalesce(ins.inscripcion_completada, false) as inscripcion_completada,
+        ins.documento is not null as tiene_inscripcion_bool,
+        coalesce(ins.inscripcion_completada, false) as inscripcion_completada_bool,
 
-        ori.documento is not null as tiene_orientacion,
-        coalesce(ori.orientacion_completada, false) as orientacion_completada,
+        ori.documento is not null as tiene_orientacion_bool,
+        coalesce(ori.orientacion_completada, false) as orientacion_completada_bool,
 
-        psi.documento is not null as tiene_psicosocial,
-        coalesce(psi.psicosocial_completada, false) as psicosocial_completada,
+        psi.documento is not null as tiene_psicosocial_bool,
+        coalesce(psi.psicosocial_completada, false) as psicosocial_completada_bool,
 
-        coalesce(frm.num_registros_formacion, 0) > 0 as tiene_formacion,
-        coalesce(frm.formacion_completada, false) as formacion_completada,
+        coalesce(frm.num_registros_formacion, 0) > 0 as tiene_formacion_bool,
+        coalesce(frm.formacion_completada, false) as formacion_completada_bool,
 
-        coalesce(itm.num_intermediaciones, 0) > 0 as tiene_intermediacion,
-        coalesce(itm.intermediacion_completada, false) as intermediacion_completada,
+        coalesce(itm.num_intermediaciones, 0) > 0 as tiene_intermediacion_bool,
+        coalesce(itm.intermediacion_completada, false) as intermediacion_completada_bool,
 
-        col.fecha_colocacion is not null as tiene_colocacion,
-        col.fecha_colocacion is not null as colocada,
+        col.fecha_colocacion is not null as tiene_colocacion_bool,
+        col.fecha_colocacion is not null as colocada_bool,
 
-        post.documento is not null as tiene_postvinculacion,
-        post.documento is not null as postvinculada,
+        post.documento is not null as tiene_postvinculacion_bool,
+        post.documento is not null as postvinculada_bool,
 
         -- ── Fechas de cada fase ──
         ins.fecha_inscripcion,
@@ -106,7 +106,32 @@ base as (
     left join colocacion col on p.documento = col.documento
     left join postvinculacion post on p.documento = post.documento
 )
-select *,
+select
+    * except (
+        tiene_inscripcion_bool, inscripcion_completada_bool,
+        tiene_orientacion_bool, orientacion_completada_bool,
+        tiene_psicosocial_bool, psicosocial_completada_bool,
+        tiene_formacion_bool, formacion_completada_bool,
+        tiene_intermediacion_bool, intermediacion_completada_bool,
+        tiene_colocacion_bool, colocada_bool,
+        tiene_postvinculacion_bool, postvinculada_bool
+    ),
+    -- ── Flags Sí/No en texto para segmentadores de Power BI ──
+    case when tiene_inscripcion_bool then 'Sí' else 'No' end as tiene_inscripcion,
+    case when inscripcion_completada_bool then 'Sí' else 'No' end as inscripcion_completada,
+    case when tiene_orientacion_bool then 'Sí' else 'No' end as tiene_orientacion,
+    case when orientacion_completada_bool then 'Sí' else 'No' end as orientacion_completada,
+    case when tiene_psicosocial_bool then 'Sí' else 'No' end as tiene_psicosocial,
+    case when psicosocial_completada_bool then 'Sí' else 'No' end as psicosocial_completada,
+    case when tiene_formacion_bool then 'Sí' else 'No' end as tiene_formacion,
+    case when formacion_completada_bool then 'Sí' else 'No' end as formacion_completada,
+    case when tiene_intermediacion_bool then 'Sí' else 'No' end as tiene_intermediacion,
+    case when intermediacion_completada_bool then 'Sí' else 'No' end as intermediacion_completada,
+    case when tiene_colocacion_bool then 'Sí' else 'No' end as tiene_colocacion,
+    case when colocada_bool then 'Sí' else 'No' end as colocada,
+    case when tiene_postvinculacion_bool then 'Sí' else 'No' end as tiene_postvinculacion,
+    case when postvinculada_bool then 'Sí' else 'No' end as postvinculada,
+
     -- Estado final del preregistro (replica la columna original del dashboard)
     case
         when se_inscribio then 'Inscritos'
@@ -122,22 +147,22 @@ select *,
 
     -- ── Etapa máxima alcanzada en la ruta ──
     case
-        when tiene_postvinculacion  then '6. Postvinculación'
-        when tiene_colocacion       then '5. Colocación'
-        when tiene_intermediacion   then '4. Intermediación'
-        when tiene_psicosocial      then '3. Atención Psicosocial'
-        when tiene_orientacion      then '2. Orientación'
-        when tiene_inscripcion      then '1. Inscripción'
-        else                             '0. Solo preregistro'
+        when tiene_postvinculacion_bool then '6. Postvinculación'
+        when tiene_colocacion_bool      then '5. Colocación'
+        when tiene_intermediacion_bool  then '4. Intermediación'
+        when tiene_psicosocial_bool     then '3. Atención Psicosocial'
+        when tiene_orientacion_bool     then '2. Orientación'
+        when tiene_inscripcion_bool     then '1. Inscripción'
+        else                                 '0. Solo preregistro'
     end as etapa_actual,
 
     -- ── Próxima fase pendiente para priorización ──
     case
-        when not tiene_inscripcion then '1. Pendiente Inscripción'
-        when not tiene_orientacion then '2. Pendiente Orientación'
-        when not tiene_intermediacion and not tiene_colocacion then '3. Pendiente Intermediación'
-        when not tiene_colocacion then '4. Pendiente Colocación'
-        when not tiene_postvinculacion then '5. Pendiente Postvinculación'
+        when not tiene_inscripcion_bool then '1. Pendiente Inscripción'
+        when not tiene_orientacion_bool then '2. Pendiente Orientación'
+        when not tiene_intermediacion_bool and not tiene_colocacion_bool then '3. Pendiente Intermediación'
+        when not tiene_colocacion_bool then '4. Pendiente Colocación'
+        when not tiene_postvinculacion_bool then '5. Pendiente Postvinculación'
         else '6. Ruta completa'
     end as siguiente_fase_pendiente
 

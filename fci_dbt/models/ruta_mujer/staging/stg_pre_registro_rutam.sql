@@ -43,7 +43,8 @@ select
     lower(trim(`Ha_tenido_empleo_con_caja_de_compensaci_n`)) as ha_tenido_empleo_con_caja_de_compensaci_n,
     trim(`A_os_totales_de_experiencia_laboral`) as a_os_totales_de_experiencia_laboral,
     lower(trim(`D_nde_te_enteraste_de_esta_vacante`)) as d_nde_te_enteraste_de_esta_vacante,
-    trim(`Cu_l_de_nuestras_vacantes_llam_tu_atenci_n`) as cu_l_de_nuestras_vacantes_llam_tu_atenci_n,
+    coalesce(trim(`Cu_l_de_nuestras_vacantes_llam_tu_atenci_n_Cu_ntan`), trim(`Cu_l_de_nuestras_vacantes_llam_tu_atenci_n`)) as cu_l_de_nuestras_vacantes_llam_tu_atenci_n,
+    trim(`Cu_l_de_nuestras_vacantes_llam_tu_atenci_n_Cu_ntan`) as vacante_de_interes,
     lower(trim(`Corte`)) as corte,
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time
