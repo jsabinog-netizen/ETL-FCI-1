@@ -119,12 +119,42 @@ select
         then 'no'
         else 'si'
     end as tiene_discapacidad,
-    r.tipo_de_discapacidad,
-    coalesce(r.cuenta_con_documento_discapacidad, o.acredita_discapacidad) as cuenta_con_documento_discapacidad,
-    o.grado_discapacidad as grado_de_discapacidad,
-    o.origen_discapacidad as origen_de_la_discapacidad,
-    o.vigencia_discapacidad,
-    r.certificado_discapacidad_url as url_de_discapacidad,
+    case
+        when coalesce(r.tipo_de_discapacidad, o.tipo_de_discapacidad) is null
+             or lower(trim(coalesce(r.tipo_de_discapacidad, o.tipo_de_discapacidad))) in ('none', 'ninguna', 'no aplica', 'no', 'nan', '')
+        then 'No aplica'
+        else coalesce(nullif(trim(r.tipo_de_discapacidad), ''), 'No diligenciado')
+    end as tipo_de_discapacidad,
+    case
+        when coalesce(r.tipo_de_discapacidad, o.tipo_de_discapacidad) is null
+             or lower(trim(coalesce(r.tipo_de_discapacidad, o.tipo_de_discapacidad))) in ('none', 'ninguna', 'no aplica', 'no', 'nan', '')
+        then 'No aplica'
+        else coalesce(nullif(trim(coalesce(r.cuenta_con_documento_discapacidad, o.acredita_discapacidad)), ''), 'No diligenciado')
+    end as cuenta_con_documento_discapacidad,
+    case
+        when coalesce(r.tipo_de_discapacidad, o.tipo_de_discapacidad) is null
+             or lower(trim(coalesce(r.tipo_de_discapacidad, o.tipo_de_discapacidad))) in ('none', 'ninguna', 'no aplica', 'no', 'nan', '')
+        then 'No aplica'
+        else coalesce(nullif(trim(o.grado_discapacidad), ''), 'No diligenciado')
+    end as grado_de_discapacidad,
+    case
+        when coalesce(r.tipo_de_discapacidad, o.tipo_de_discapacidad) is null
+             or lower(trim(coalesce(r.tipo_de_discapacidad, o.tipo_de_discapacidad))) in ('none', 'ninguna', 'no aplica', 'no', 'nan', '')
+        then 'No aplica'
+        else coalesce(nullif(trim(o.origen_discapacidad), ''), 'No diligenciado')
+    end as origen_de_la_discapacidad,
+    case
+        when coalesce(r.tipo_de_discapacidad, o.tipo_de_discapacidad) is null
+             or lower(trim(coalesce(r.tipo_de_discapacidad, o.tipo_de_discapacidad))) in ('none', 'ninguna', 'no aplica', 'no', 'nan', '')
+        then 'No aplica'
+        else coalesce(nullif(trim(o.vigencia_discapacidad), ''), 'No diligenciado')
+    end as vigencia_discapacidad,
+    case
+        when coalesce(r.tipo_de_discapacidad, o.tipo_de_discapacidad) is null
+             or lower(trim(coalesce(r.tipo_de_discapacidad, o.tipo_de_discapacidad))) in ('none', 'ninguna', 'no aplica', 'no', 'nan', '')
+        then 'No aplica'
+        else coalesce(nullif(trim(r.certificado_discapacidad_url), ''), 'No diligenciado')
+    end as url_de_discapacidad,
     o.poblacion_focalizada,
 
     -- ── 3. EDUCACIÓN Y FORMACIÓN ──
