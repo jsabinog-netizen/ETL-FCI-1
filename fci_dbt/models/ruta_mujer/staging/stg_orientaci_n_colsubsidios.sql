@@ -120,10 +120,22 @@ select
     lower(trim(`Ultimo_Ingreso_Laboral`)) as ultimo_ingreso_laboral,
     lower(trim(`Situaci_n_Actual`)) as situacion_ocupacional_actual,
     lower(trim(`Cu_nto_tiempo_lleva_buscando_empleo`)) as tiempo_busqueda_empleo,
-    trim(`Medios_que_usa_para_la_b_squeda_de_trabajo`) as medios_busqueda_trabajo,
-    trim(`Qu_dificultades_ha_tenido_para_conseguir_empleo`) as dificultades_conseguir_empleo,
+    case
+        when nullif(trim(`Medios_que_usa_para_la_b_squeda_de_trabajo`), '') is null or trim(`Medios_que_usa_para_la_b_squeda_de_trabajo`) = '[]'
+            then 'Sin información'
+        else trim(regexp_replace(`Medios_que_usa_para_la_b_squeda_de_trabajo`, r'[\[\]"]', ''))
+    end as medios_busqueda_trabajo,
+    case
+        when nullif(trim(`Qu_dificultades_ha_tenido_para_conseguir_empleo`), '') is null or trim(`Qu_dificultades_ha_tenido_para_conseguir_empleo`) = '[]'
+            then 'Sin información'
+        else trim(regexp_replace(`Qu_dificultades_ha_tenido_para_conseguir_empleo`, r'[\[\]"]', ''))
+    end as dificultades_conseguir_empleo,
     trim(`Describa_y_ampl_e_las_dificultades_previas`) as detalle_dificultades_empleo,
-    trim(`Perfil_capacidades`) as perfil_capacidades,
+    case
+        when nullif(trim(`Perfil_capacidades`), '') is null or trim(`Perfil_capacidades`) = '[]'
+            then 'Sin información'
+        else trim(regexp_replace(`Perfil_capacidades`, r'[\[\]"]', ''))
+    end as perfil_capacidades,
     trim(`Profundice_la_barrera_o_brecha_identificada`) as profundice_la_barrera_o_brecha_identificada,
     lower(trim(`Disponibilidad_para_la_jornada_laboral`)) as disponibilidad_jornada,
     lower(trim(`Posibilidad_de_trasladarse`)) as posibilidad_trasladarse,

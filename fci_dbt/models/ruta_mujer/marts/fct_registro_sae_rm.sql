@@ -111,7 +111,11 @@ select
     r.tiene_hijos,
     r.estado_civil,
     coalesce(r.tiene_clasificacion_sisben, case when r.seleccione_nivel_de_sisb_n is not null then 'si' else null end) as tiene_clasificacion_de_sisben,
-    r.seleccione_nivel_de_sisb_n as nivel_sisben,
+    case
+        when lower(trim(coalesce(r.tiene_clasificacion_sisben, ''))) in ('no', 'false') then 'No aplica'
+        when r.seleccione_nivel_de_sisb_n is null or trim(r.seleccione_nivel_de_sisb_n) = '' then 'Sin información'
+        else r.seleccione_nivel_de_sisb_n
+    end as nivel_sisben,
     r.ha_recibido_subsidio_gobierno as ha_recibido_algun_subsidio_del_gobierno,
     case
         when coalesce(r.tipo_de_discapacidad, o.tipo_de_discapacidad) is null
@@ -201,44 +205,47 @@ select
     ], ', '), '') as programas_que_maneja,
 
     -- ── 4. EXPERIENCIA LABORAL ──
-    r.nombre_empresa_experiencia as empresa,
-    r.sector_ultimo_empleo as industria,
-    o.area_experiencia as area_experiencia_orientacion,
-    o.area_experiencia_normalizada,
-    o.cargo_desempeno_cuoc as cargo,
-    r.tipo_vinculacion_experiencia as tipo_de_experiencia,
+    coalesce(r.nombre_empresa_experiencia, 'No aplica / Sin experiencia') as empresa,
+    coalesce(r.sector_ultimo_empleo, 'No aplica / Sin experiencia') as industria,
+    coalesce(o.area_experiencia, 'No aplica / Sin experiencia') as area_experiencia_orientacion,
+    coalesce(o.area_experiencia_normalizada, 'No aplica / Sin experiencia') as area_experiencia_normalizada,
+    coalesce(o.cargo_desempeno_cuoc, 'No aplica / Sin experiencia') as cargo,
+    coalesce(r.tipo_vinculacion_experiencia, 'No aplica / Sin experiencia') as tipo_de_experiencia,
     r.fecha_inicio_experiencia as fecha_de_ingreso,
     r.fecha_fin_experiencia as fecha_de_retiro,
-    o.tiempo_de_experiencia_laboral,
+    coalesce(o.tiempo_de_experiencia_laboral, 'Sin información') as tiempo_de_experiencia_laboral,
     r.pais_empresa_experiencia,
     r.pais_empresa_experiencia as pais_experiencia,
-    r.funciones_logros_experiencia as descripcion_de_la_experiencia_laboral,
-    o.trabaja_actualmente as trabaja_actualmente_en_la_empresa,
-    o.motivo_retiro as razon_retiro_empleo_anterior,
-    o.ultimo_ingreso_laboral,
+    coalesce(r.funciones_logros_experiencia, 'No aplica / Sin experiencia') as descripcion_de_la_experiencia_laboral,
+    coalesce(o.trabaja_actualmente, 'no') as trabaja_actualmente_en_la_empresa,
+    coalesce(o.motivo_retiro, 'Sin información') as razon_retiro_empleo_anterior,
+    coalesce(o.ultimo_ingreso_laboral, 'Sin información') as ultimo_ingreso_laboral,
 
     -- ── 5. SITUACIÓN OCUPACIONAL Y EXPECTATIVAS ──
-    coalesce(o.situacion_ocupacional_actual, o.ocupacion_actual) as situacion_ocupacional_actual,
-    o.tiempo_busqueda_empleo as tiempo_de_cesion_laboral,
-    o.medios_busqueda_trabajo as medios_que_usa_para_buscar_trabajo,
-    o.dificultades_conseguir_empleo,
-    o.detalle_dificultades_empleo as profundice_dificultades_empleo,
-    o.perfil_capacidades,
-    o.disponibilidad_jornada as tiempo_para_trabajar,
-    o.posibilidad_trasladarse as tiene_posibilidad_de_trasladarse,
-    o.posibilidad_viajar as tiene_posibilidad_para_viajar,
-    o.interes_teletrabajo as le_interesa_el_teletrabajo,
-    o.aspiracion_salarial,
-    o.interes_ocupacional_cuoc as cargo_de_interes,
-    o.interes_practica_empresarial,
-    o.clasificacion_orientacion,
-    o.concepto_de_orientaci_n,
-    o.modalidad_orientacion,
+    coalesce(o.situacion_ocupacional_actual, o.ocupacion_actual, 'Sin información') as situacion_ocupacional_actual,
+    coalesce(o.tiempo_busqueda_empleo, 'Sin información') as tiempo_de_cesion_laboral,
+    coalesce(o.medios_busqueda_trabajo, 'Sin información') as medios_que_usa_para_buscar_trabajo,
+    coalesce(o.dificultades_conseguir_empleo, 'Sin información') as dificultades_conseguir_empleo,
+    coalesce(o.detalle_dificultades_empleo, 'Sin información') as profundice_dificultades_empleo,
+    coalesce(o.perfil_capacidades, 'Sin información') as perfil_capacidades,
+    coalesce(o.disponibilidad_jornada, 'Sin información') as tiempo_para_trabajar,
+    coalesce(o.posibilidad_trasladarse, 'Sin información') as tiene_posibilidad_de_trasladarse,
+    coalesce(o.posibilidad_viajar, 'Sin información') as tiene_posibilidad_para_viajar,
+    coalesce(o.interes_teletrabajo, 'Sin información') as le_interesa_el_teletrabajo,
+    coalesce(o.aspiracion_salarial, 'Sin información') as aspiracion_salarial,
+    coalesce(o.interes_ocupacional_cuoc, 'Sin información') as cargo_de_interes,
+    coalesce(o.interes_practica_empresarial, 'Sin información') as interes_practica_empresarial,
+    coalesce(o.clasificacion_orientacion, 'Sin información') as clasificacion_orientacion,
+    case
+        when o.id is null then 'Aún no realizada la orientación'
+        else coalesce(o.concepto_de_orientaci_n_colsubsidio, o.concepto_de_orientaci_n, 'No diligenciado')
+    end as concepto_de_orientaci_n,
+    coalesce(o.modalidad_orientacion, 'Sin información') as modalidad_orientacion,
 
     -- ── RESULTADO SOCIO-OCUPACIONAL / BARRERAS ──
-    o.brecha_o_barrera_identificada,
-    o.profundice_la_barrera_o_brecha_identificada,
-    o.construccion_concepto_entrevista as contruccion_de_concepto_de_entrevista
+    coalesce(o.brecha_o_barrera_identificada, 'Sin información') as brecha_o_barrera_identificada,
+    coalesce(o.profundice_la_barrera_o_brecha_identificada, 'Sin información') as profundice_la_barrera_o_brecha_identificada,
+    coalesce(o.construccion_concepto_entrevista, 'Sin información') as contruccion_de_concepto_de_entrevista
 
 from inscripcion r
 left join orientacion o on r.documento = o.documento
