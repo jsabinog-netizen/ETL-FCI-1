@@ -5,11 +5,21 @@ with orientacion as (
         order by fecha_de_orientaci_n desc nulls last, modified_time desc nulls last, id desc
     ) = 1
 ), psicosocial as (
+    -- Psicosocial Corte 1 (v1). Los registros sin corte son cascarones
+    -- vacios de mujeres de Corte 2: su psicosocial vive en v2.
     select * from {{ ref('stg_psicosocial_rutam') }}
+    where corte = 'corte 1'
     qualify row_number() over (
         partition by documento order by fecha_inicio_acompanamiento_sc_1 desc nulls last, 
         fecha_final_acompanamiento_sc_1 desc nulls last, modified_time desc nulls last, 
         created_time desc nulls last, id desc
+    ) = 1
+), psicosocial_v2 as (
+    -- Psicosocial Corte 2. Una mujer de Corte 1 que sigue en Corte 2 puede
+    -- tener ambos: v2 tiene prioridad en los campos descriptivos.
+    select * from {{ ref('stg_psicosocial_rutam_v2') }}
+    qualify row_number() over (
+        partition by documento order by created_time desc nulls last, id desc
     ) = 1
 ), formacion as (
     select * from {{ ref('stg_formaci_n_colsubsidios') }}
@@ -76,7 +86,9 @@ with orientacion as (
         date(r.fecha_de_nacimiento) as fecha_nacimiento,
         date(r.fecha_de_registro) as fecha_inscripcion,
         date(o.fecha_de_orientaci_n) as fecha_orientacion,
-        date(p.created_time) as fecha_registro_psicosocial,
+        coalesce(date(p2.created_time), date(p.created_time)) as fecha_registro_psicosocial,
+        -- Fecha de la primera atencion: Llamada 1 en v2, Sesion Corta 1 en v1.
+        coalesce(p2.l1_fecha_inicio, p.fecha_inicio_acompanamiento_sc_1) as fecha_atencion_psicosocial,
         p.fecha_inicio_acompanamiento_sc_1 as fecha_inicio_acompanamiento_sc_1,
         p.fecha_final_acompanamiento_sc_1 as fecha_final_acompanamiento_sc_1, 
         coalesce(f.fecha_formaci_n, f.fecha_curso) as fecha_formacion,
@@ -84,7 +96,9 @@ with orientacion as (
         date(i.ultima.fecha_intermediacion) as fecha_intermediacion,
         date(c.fecha_de_vinculaci_n_laboral) as fecha_colocacion,
         date(pr.created_time) as fecha_preregistro,
-        o.id as orientacion_id, p.id as psicosocial_id,
+        o.id as orientacion_id, coalesce(p2.id, p.id) as psicosocial_id,
+        case when p2.id is not null then 'v2'
+             when p.id  is not null then 'v1' end as psicosocial_version,
         f.id as formacion_id, pv.id as postvinculacion_id,
         i.ultima.id as intermediacion_id, c.id as colocacion_id, pr.id as preregistro_id,
         o.gestor_operativo as orientador,
@@ -92,8 +106,11 @@ with orientacion as (
             when o.id is null then 'Aún no realizada la orientación'
             else coalesce(o.perfil_ocupacional, 'No diligenciado')
         end as perfil_ocupacional,
-        p.gestor_operativo as profesional_psicosocial,
-        p.estado_actual_del_proceso as estado_psicosocial,
+        -- v2 no registra la profesional psicosocial; se usa la orientadora que remite.
+        if(p2.id is not null, p2.profesional_que_remite, p.gestor_operativo) as profesional_psicosocial,
+        if(p2.id is not null,
+           coalesce(p2.estado_final_del_caso, p2.estado_del_caso_llamada_1, p2.estado_del_diagnostico),
+           p.estado_actual_del_proceso) as estado_psicosocial,
         coalesce(fa.num_registros_formacion, 0) as num_registros_formacion,
         coalesce(fa.alguna_completada, false) as alguna_formacion_completada,
         coalesce(i.num_intermediaciones, 0) as num_intermediaciones,
@@ -151,10 +168,11 @@ with orientacion as (
         coalesce(o.profundice_la_barrera_o_brecha_identificada, 'Sin información') as profundice_la_barrera_o_brecha_identificada,
 
         -- ── Campos de Psicosocial agregados para replicar vw_fact_Colsubsidio ──
-        coalesce(p.seleccione_el_tipo_de_barrera, 'Sin información') as seleccione_el_tipo_de_barrera,
-        coalesce(p.seleccione_el_tipo_de_barrera_2, 'Sin información') as seleccione_el_tipo_de_barrera_2,
-        coalesce(p.seleccione_el_tipo_de_barrera_3, 'Sin información') as seleccione_el_tipo_de_barrera_3,
-        coalesce(p.evoluci_n, 'Sin evolución registrada') as evoluci_n,
+        coalesce(p2.barrera_1, p.seleccione_el_tipo_de_barrera, 'Sin información') as seleccione_el_tipo_de_barrera,
+        coalesce(p2.barrera_2, p.seleccione_el_tipo_de_barrera_2, 'Sin información') as seleccione_el_tipo_de_barrera_2,
+        coalesce(p2.barrera_3, p.seleccione_el_tipo_de_barrera_3, 'Sin información') as seleccione_el_tipo_de_barrera_3,
+        -- Evolucion solo existe en v1.
+        coalesce(if(p2.id is null, p.evoluci_n, null), 'Sin evolución registrada') as evoluci_n,
 
         -- ── Campos de Inscripción agregados para replicar vw_fact_Colsubsidio ──
         r.estrato,
@@ -196,7 +214,9 @@ with orientacion as (
 
         coalesce(r.inscripci_n_completada in ('si', 'sí', 'true'), false) as inscrita,
         coalesce(o.orientaci_n_sociocupacion_completada in ('si', 'sí', 'true'), false) as orientada,
-        coalesce(p.acompa_amiento_psicosocial_completado in ('si', 'sí', 'true'), false) as psicosocial,
+        -- OR: quien completo en Corte 1 no lo pierde al pasar a Corte 2.
+        coalesce(p.acompa_amiento_psicosocial_completado in ('si', 'sí', 'true'), false)
+            or coalesce(p2.psicosocial_completada, false) as psicosocial,
         coalesce(fa.alguna_completada, false) as formada,
         pv.permanencia_seguimiento is not null as postvinculada,
         coalesce(i.ultima.intermediaci_n_completada in ('si', 'sí', 'true'), false) as intermediada,
@@ -204,6 +224,7 @@ with orientacion as (
     from {{ ref('stg_inscripci_n_colsubsidios') }} r
     left join orientacion o on r.documento = o.documento
     left join psicosocial p on r.documento = p.documento
+    left join psicosocial_v2 p2 on r.documento = p2.documento
     left join formacion f on r.documento = f.documento
     left join formacion_agg fa on r.documento = fa.documento
     left join postvinculacion pv on r.documento = pv.documento
@@ -284,11 +305,13 @@ select *,
     case when fecha_colocacion     >= '2026-09-01' then 'corte 2'
          when fecha_colocacion     is null         then null
          else 'corte 1' end as corte_colocacion,
-    CASE WHEN fecha_inicio_acompanamiento_sc_1 >= '2026-09-01' THEN 'corte 2' 
-         WHEN fecha_inicio_acompanamiento_sc_1 is null         THEN null
-         ELSE 'corte 1' END as corte_psicosocial,  
+    -- El corte psicosocial lo define el modulo: v1 = Corte 1, v2 = Corte 2.
+    case psicosocial_version
+        when 'v2' then 'corte 2'
+        when 'v1' then 'corte 1'
+    end as corte_psicosocial,
 
-    date_diff(fecha_inicio_acompanamiento_sc_1, fecha_inscripcion, day) as dias_inscripcion_a_psicosocial,
+    date_diff(fecha_atencion_psicosocial, fecha_inscripcion, day) as dias_inscripcion_a_psicosocial,
     case when fecha_orientacion >= fecha_inscripcion
          then date_diff(fecha_orientacion, fecha_inscripcion, day) end as dias_inscripcion_a_orientacion,
     case when fecha_intermediacion >= fecha_orientacion

@@ -1,6 +1,6 @@
 # Ruta Mujer
 
-Fuente: `zoho_raw_ruta_mujer`, las 14 tablas raw de
+Fuente: `zoho_raw_ruta_mujer`, las 15 tablas raw de
 `zoho-bq-pipeline-492116.proyecto_ruta_mujer`. Las tablas temporales `_stg_`
 del cargador no son fuentes dbt.
 
@@ -18,7 +18,8 @@ Los nombres abreviados del diseño corresponden a estos modelos existentes:
 |---|---|
 | stg_inscripcion_rm | stg_inscripci_n_colsubsidios |
 | stg_orientacion_rm | stg_orientaci_n_colsubsidios |
-| stg_psicosocial_rm | stg_psicosocial_rutam |
+| stg_psicosocial_rm | stg_psicosocial_rutam (Corte 1) |
+| stg_psicosocial_v2_rm | stg_psicosocial_rutam_v2 (Corte 2) |
 | stg_intermediacion_rm | stg_intermediaci_n_ruta_m |
 | stg_colocacion_rm | stg_colocaci_n_colsubsidios |
 | stg_preregistro_rm | stg_pre_registro_rutam |
@@ -40,6 +41,27 @@ de auditoría; no se exponen TIMESTAMP ni DATETIME.
 | fct_formacion_rm | Una inscripción a curso por `id_curso` (`id` de Zoho + slot 1–6); `documento` se repite por curso |
 | dim_vacantes_rm | Una vacante por id, enriquecida con empresa |
 | fct_agendamientos_rm | Una cita por id compuesto: tipo + id de origen |
+| fct_psicosocial_rm | Un diagnóstico psicosocial de Corte 2 por id (solo v2) |
+
+### Psicosocial por corte
+
+Hay dos módulos psicosociales con campos distintos:
+
+- `Psicosocial_RutaM` (v1) es **Corte 1**. Solo se usan sus registros con
+  `corte = 'corte 1'`. Los registros con corte vacío son cascarones de mujeres
+  de Corte 2 (0 completados) y se ignoran.
+- `Psicosocial_RutaM_v2` es **Corte 2**: un diagnóstico por ejes con llamadas
+  L1/L2. No tiene campo `Corte`; el staging lo fija en `'corte 2'`.
+
+Una mujer de Corte 1 que sigue en el programa puede tener registro en ambos.
+En `fct_ruta_mujer` y `fct_registro_sae_rm`, v2 tiene prioridad en los campos
+descriptivos (`psicosocial_id`, profesional, estado, barreras, fechas). El
+flag `psicosocial` es v1 OR v2, para que quien completó en Corte 1 no lo pierda.
+`fct_preregistro_rm` une ambas fuentes con `UNION ALL` y agrega por documento.
+
+En v2 el profesional es `Profesional_que_remite`, porque el `Owner` es la
+plataforma. "Acompañamiento completado" en v2 está pendiente de definir: por
+ahora `psicosocial_completada` es false.
 
 ### Ruta central
 

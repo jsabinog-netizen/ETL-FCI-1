@@ -19,10 +19,22 @@ orientacion as (
     group by documento
 ),
 psicosocial as (
+    -- Corte 1 desde v1 (sin los cascarones vacios de Corte 2) y Corte 2 desde v2.
     select documento,
-        max(coalesce(fecha_inicio_acompanamiento_sc_1, date(created_time))) as fecha_psicosocial,
-        max(coalesce(acompa_amiento_psicosocial_completado in ('si', 'sí', 'true'), false)) as psicosocial_completada
-    from {{ ref('stg_psicosocial_rutam') }}
+        max(fecha_psicosocial) as fecha_psicosocial,
+        max(psicosocial_completada) as psicosocial_completada
+    from (
+        select documento,
+            coalesce(fecha_inicio_acompanamiento_sc_1, date(created_time)) as fecha_psicosocial,
+            coalesce(acompa_amiento_psicosocial_completado in ('si', 'sí', 'true'), false) as psicosocial_completada
+        from {{ ref('stg_psicosocial_rutam') }}
+        where corte = 'corte 1'
+        union all
+        select documento,
+            coalesce(l1_fecha_inicio, date(created_time)),
+            psicosocial_completada
+        from {{ ref('stg_psicosocial_rutam_v2') }}
+    )
     where documento is not null
     group by documento
 ),

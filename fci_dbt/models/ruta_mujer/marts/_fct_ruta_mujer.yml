@@ -95,13 +95,20 @@ models:
   - name: tuvo_preregistro
     description: TRUE si la mujer tiene registro en Pre_registro_RutaM.
   - name: fecha_inicio_acompanamiento_sc_1
-    description: Fecha de inicio del acompañamiento psicosocial de la participante; DATE.
+    description: Fecha de inicio del acompañamiento psicosocial de Corte 1 (v1, Sesión Corta 1); DATE.
   - name: fecha_final_acompanamiento_sc_1
-    description: Fecha final del acompañamiento psicosocial de la participante; DATE.
+    description: Fecha final del acompañamiento psicosocial de Corte 1 (v1, Sesión Corta 1); DATE.
+  - name: fecha_atencion_psicosocial
+    description: Primera atención psicosocial — Llamada 1 si está en v2, Sesión Corta 1 si está en v1; DATE.
+  - name: psicosocial_version
+    description: >
+      Módulo del que salen los campos psicosociales: 'v2' (Psicosocial_RutaM_v2, Corte 2)
+      tiene prioridad sobre 'v1' (Psicosocial_RutaM con corte 1). Null si no tiene psicosocial.
+      Los registros de v1 sin corte (cascarones de Corte 2) se ignoran.
   - name: corte_psicosocial
     description: >
-      Cohorte de la atención psicosocial calculada a partir de la fecha de acompañamiento
-      (>= 2026-09-01 para corte 2). Null si la mujer no tiene fecha de inicio.
+      Cohorte de la atención psicosocial según el módulo: v2 = 'corte 2', v1 = 'corte 1'.
+      Null si la mujer no tiene registro psicosocial.
     tests:
       - accepted_values:
           arguments:

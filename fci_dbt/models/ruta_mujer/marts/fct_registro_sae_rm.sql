@@ -15,11 +15,20 @@ orientacion as (
     ) = 1
 ),
 psicosocial as (
+    -- Corte 1: v1 sin los cascarones vacios de Corte 2.
     select * from {{ ref('stg_psicosocial_rutam') }}
+    where corte = 'corte 1'
     qualify row_number() over (
         partition by documento
         order by created_time desc nulls last,
                  modified_time desc nulls last, id desc
+    ) = 1
+),
+psicosocial_v2 as (
+    -- Corte 2: tiene prioridad si la mujer esta en ambos.
+    select * from {{ ref('stg_psicosocial_rutam_v2') }}
+    qualify row_number() over (
+        partition by documento order by created_time desc nulls last, id desc
     ) = 1
 )
 
@@ -27,12 +36,12 @@ select
     -- ── LLAVES Y METADATOS ──
     r.id as inscripcion_id,
     o.id as orientacion_id,
-    p.id as psicosocial_id,
+    coalesce(p2.id, p.id) as psicosocial_id,
     r.corte,
     r.validacion_habilitante,
     r.fecha_de_registro as fecha_inscripcion,
     o.fecha_de_orientaci_n as fecha_orientacion,
-    date(p.created_time) as fecha_psicosocial,
+    coalesce(date(p2.created_time), date(p.created_time)) as fecha_psicosocial,
 
     -- ── 1. INFORMACIÓN GENERAL ──
     r.tipo_de_documento,
@@ -250,4 +259,5 @@ select
 from inscripcion r
 left join orientacion o on r.documento = o.documento
 left join psicosocial p on r.documento = p.documento
+left join psicosocial_v2 p2 on r.documento = p2.documento
 where r.documento is not null

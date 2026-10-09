@@ -38,9 +38,9 @@ select
     safe_cast(`Puntaje_total_0_100` as int64) as puntaje_total,
 
     -- ── Barreras (multiselect, hasta 3) ──
-    json_value(`Marca_hasta_3_barreras_que_sientes_que_m_s_te_difi`, '$[0]') as barrera_1,
-    json_value(`Marca_hasta_3_barreras_que_sientes_que_m_s_te_difi`, '$[1]') as barrera_2,
-    json_value(`Marca_hasta_3_barreras_que_sientes_que_m_s_te_difi`, '$[2]') as barrera_3,
+    lower(trim(json_value(`Marca_hasta_3_barreras_que_sientes_que_m_s_te_difi`, '$[0]'))) as barrera_1,
+    lower(trim(json_value(`Marca_hasta_3_barreras_que_sientes_que_m_s_te_difi`, '$[1]'))) as barrera_2,
+    lower(trim(json_value(`Marca_hasta_3_barreras_que_sientes_que_m_s_te_difi`, '$[2]'))) as barrera_3,
 
     -- ── Llamada 1 ──
     date(safe_cast(`L1_Hora_de_inico` as timestamp)) as l1_fecha_inicio,
