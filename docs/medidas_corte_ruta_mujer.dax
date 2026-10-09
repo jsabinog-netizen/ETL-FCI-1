@@ -158,6 +158,46 @@ CALCULATE(
 ) + 0
 
 
+// (NUEVA) Llamada 2 con contacto efectivo.
+N° de llamadas2 =
+CALCULATE(
+    COUNTROWS(fct_psicosocial_rm),
+    fct_psicosocial_rm[contacto_l2] = TRUE(),
+    TREATAS(VALUES(dim_corte_rm[corte]), fct_psicosocial_rm[corte])
+) + 0
+
+// (NUEVA) Campo Psicosocial_Completado de Zoho = Sí.
+Atenciones psicosociales completadas =
+CALCULATE(
+    COUNTROWS(fct_psicosocial_rm),
+    fct_psicosocial_rm[psicosocial_completada] = TRUE(),
+    TREATAS(VALUES(dim_corte_rm[corte]), fct_psicosocial_rm[corte])
+) + 0
+
+// EMBUDO PSICOSOCIAL: visual "Embudo" sin campo en Categoría, con estas 4
+// medidas en Valores, en este orden:
+//   Atenciones psicosociales en proceso → N° de llamadas1 → N° de llamadas2
+//   → Atenciones psicosociales completadas
+
+// RESULTADOS POR EJES (tabla fct_psicosocial_ejes_rm):
+// gráfico de barras, eje X = fct_psicosocial_ejes_rm[eje] (ordenado por
+// eje_orden), valor = la medida de abajo.
+// (NUEVA) % de mujeres diagnosticadas cuyo eje supera el umbral (hoy > 0).
+% Mujeres con alerta por eje =
+DIVIDE([Mujeres con alerta por eje], [Mujeres diagnosticadas por eje], 0)
+
+// (NUEVA) Denominador: mujeres con diagnóstico diligenciado. Útil en tooltip.
+Mujeres diagnosticadas por eje =
+CALCULATE(
+    DISTINCTCOUNT(fct_psicosocial_ejes_rm[documento]),
+    TREATAS(VALUES(dim_corte_rm[corte]), fct_psicosocial_ejes_rm[corte])
+)
+
+// (NUEVA) Numerador: mujeres cuyo eje supera el umbral.
+Mujeres con alerta por eje =
+CALCULATE([Mujeres diagnosticadas por eje], fct_psicosocial_ejes_rm[en_alerta] = TRUE()) + 0
+
+
 // -----------------------------------------------------------------------------
 // 4. FORMACIÓN  (fct_actividad_rm, modulo "5. Formación")
 //    Control: registros C1 515 · C2 150 | completadas 50 (todas C1)
