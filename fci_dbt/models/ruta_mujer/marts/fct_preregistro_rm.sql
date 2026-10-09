@@ -115,8 +115,10 @@ select
         tiene_formacion_bool, formacion_completada_bool,
         tiene_intermediacion_bool, intermediacion_completada_bool,
         tiene_colocacion_bool, colocada_bool,
-        tiene_postvinculacion_bool, postvinculada_bool
+        tiene_postvinculacion_bool, postvinculada_bool,
+        vacante_de_interes
     ),
+    coalesce(vacante_de_interes, 'Sin información') as vacante_de_interes,
     -- ── Flags Sí/No en texto para segmentadores de Power BI ──
     case when tiene_inscripcion_bool then 'Sí' else 'No' end as tiene_inscripcion,
     case when inscripcion_completada_bool then 'Sí' else 'No' end as inscripcion_completada,
