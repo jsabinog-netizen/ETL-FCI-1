@@ -54,7 +54,8 @@ with orientacion as (
         array_agg(struct(id, fecha_intermediaci_n as fecha_intermediacion,
                          intermediaci_n_completada, estado, intermediador,
                          concepto_de_intermediaci_n as concepto_de_intermediacion,
-                         buscar_vacante_id, nombre_vacante, nit_de_la_empresa, nombre_de_la_empresa_1)
+                         buscar_vacante_id, nombre_vacante, nit_de_la_empresa, nombre_de_la_empresa_1,
+                         corte)
             order by fecha_intermediaci_n desc nulls last,
                      modified_time desc nulls last, id desc limit 1)[offset(0)] as ultima
     from {{ ref('stg_intermediaci_n_ruta_m') }}
@@ -96,6 +97,13 @@ with orientacion as (
         date(i.ultima.fecha_intermediacion) as fecha_intermediacion,
         date(c.fecha_de_vinculaci_n_laboral) as fecha_colocacion,
         date(pr.created_time) as fecha_preregistro,
+        -- ── Cortes por etapa: el campo Corte de Zoho del registro seleccionado ──
+        -- (antes se calculaban por fecha >= 2026-09-01 y contradecian al CRM).
+        -- Null si la mujer no tiene registro en ese modulo. Para contar por
+        -- corte TODOS los registros de un modulo, usar fct_actividad_rm.
+        o.corte as corte_orientacion,
+        i.ultima.corte as corte_intermediacion,
+        c.corte as corte_colocacion,
         o.id as orientacion_id, coalesce(p2.id, p.id) as psicosocial_id,
         case when p2.id is not null then 'v2'
              when p.id  is not null then 'v1' end as psicosocial_version,
@@ -292,19 +300,8 @@ select *,
         else                     '0. Sin completar'
     end as etapa_actual,
 
-    -- ── Cortes por etapa: cada fecha de evento determina su propio corte ──
-    -- Permite a Análisis Metas filtrar inscripciones, orientaciones,
-    -- intermediaciones y colocaciones por corte independientemente.
-    case when fecha_inscripcion    >= '2026-09-01' then 'corte 2' else 'corte 1' end as corte_inscripcion,
-    case when fecha_orientacion    >= '2026-09-01' then 'corte 2'
-         when fecha_orientacion    is null         then null
-         else 'corte 1' end as corte_orientacion,
-    case when fecha_intermediacion >= '2026-09-01' then 'corte 2'
-         when fecha_intermediacion is null         then null
-         else 'corte 1' end as corte_intermediacion,
-    case when fecha_colocacion     >= '2026-09-01' then 'corte 2'
-         when fecha_colocacion     is null         then null
-         else 'corte 1' end as corte_colocacion,
+    -- corte_orientacion/intermediacion/colocacion vienen de base (Zoho).
+    corte as corte_inscripcion,
     -- El corte psicosocial lo define el modulo: v1 = Corte 1, v2 = Corte 2.
     case psicosocial_version
         when 'v2' then 'corte 2'

@@ -42,6 +42,31 @@ de auditoría; no se exponen TIMESTAMP ni DATETIME.
 | dim_vacantes_rm | Una vacante por id, enriquecida con empresa |
 | fct_agendamientos_rm | Una cita por id compuesto: tipo + id de origen |
 | fct_psicosocial_rm | Un diagnóstico psicosocial de Corte 2 por id (solo v2) |
+| fct_actividad_rm | Un registro de módulo de persona por `actividad_id` (8 módulos), con el corte de su módulo |
+| dim_corte_rm | Un corte (`corte 1`, `corte 2`, `sin corte`) |
+
+### Filtro de corte
+
+Cada módulo de Zoho tiene su propio campo `Corte`, y una mujer puede tener la
+orientación en Corte 1 y la intermediación en Corte 2. Por eso el `corte` de
+`fct_ruta_mujer` (el de la inscripción) no puede filtrar bien todos los módulos.
+
+- Los stagings convierten el `Corte` vacío en `'sin corte'`, para que el Total
+  sea igual a Corte 1 + Corte 2 + Sin corte.
+- `fct_actividad_rm` reúne con `UNION ALL` los registros de pre-registro,
+  registro, orientación, psicosocial (v1 corte 1 + v2), formación,
+  intermediación, colocación y postvinculación. Solo tiene columnas comunes:
+  `modulo`, `documento`, `corte`, `fecha_evento`, `completado` y `estado`.
+- En Power BI, `dim_corte_rm` es el único slicer y se relaciona solo con
+  `fct_actividad_rm`. Vacantes, empresas, pre-registro e intermediación se
+  filtran con `TREATAS(VALUES(dim_corte_rm[corte]), tabla[corte])` en la medida.
+- Las columnas `corte_orientacion`, `corte_intermediacion` y `corte_colocacion`
+  de `fct_ruta_mujer` usan el campo `Corte` de Zoho del registro seleccionado.
+  Antes se calculaban por fecha y contradecían al CRM.
+- Las columnas `corte_evento` de otros marts siguen calculándose por fecha.
+  No se deben usar para filtrar.
+
+Guía de Power BI: `docs/guia_filtro_corte_ruta_mujer.md`.
 
 ### Psicosocial por corte
 

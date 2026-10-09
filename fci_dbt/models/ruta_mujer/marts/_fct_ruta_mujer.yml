@@ -48,13 +48,24 @@ models:
         config:
           severity: warn
   - name: corte
-    description: Cohorte del programa (Corte 1 / Corte 2), normalizada a minúsculas en staging. Segmentación transversal del dashboard.
+    description: >
+      Corte de la INSCRIPCIÓN de la mujer (campo Corte de Zoho). No es el corte de
+      orientación, intermediación, etc.: para filtrar todos los módulos con un solo
+      slicer usar dim_corte_rm -> fct_actividad_rm.
     tests:
       - accepted_values:
           arguments:
             values: ['corte 1', 'corte 2', 'sin corte']
           config:
             severity: warn
+  - name: corte_inscripcion
+    description: Igual a corte (campo Corte de la inscripción en Zoho).
+  - name: corte_orientacion
+    description: Campo Corte de Zoho de la orientación seleccionada para la mujer; null si no tiene orientación.
+  - name: corte_intermediacion
+    description: Campo Corte de Zoho de la última intermediación; null si no tiene. Una mujer puede tener intermediaciones en ambos cortes.
+  - name: corte_colocacion
+    description: Campo Corte de Zoho de la colocación seleccionada; null si no está colocada.
   - name: concepto_intermediacion
     description: Concepto de la última intermediación; conserva el mismo evento que estado, intermediador y vacante, incluso si el concepto es nulo.
   - name: rango_etario

@@ -48,7 +48,7 @@ dbt: 1.11.12 + dbt-bigquery 1.11.3 (pinneado; 1.12.0 rompe compat. binaria)
 ```
 ETL-FCI/
 ├── config.py          # PROJECT_ID, PROJECTS dict, MODULES_* por proyecto
-├── main.py            # python main.py <proyecto> [--modulos <Modulo>]
+├── main.py            # python main.py <proyecto> | --all  (no hay filtro por módulo)
 ├── auth.py            # ZohoAuth(env_prefix) — OAuth2
 ├── extractor.py       # extracción con fields explícitos
 ├── loader.py          # carga a BigQuery, param. por dataset_id
@@ -91,7 +91,7 @@ Los nombres de staging derivan del snake_case del módulo Zoho, **no** de un ali
 | `Postvinculaci_n_Colsub` | `stg_postvinculaci_n_colsub` |
 | `Mitigaci_n_Colsubsidios` | `stg_mitigaci_n_colsubsidios` |
 
-### Marts (10)
+### Marts principales
 
 | Mart | Grano | Filas aprox. |
 |---|---|---|
@@ -105,6 +105,11 @@ Los nombres de staging derivan del snake_case del módulo Zoho, **no** de un ali
 | `dim_vacantes_rm` | 1 vacante (+ datos de empresa) | 111 |
 | `fct_postvinculacion_rm` | 1 seguimiento post-contrato | 0+ |
 | `fct_mitigacion_rm` | 1 apoyo entregado | 0 |
+| `fct_psicosocial_rm` | 1 diagnóstico psicosocial Corte 2 (v2) | ~115 |
+| `fct_actividad_rm` | 1 registro de módulo de persona (8 módulos) con el Corte de SU módulo | ~5.300 |
+| `dim_corte_rm` | 1 corte (corte 1 / corte 2 / sin corte) — único slicer de corte en Power BI | 3 |
+
+**Filtro de corte:** el `corte` de `fct_ruta_mujer` es el de la **inscripción**, no el de cada módulo. Para que un solo slicer filtre todos los módulos: `dim_corte_rm` → `fct_actividad_rm`, y `TREATAS` en las medidas de vacantes, empresas, pre-registro e intermediación. Los `corte_evento` calculados por fecha contradicen a Zoho: no usarlos para filtrar. Los stagings normalizan `Corte` vacío a `'sin corte'`.
 
 No existe `dim_empresas_rm`: los datos de empresa se resuelven dentro de `dim_vacantes_rm` con `COALESCE` sobre el lookup `Buscar_empresa`.
 
@@ -305,7 +310,7 @@ Se replica el `.pbix` de C2M (14 páginas) y se agregan 5 nuevas. C2M conectaba 
 
 **Nuevas (5):** COLOCACIONES · CALIDAD DE DATOS · PRODUCTIVIDAD DEL EQUIPO · POSTVINCULACIÓN · ESTADO DE EMPRESA (bloqueada hasta que Zoho implemente el Módulo 2)
 
-Metas conocidas: orientación 600 · formación 600 · colocación 150. Faltan las de inscripción, psicosocial e intermediación, y está pendiente confirmar si son del programa completo o por corte.
+Metas (tabla `Metas RM` del .pbix, confirmadas por Jorge el 9-oct-2026): registro 1000 · orientación 1000 · acompañamientos psicosociales 600 (son **sesiones** de ≥1 hora, no mujeres) · remisiones a vacantes 1000 · colocadas 240 · posvinculadas 240. **Son solo de Corte 2**; Corte 1 no tiene metas. Los `% Cumplimiento` deben medir Corte 2 sin importar el slicer.
 
 ---
 
