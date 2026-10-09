@@ -24,12 +24,36 @@ with inscripcion as (
         p.estado_del_diagnostico = 'diligenciado' as diagnostico_diligenciado,
         coalesce(p.l1_contacto_efectivo in ('sí', 'si'), false) as contacto_l1,
         coalesce(p.l2_contacto_efectivo in ('sí', 'si'), false) as contacto_l2,
-        p.estado_final_del_caso is not null as caso_cerrado
+        p.estado_final_del_caso is not null as caso_cerrado,
+
+        -- ── Respuestas clave (columnas Sí/No de la Base de Seguimiento) ──
+        -- Solo tienen sentido con diagnostico diligenciado; sin el quedan false.
+        coalesce(
+            p.violencia_familiar = 'sí' or p.violencia_laboral = 'sí' or p.violencia_comunidad = 'sí'
+            or exists (select 1 from unnest(p.violencia_pareja_opciones) o
+                       where o not in ('Ninguna de las anteriores', 'No tengo pareja actualmente / no aplica')),
+            false) as reporta_violencia,
+        exists (select 1 from unnest(p.indicadores_alerta_opciones) o
+                where starts_with(o, 'En las últimas semanas he pensado que no vale la pena seguir')) as marca_ideas_autolesivas,
+        exists (select 1 from unnest(p.indicadores_alerta_opciones) o
+                where o not in ('Ninguna de las anteriores', 'Prefiero no responder')) as marca_indicadores_emocionales,
+        coalesce(p.personas_de_apoyo = 'ninguna', false) as sin_redes_de_apoyo,
+        -- 'En ocasiones' cuenta como que el cuidado si afecta la permanencia.
+        coalesce(p.tiene_responsabilidades_cuidado = 'sí'
+                 and p.cuidado_dificulta_permanencia in ('sí', 'en ocasiones'), false) as cuidado_afecta_permanencia,
+        array_length(p.barreras_opciones) as num_barreras,
+        exists (select 1 from unnest(p.barreras_opciones) o
+                where o in ('Falta de recursos para alimentación o transporte',
+                            'Falta de apoyo para el cuidado de hijos/as u otras personas a cargo')) as barreras_alimentacion_transporte_cuidado,
+        p.factores_permanencia is not null as reporta_factores_permanencia,
+        coalesce(p.en_tratamiento_psicologico = 'sí', false) as en_tratamiento_psicologico_flag
     from {{ ref('stg_psicosocial_rutam_v2') }} p
     left join inscripcion i on p.documento = i.documento
 )
 select
-    * except (profesional_que_remite),
+    -- Power BI no importa columnas ARRAY: se exponen como flags y conteos.
+    * except (profesional_que_remite, violencia_pareja_opciones, indicadores_alerta_opciones, barreras_opciones),
+    case when psicosocial_completada then 'Sí' else 'No' end as tiene_psicosocial_completada,
     coalesce(profesional_que_remite, 'Sin información') as profesional_que_remite,
     -- Estado mas avanzado del caso: cierre > llamada 1 > diagnostico.
     coalesce(estado_final_del_caso, estado_del_caso_llamada_1, estado_del_diagnostico, 'sin información') as estado_caso,

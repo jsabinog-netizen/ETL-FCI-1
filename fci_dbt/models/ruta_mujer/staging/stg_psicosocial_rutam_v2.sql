@@ -68,9 +68,29 @@ select
 
     -- ── Cierre ──
     lower(trim(`Estado_final_del_caso`)) as estado_final_del_caso,
-    -- TODO: definicion de "acompañamiento completado" en v2 pendiente de
-    -- confirmar con coordinacion psicosocial. Mientras tanto, false.
-    false as psicosocial_completada,
+    -- Campo Psicosocial_Completado de Zoho (agregado al modulo en oct-2026).
+    coalesce(lower(trim(`Psicosocial_Completado`)) in ('sí', 'si', 'true'), false) as psicosocial_completada,
+
+    -- ── Respuestas clave del diagnostico (picklists: lower + trim) ──
+    lower(trim(`Has_vivido_o_vives_situaciones_de_violencia_en_tu`)) as violencia_familiar,
+    json_value_array(`En_los_ltimos_12_meses_tu_pareja_o_expareja_ha_hec`) as violencia_pareja_opciones,
+    lower(trim(`Has_vivido_situaciones_de_violencia_o_acoso_en_tu`)) as violencia_laboral,
+    lower(trim(`Has_vivido_situaciones_de_violencia_en_tu_comunida`)) as violencia_comunidad,
+    json_value_array(`Indicadores_de_alerta_has_vivido_alguna_de_estas_s`) as indicadores_alerta_opciones,
+    lower(trim(`Cu_ntas_personas_sientes_que_tienes_cerca_a_quiene`)) as personas_de_apoyo,
+    lower(trim(`Tienes_responsabilidades_de_cuidado_de_ni_os_as_pe`)) as tiene_responsabilidades_cuidado,
+    lower(trim(`Estas_responsabilidades_han_dificultado_tu_permane`)) as cuidado_dificulta_permanencia,
+    json_value_array(`Marca_hasta_3_barreras_que_sientes_que_m_s_te_difi`) as barreras_opciones,
+    lower(trim(`Qu_factores_dificultaron_tu_permanencia`)) as factores_permanencia,
+    lower(trim(`Actualmente_est_s_en_un_tratamiento_psicol_gico_o`)) as en_tratamiento_psicologico,
+
+    -- ── Plan de trabajo (L1) y remision (L2): texto libre solo trim ──
+    trim(`L1_Compromisos_de_la_participante`) as l1_compromisos_participante,
+    trim(`L1_Compromisos_de_la_profesional`) as l1_compromisos_profesional,
+    nullif(array_to_string(json_value_array(`L1_Herramientas_y_recursos_entregados`), '; '), '') as l1_herramientas_entregadas,
+    trim(`L2_Remisi_n_entidad_o_ruta_espec_fica`) as l2_remision_entidad,
+    date(safe_cast(`L2_Remisi_n_fecha` as timestamp)) as l2_remision_fecha,
+    date(safe_cast(`L2_Remisi_n_fecha_de_verificaci_n` as timestamp)) as l2_remision_fecha_verificacion,
 
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time,

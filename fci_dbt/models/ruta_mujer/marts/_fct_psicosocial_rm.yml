@@ -61,3 +61,25 @@ models:
         description: BOOL. TRUE si la Llamada 2 tuvo contacto efectivo.
       - name: caso_cerrado
         description: BOOL. TRUE si hay estado final del caso.
+      - name: psicosocial_completada
+        description: BOOL desde el campo Psicosocial_Completado de Zoho.
+      - name: tiene_psicosocial_completada
+        description: psicosocial_completada en texto (Sí/No).
+      - name: reporta_violencia
+        description: Violencia familiar, laboral o comunitaria = Sí, o marcó alguna conducta de la pareja (excepto "Ninguna" / "No tengo pareja").
+      - name: marca_ideas_autolesivas
+        description: Marcó "he pensado que no vale la pena seguir, o he tenido ganas de hacerme daño" en Indicadores de alerta.
+      - name: marca_indicadores_emocionales
+        description: Marcó cualquier indicador de alerta (excepto "Ninguna" / "Prefiero no responder").
+      - name: sin_redes_de_apoyo
+        description: Respondió "Ninguna" a cuántas personas cercanas puede pedir ayuda.
+      - name: cuidado_afecta_permanencia
+        description: Tiene responsabilidades de cuidado y estas dificultan su permanencia ("Sí" o "En ocasiones").
+      - name: num_barreras
+        description: Número de barreras marcadas (máximo 3).
+      - name: barreras_alimentacion_transporte_cuidado
+        description: Marcó falta de recursos para alimentación/transporte o falta de apoyo para el cuidado.
+      - name: reporta_factores_permanencia
+        description: Respondió algún factor que dificultó su permanencia laboral.
+      - name: en_tratamiento_psicologico_flag
+        description: Está en tratamiento psicológico o psiquiátrico (Sí).

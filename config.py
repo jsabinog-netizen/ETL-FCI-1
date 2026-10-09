@@ -391,6 +391,23 @@ MODULES_RUTA_MUJER = {
         "L2_Contacto_efectivo", "L2_N_de_intento_de_contacto", "L2_Alertas",
         "L2_Estado_del_proceso_de_empleabilidad", "L2_Remisi_n_tipo1",
         "L2_Remisi_n_activaci_n_verificada", "Estado_final_del_caso",
+        "Psicosocial_Completado",
+        # Respuestas clave del diagnóstico (columnas Sí/No de la Base de Seguimiento en Excel)
+        "Has_vivido_o_vives_situaciones_de_violencia_en_tu",
+        "En_los_ltimos_12_meses_tu_pareja_o_expareja_ha_hec",
+        "Has_vivido_situaciones_de_violencia_o_acoso_en_tu",
+        "Has_vivido_situaciones_de_violencia_en_tu_comunida",
+        "Indicadores_de_alerta_has_vivido_alguna_de_estas_s",
+        "Cu_ntas_personas_sientes_que_tienes_cerca_a_quiene",
+        "Tienes_responsabilidades_de_cuidado_de_ni_os_as_pe",
+        "Estas_responsabilidades_han_dificultado_tu_permane",
+        "Qu_factores_dificultaron_tu_permanencia",
+        "Actualmente_est_s_en_un_tratamiento_psicol_gico_o",
+        # Plan de trabajo y remisión
+        "L1_Compromisos_de_la_participante", "L1_Compromisos_de_la_profesional",
+        "L1_Herramientas_y_recursos_entregados",
+        "L2_Remisi_n_entidad_o_ruta_espec_fica", "L2_Remisi_n_fecha",
+        "L2_Remisi_n_fecha_de_verificaci_n",
     ],
     "Intermediaci_n_Ruta_M": [
         "Corte",

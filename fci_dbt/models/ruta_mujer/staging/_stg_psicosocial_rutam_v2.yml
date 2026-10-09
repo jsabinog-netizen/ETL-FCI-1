@@ -37,4 +37,10 @@ models:
   - name: l1_fecha_inicio
     description: Fecha de inicio de la Llamada 1 (api_name L1_Hora_de_inico, typo de Zoho), DATE.
   - name: psicosocial_completada
-    description: Placeholder en false hasta que se confirme qué cuenta como acompañamiento completado en v2.
+    description: TRUE si el campo Psicosocial_Completado de Zoho es 'Sí'; false si es 'No' o está vacío.
+  - name: violencia_pareja_opciones
+    description: ARRAY con las opciones marcadas en "En los últimos 12 meses, ¿tu pareja o expareja ha hecho…?".
+  - name: indicadores_alerta_opciones
+    description: ARRAY con las opciones marcadas en "Indicadores de alerta" (ideas de hacerse daño, sueño, consumo, pérdida de control).
+  - name: barreras_opciones
+    description: ARRAY con las barreras marcadas (hasta 3). barrera_1..3 son las mismas en columnas.
