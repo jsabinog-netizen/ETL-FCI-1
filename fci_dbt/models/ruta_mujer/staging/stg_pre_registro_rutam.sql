@@ -24,7 +24,7 @@ select
     trim(`Otra_nacionalidad`) as otra_nacionalidad,
     lower(trim(`Modalidad_de_atenci_n`)) as modalidad_de_atenci_n,
     lower(trim(`Tipo_de_poblaci_n`)) as tipo_de_poblaci_n,
-    trim(`Ruta_Mujer`) as ruta_mujer,
+    lower(trim(`Ruta_Mujer`)) as ruta_mujer,
     lower(trim(`Preinscripci_n_completad`)) as preinscripci_n_completad,
     lower(trim(`Municipio_de_residencia1`)) as municipio_de_residencia1,
     case

@@ -26,15 +26,30 @@ models:
                 severity: warn
       - name: estado_inscripcion_final
         description: >
-          Inscritos si el documento existe en stg_inscripci_n_colsubsidios;
-          No aplica si preinscripci_n_completad indica no aplica;
-          Pendiente en cualquier otro caso, incluido NULL.
+          No aplica si ruta_mujer = 'no aplica', o está empleada formalmente,
+          o el sexo es masculino (gana aunque se haya inscrito); Inscritos si
+          el documento existe en stg_inscripci_n_colsubsidios; Pendiente en
+          cualquier otro caso. sexo está vacío en ~59% de los preregistros,
+          así que pueden existir hombres no detectados.
         tests:
           - accepted_values:
               arguments:
                 values: ['Inscritos', 'No aplica', 'Pendiente']
               config:
                 severity: warn
+      - name: motivo_no_aplica
+        description: >
+          Solo cuando estado_inscripcion_final = 'No aplica': Hombre,
+          Empleada formalmente o Marcado No aplica en CRM (primer motivo en
+          ese orden). Null en los demás.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Hombre', 'Empleada formalmente', 'Marcado No aplica en CRM']
+              config:
+                severity: warn
+      - name: ruta_mujer
+        description: Campo Ruta_Mujer de Zoho en minúsculas (aplica / no aplica / registrado). Vacío en ~87%.
       - name: se_inscribio
         description: >
           TRUE si el documento del preregistro aparece en el staging

@@ -147,13 +147,25 @@ select
     case when tiene_postvinculacion_bool then 'Sí' else 'No' end as tiene_postvinculacion,
     case when postvinculada_bool then 'Sí' else 'No' end as postvinculada,
 
-    -- Estado final del preregistro (replica la columna original del dashboard)
+    -- Estado final del preregistro. "No aplica" gana aunque se haya inscrito
+    -- (regla de negocio acordada 9-oct-2026): esas inscripciones son una
+    -- inconsistencia de proceso y se ven con se_inscribio = TRUE.
+    -- Antes miraba preinscripci_n_completad, que solo trae 'sí'/'no', y nunca
+    -- devolvia 'No aplica'.
     case
-        when se_inscribio then 'Inscritos'
-        when lower(trim(coalesce(preinscripci_n_completad, ''))) like '%no aplica%'
+        when ruta_mujer = 'no aplica'
+            or actualmente_te_encuentras = 'empleada formalmente'
+            or sexo = 'masculino'
             then 'No aplica'
+        when se_inscribio then 'Inscritos'
         else 'Pendiente'
     end as estado_inscripcion_final,
+    -- Motivo del "No aplica"; si hay varios, el primero en este orden.
+    case
+        when sexo = 'masculino' then 'Hombre'
+        when actualmente_te_encuentras = 'empleada formalmente' then 'Empleada formalmente'
+        when ruta_mujer = 'no aplica' then 'Marcado No aplica en CRM'
+    end as motivo_no_aplica,
 
     case
         when created_time >= '2026-09-01' then 'corte 2'
