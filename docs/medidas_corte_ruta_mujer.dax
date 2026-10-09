@@ -1,0 +1,531 @@
+// =============================================================================
+// MEDIDAS RUTA MUJER — FILTRO ÚNICO DE CORTE
+// Generado el 9-oct-2026 a partir del Calculos.tmdl real del PBIP.
+//
+// Cómo usar este archivo:
+// - Cada bloque "Nombre = ..." es UNA medida de la tabla Calculos.
+//   Abrir la medida existente con ese nombre y reemplazar su fórmula
+//   (no crear una nueva: así los visuales siguen funcionando).
+// - Las marcadas (NUEVA) no existen todavía: crearlas en Calculos.
+// - Antes de pegar, importar dim_corte_rm y fct_actividad_rm y crear las
+//   relaciones (ver docs/guia_filtro_corte_ruta_mujer.md, pasos 1 a 4).
+//
+// Regla de diseño:
+// - dim_corte_rm[corte] es el ÚNICO slicer de corte.
+// - Se relaciona solo con fct_actividad_rm. Las demás tablas se filtran
+//   con TREATAS(VALUES(dim_corte_rm[corte]), tabla[corte]) dentro de la medida.
+// - Nunca escribir un corte fijo ("corte 2") dentro de un CALCULATE de una
+//   medida de conteo: reemplaza al slicer y lo deja sin efecto. Esa fue la
+//   causa principal del error. La única excepción son las metas (sección 9).
+// - Las comparaciones de texto en DAX no distinguen mayúsculas,
+//   pero sí tildes y errores de escritura.
+// =============================================================================
+
+
+// -----------------------------------------------------------------------------
+// 0. TABLA CALCULADA 'Metas RM'
+//    Reemplazar la expresión de la tabla (Modelado > Tabla 'Metas RM' > fórmula).
+//    Cambio: "Posviculadas" -> "Posvinculadas" (typo que dejaba vacía la etapa 6
+//    en Ejecutados Ruta Mujer). Las metas son SOLO de Corte 2.
+// -----------------------------------------------------------------------------
+
+Metas RM =
+DATATABLE(
+    "Etapa",       STRING,
+    "meta_total",  INTEGER,
+    "descripcion", STRING,
+    {
+        { "1. Mujeres registradas",           1000, "Mujeres registradas" },
+        { "2. Mujeres Orientadas",            1000, "Mujeres orientación" },
+        { "3. Acompañamientos individuales",   600, "Personas con atención Psicosocial (meta en sesiones de 1 hora)" },
+        { "4. Remisiones a vacantes",         1000, "Remisiones a vacantes" },
+        { "5. Personas Colocadas",             240, "Participantes con empleo formal" },
+        { "6. Personas Posvinculadas",         240, "Participantes con seguimiento pos-vinculación" }
+    }
+)
+
+
+// -----------------------------------------------------------------------------
+// 1. REGISTRO  (fct_actividad_rm, modulo "2. Registro")
+//    Control: Total 768 · C1 535 · C2 233
+// -----------------------------------------------------------------------------
+
+Mujeres registradas =
+CALCULATE(
+    DISTINCTCOUNT(fct_actividad_rm[documento]),
+    fct_actividad_rm[modulo] = "2. Registro"
+)
+
+// Misma cifra, pero respeta un eje o filtro de Calendario por fecha de inscripción.
+Personas Registradas =
+CALCULATE(
+    [Mujeres registradas],
+    USERELATIONSHIP(Calendario[Date], fct_actividad_rm[fecha_evento])
+)
+
+// Antes tenía corte 2 fijo: con el slicer en Corte 1 seguía mostrando Corte 2.
+Inscripciones Completadas =
+CALCULATE([Mujeres registradas], fct_actividad_rm[completado] = TRUE())
+
+// Fijas a propósito: muestran siempre su corte, sin importar el slicer.
+Registros Corte 1 =
+CALCULATE([Mujeres registradas], dim_corte_rm[corte] = "corte 1")
+
+Registros Corte 2 =
+CALCULATE([Mujeres registradas], dim_corte_rm[corte] = "corte 2")
+
+Jefas de hogar =
+CALCULATE([Mujeres registradas], fct_ruta_mujer[es_jefe_hogar] = "si")
+
+// Antes: <> "no, ninguna" contaba los 13 registros vacíos como "con cuidado".
+Con responsabilidades de cuidado =
+CALCULATE([Mujeres registradas], fct_ruta_mujer[tiene_cuidado_txt] = "Sí")
+
+// (NUEVA) Control: Total 313 · C1 251 · C2 62
+Mujeres habilitantes =
+CALCULATE([Mujeres registradas], fct_ruta_mujer[tipo_de_poblacion_subsidio] = "habilitante")
+
+
+// -----------------------------------------------------------------------------
+// 2. ORIENTACIÓN  (fct_actividad_rm, modulo "3. Orientación")
+//    Control: Total 805 · C1 573 · C2 232
+//    Incluye ~37 mujeres orientadas que no tienen inscripción (fct_ruta_mujer
+//    nunca podía contarlas: su base es la inscripción).
+// -----------------------------------------------------------------------------
+
+Mujeres Orientadas =
+CALCULATE(
+    DISTINCTCOUNT(fct_actividad_rm[documento]),
+    fct_actividad_rm[modulo] = "3. Orientación"
+)
+
+Personas Orientadas =
+CALCULATE(
+    [Mujeres Orientadas],
+    USERELATIONSHIP(Calendario[Date], fct_actividad_rm[fecha_evento])
+)
+
+// (NUEVA) Orientaciones con "Orientación sociocupación completada" = sí.
+Orientaciones Completadas =
+CALCULATE([Mujeres Orientadas], fct_actividad_rm[completado] = TRUE())
+
+// Antes dividía orientadas de todos los cortes entre inscritas de Corte 2
+// (podía pasar de 100%). Ahora: de las registradas del corte, cuántas se orientaron.
+Tasa Conversión Inscritas a Orientadas =
+DIVIDE(
+    CALCULATE([Mujeres registradas], fct_ruta_mujer[Orientada] = TRUE()),
+    [Mujeres registradas],
+    0
+)
+
+// Sin cambios de fórmula (ya funcionan con el slicer porque usan [Personas Orientadas]):
+// Orientaciones individuales, Orientaciones grupales, Promedio Orientaciones Equipo,
+// Pendientes De Orientación rm, % Derivadas a Psicosocial.
+
+
+// -----------------------------------------------------------------------------
+// 3. PSICOSOCIAL  (fct_actividad_rm, modulo "4. Psicosocial")
+//    Corte 1 = Psicosocial_RutaM (solo registros con corte 1)
+//    Corte 2 = Psicosocial_RutaM_v2
+//    Control: Total 681 · C1 566 · C2 115 | completados: C1 201 · C2 0
+// -----------------------------------------------------------------------------
+
+// Antes: tenía "Corte 2" fijo y usaba el flag de v1, así que daba ~0.
+Mujeres con Acompañamiento individual =
+CALCULATE(
+    DISTINCTCOUNT(fct_actividad_rm[documento]),
+    fct_actividad_rm[modulo] = "4. Psicosocial"
+) + 0
+
+// Atención completada. En v2 es false hasta que se defina el criterio.
+Personas con Atención Psicosocial =
+CALCULATE([Mujeres con Acompañamiento individual], fct_actividad_rm[completado] = TRUE()) + 0
+
+// Página Psicosocial (solo Corte 2). Con el slicer en Corte 1 queda en blanco, que es correcto.
+// Sugerencia: renombrar a "Diagnósticos psicosociales": cuenta todos los diagnósticos v2.
+Atenciones psicosociales en proceso =
+CALCULATE(
+    DISTINCTCOUNT(fct_psicosocial_rm[documento]),
+    TREATAS(VALUES(dim_corte_rm[corte]), fct_psicosocial_rm[corte])
+)
+
+// Antes: COUNT de una columna BOOL contaba todas las filas (true y false).
+N° de llamadas1 =
+CALCULATE(
+    COUNTROWS(fct_psicosocial_rm),
+    fct_psicosocial_rm[contacto_l1] = TRUE(),
+    TREATAS(VALUES(dim_corte_rm[corte]), fct_psicosocial_rm[corte])
+) + 0
+
+
+// -----------------------------------------------------------------------------
+// 4. FORMACIÓN  (fct_actividad_rm, modulo "5. Formación")
+//    Control: registros C1 515 · C2 150 | completadas 50 (todas C1)
+//    Nota: los 150 registros de C2 aún no tienen cursos, por eso no aparecen
+//    en fct_formacion_rm (grano = curso).
+// -----------------------------------------------------------------------------
+
+// Antes: COUNT(documento) contaba cursos, no personas.
+Personas Formadas =
+CALCULATE(
+    DISTINCTCOUNT(fct_actividad_rm[documento]),
+    fct_actividad_rm[modulo] = "5. Formación",
+    fct_actividad_rm[completado] = TRUE()
+) + 0
+
+
+// -----------------------------------------------------------------------------
+// 5. INTERMEDIACIÓN  (fct_intermediacion_rm + TREATAS)
+//    Se queda en su propia tabla para que los gráficos por intermediador,
+//    estado, empresa, etc. sigan funcionando.
+//    Control: intermediaciones 1223 · C1 868 · C2 353 · Sin corte 2
+//             mujeres 518 · C1 309 · C2 251  (42 están en ambos cortes,
+//             por eso el Total es menor que C1 + C2)
+//             contratadas C1 6 · C2 8
+// -----------------------------------------------------------------------------
+
+Número Intermediaciones =
+CALCULATE(
+    COUNTROWS(fct_intermediacion_rm),
+    TREATAS(VALUES(dim_corte_rm[corte]), fct_intermediacion_rm[corte])
+) + 0
+
+Personas intermediadas =
+CALCULATE(
+    DISTINCTCOUNT(fct_intermediacion_rm[documento]),
+    TREATAS(VALUES(dim_corte_rm[corte]), fct_intermediacion_rm[corte])
+) + 0
+
+// Duplicadas: apuntan a la medida principal. Se pueden borrar cuando ningún visual las use.
+Personas intermediadas_ = [Personas intermediadas]
+TABLA INTER = [Número Intermediaciones]
+Total Remisiones = [Número Intermediaciones]
+
+// Antes: SUMX por empresa de mujeres distintas (no era el número de postulaciones).
+Total Postulaciones = [Número Intermediaciones]
+
+Mujeres Contratadas =
+CALCULATE([Personas intermediadas], fct_intermediacion_rm[estado_normalizado] = "3. Contratada") + 0
+
+Contratación de remitidas =
+DIVIDE([Mujeres Contratadas], [Personas intermediadas], 0)
+
+Empresas Receptoras Activas =
+CALCULATE(
+    DISTINCTCOUNT(fct_intermediacion_rm[nit_de_la_empresa]),
+    TREATAS(VALUES(dim_corte_rm[corte]), fct_intermediacion_rm[corte])
+)
+
+// Sin cambios de fórmula: Promedio Intermediaciones por Mujer,
+// Tasa conversión Orientadas a intermediadas, Tasa conversión Intermediadas a colocadas.
+
+
+// -----------------------------------------------------------------------------
+// 6. COLOCACIÓN Y POSTVINCULACIÓN
+//    Colocadas: fct_actividad_rm, modulo "7. Colocación" (registros del módulo,
+//    igual que el CRM). Control: 9 · C1 6 · C2 3
+//    OJO: "Mujeres colocadas" (módulo colocación, 9) NO es lo mismo que
+//    "Mujeres Contratadas" (estado de intermediación, 14). Titularlas distinto.
+// -----------------------------------------------------------------------------
+
+// Antes: corte 2 fijo (y calculado por fecha).
+Mujeres colocadas =
+CALCULATE(
+    DISTINCTCOUNT(fct_actividad_rm[documento]),
+    fct_actividad_rm[modulo] = "7. Colocación"
+) + 0
+
+Puestos Ocupados = [Mujeres colocadas]
+
+Total Posvinculaciones =
+CALCULATE(
+    COUNTROWS(fct_postvinculacion_rm),
+    TREATAS(VALUES(dim_corte_rm[corte]), fct_postvinculacion_rm[corte])
+) + 0
+
+// Antes: corte 2 fijo sobre fct_ruta_mujer[corte_colocacion].
+Mujeres posvinculadas =
+CALCULATE(
+    DISTINCTCOUNT(fct_postvinculacion_rm[documento]),
+    TREATAS(VALUES(dim_corte_rm[corte]), fct_postvinculacion_rm[corte])
+) + 0
+
+Total de Posvinculaciones pendientes =
+CALCULATE([Total Posvinculaciones], fct_postvinculacion_rm[alerta_vencida] = TRUE()) + 0
+
+// Antes estaba invertida (colocadas / posvinculadas).
+% Cobertura Posvinculacion =
+DIVIDE([Mujeres posvinculadas], [Mujeres colocadas], 0)
+
+// Antes el numerador era [Posvinculadas sin gestionar].
+% Colocadas de Registros =
+DIVIDE([Mujeres colocadas], [Mujeres registradas], 0)
+
+// Sin cambios de fórmula: Posvinculadas sin gestionar, Discrepancias Estado Post.
+
+
+// -----------------------------------------------------------------------------
+// 7. PRE-REGISTRO  (fct_preregistro_rm + TREATAS sobre su corte de Zoho,
+//    NO sobre corte_evento, que se calcula por fecha)
+//    Control: 1171 · C1 694 · C2 476 · Sin corte 1
+// -----------------------------------------------------------------------------
+
+Total Pre-registros =
+CALCULATE(
+    DISTINCTCOUNT(fct_preregistro_rm[documento]),
+    TREATAS(VALUES(dim_corte_rm[corte]), fct_preregistro_rm[corte])
+)
+
+Mujeres en pre-registro =
+CALCULATE([Total Pre-registros], fct_preregistro_rm[sexo] = "femenino")
+
+// Sin cambios de fórmula (usan [Total Pre-registros]): Preregistros Inscritos,
+// Pre-registros No Aplican, Pre-registros Pendientes, % Conversion Preregistro.
+
+
+// -----------------------------------------------------------------------------
+// 8. GESTIÓN EMPRESARIAL: VACANTES Y EMPRESAS (TREATAS sobre su corte de Zoho)
+//    Control vacantes: 295 · C1 108 · C2 187 | puestos 3096 · C1 1616 · C2 1480
+//             activas 274 (92 / 182) · cerradas 17 (15 / 2)
+//             empresas con vacantes 57 (34 / 47) | empresas registradas 106 (83 / 23)
+// -----------------------------------------------------------------------------
+
+Recuento Vacantes =
+CALCULATE(
+    COUNTROWS(dim_vacantes_rm),
+    TREATAS(VALUES(dim_corte_rm[corte]), dim_vacantes_rm[corte])
+) + 0
+
+Total de Vacantes = [Recuento Vacantes]
+Vacantes Aportadas = [Recuento Vacantes]
+
+Vacantes Activas =
+CALCULATE([Recuento Vacantes], dim_vacantes_rm[estado_de_la_vacante] = "activa")
+
+N Vacantes Activas = [Vacantes Activas]
+
+// (NUEVA)
+Vacantes Cerradas =
+CALCULATE([Recuento Vacantes], dim_vacantes_rm[estado_de_la_vacante] = "cerrada")
+
+// Antes: SUM de columnas de dim_empresas_rm (por empresa, mezclaba cortes).
+// Requiere la columna nueva dim_vacantes_rm[motivo_cierre] (actualizar la tabla).
+Vacantes Cerradas Intermediación =
+CALCULATE([Recuento Vacantes], dim_vacantes_rm[motivo_cierre] = "Intermediación")
+
+Vacantes Cerradas Gestión Directa =
+CALCULATE([Recuento Vacantes], dim_vacantes_rm[motivo_cierre] = "Gestión directa")
+
+// CRM: "fecha final MAYOR a hoy" (antes era >=).
+Vacantes Vigentes =
+CALCULATE([Recuento Vacantes], dim_vacantes_rm[fecha_final_de_la_vacante] > TODAY())
+
+Total Puestos =
+CALCULATE(
+    SUM(dim_vacantes_rm[n_mero_de_puestos_de_trabajo]),
+    TREATAS(VALUES(dim_corte_rm[corte]), dim_vacantes_rm[corte])
+)
+
+Puestos aportados al convenio = [Total Puestos]
+
+Puestos Solicitados =
+CALCULATE([Total Puestos], dim_vacantes_rm[fecha_final_de_la_vacante] > TODAY())
+
+Empresas con vacantes =
+CALCULATE(
+    DISTINCTCOUNT(dim_vacantes_rm[nit_empresa]),
+    TREATAS(VALUES(dim_corte_rm[corte]), dim_vacantes_rm[corte])
+)
+
+// OJO: el CRM reporta 12 sectores; esta columna da 26. Validar qué columna es
+// "sector" para el CRM (probablemente sector_normalizado).
+Cobertura Sectorial =
+CALCULATE(
+    DISTINCTCOUNT(dim_vacantes_rm[sector_economico_empresa]),
+    TREATAS(VALUES(dim_corte_rm[corte]), dim_vacantes_rm[corte])
+)
+
+Total empresas =
+CALCULATE(
+    DISTINCTCOUNT(dim_empresas_rm[nit]),
+    TREATAS(VALUES(dim_corte_rm[corte]), dim_empresas_rm[corte])
+)
+
+// Sin cambios de fórmula (usan [Total Puestos]): Puestos en Vacantes Vencidas, Puestos Disponibles.
+
+
+// -----------------------------------------------------------------------------
+// 8b. AGENDAMIENTOS  (su propio corte; antes se filtraban con el corte de intermediación)
+// -----------------------------------------------------------------------------
+
+Citas Empresariales =
+CALCULATE(
+    COUNTROWS(fct_agenda_comercial_rm),
+    TREATAS(VALUES(dim_corte_rm[corte]), fct_agenda_comercial_rm[Cohorte])
+)
+
+Citas Virtuales =
+CALCULATE([Citas Empresariales], fct_agenda_comercial_rm[Modalidad] = "virtual")
+
+Citas Presenciales =
+CALCULATE([Citas Empresariales], fct_agenda_comercial_rm[Modalidad] = "presencial")
+
+Reuniones Unicas =
+CALCULATE(
+    DISTINCTCOUNT(fct_agenda_comercial_rm[empresa_id]),
+    TREATAS(VALUES(dim_corte_rm[corte]), fct_agenda_comercial_rm[Cohorte])
+)
+
+Dias Agendados =
+CALCULATE(
+    DISTINCTCOUNT(fct_agenda_comercial_rm[Fecha de Agenda]),
+    TREATAS(VALUES(dim_corte_rm[corte]), fct_agenda_comercial_rm[Cohorte])
+)
+
+Citas Individuales =
+CALCULATE(
+    COUNTROWS(fct_agenda_orientacion_rm),
+    TREATAS(VALUES(dim_corte_rm[corte]), fct_agenda_orientacion_rm[corte])
+)
+
+Personas Agendadas =
+CALCULATE(
+    DISTINCTCOUNT(fct_agenda_orientacion_rm[documento]),
+    TREATAS(VALUES(dim_corte_rm[corte]), fct_agenda_orientacion_rm[corte])
+)
+
+Dias Agendados Orientacion =
+CALCULATE(
+    DISTINCTCOUNT(fct_agenda_orientacion_rm[fecha_cita]),
+    TREATAS(VALUES(dim_corte_rm[corte]), fct_agenda_orientacion_rm[corte])
+)
+
+
+// -----------------------------------------------------------------------------
+// 9. METAS — SIEMPRE CORTE 2 (las metas solo existen para Corte 2)
+//    El CALCULATE con dim_corte_rm[corte] = "corte 2" reemplaza a propósito el
+//    slicer: el avance contra la meta no cambia si se elige Corte 1.
+//    Titular los medidores "Avance meta Corte 2".
+// -----------------------------------------------------------------------------
+
+Ejecutados Ruta Mujer =
+VAR etapa = SELECTEDVALUE('Metas RM'[Etapa])
+RETURN
+    CALCULATE(
+        SWITCH(
+            etapa,
+            "1. Mujeres registradas",          [Mujeres registradas],
+            "2. Mujeres Orientadas",           [Mujeres Orientadas],
+            "3. Acompañamientos individuales", [Mujeres con Acompañamiento individual],
+            "4. Remisiones a vacantes",        [Número Intermediaciones],
+            "5. Personas Colocadas",           [Mujeres colocadas],
+            "6. Personas Posvinculadas",       [Mujeres posvinculadas],
+            BLANK()
+        ),
+        dim_corte_rm[corte] = "corte 2"
+    )
+
+// Sin cambios: Faltante Metas ruta = [Meta RM] - [Ejecutados Ruta Mujer]
+
+// Typo corregido (igual que en la tabla 'Metas RM').
+Meta postvinculadas rm =
+CALCULATE(SUM('Metas RM'[meta_total]), 'Metas RM'[Etapa] = "6. Personas Posvinculadas")
+
+% Cumplimiento Registro =
+DIVIDE(CALCULATE([Mujeres registradas], dim_corte_rm[corte] = "corte 2"), [Meta Registros rm], 0)
+
+% Cumplimiento Orientación =
+DIVIDE(CALCULATE([Mujeres Orientadas], dim_corte_rm[corte] = "corte 2"), [Meta Orientación rm], 0)
+
+// La meta es de SESIONES de 1 hora; hoy se mide en mujeres (proxy). Dejarlo en el título.
+% Cumplimiento psicosocial =
+DIVIDE(CALCULATE([Mujeres con Acompañamiento individual], dim_corte_rm[corte] = "corte 2"), [Meta Psicosocial rm], 0)
+
+% Cumplimiento intermediación =
+DIVIDE(CALCULATE([Número Intermediaciones], dim_corte_rm[corte] = "corte 2"), [Meta intermediación rm], 0)
+
+// Antes el numerador era [Posvinculadas sin gestionar].
+% Cumplimiento Colocados =
+DIVIDE(CALCULATE([Mujeres colocadas], dim_corte_rm[corte] = "corte 2"), [Meta Colocados rm], 0)
+
+% Cumplimiento postvinculación =
+DIVIDE(CALCULATE([Mujeres posvinculadas], dim_corte_rm[corte] = "corte 2"), [Meta postvinculadas rm], 0)
+
+
+// -----------------------------------------------------------------------------
+// 10. FILTROS PARA TABLAS DE DETALLE (NUEVAS)
+//     Uso: en el visual de tabla > panel Filtros > "Filtros en este objeto
+//     visual" > arrastrar la medida > "es" 1 > Aplicar filtro.
+//     Sin corte seleccionado devuelven 1 (muestran todo).
+// -----------------------------------------------------------------------------
+
+// Tablas de fct_ruta_mujer: la mujer tiene un registro del módulo en el corte elegido.
+Filtro corte Registro =
+IF(
+    ISFILTERED(dim_corte_rm),
+    INT(CALCULATE(COUNTROWS(fct_actividad_rm), fct_actividad_rm[modulo] = "2. Registro") > 0),
+    1
+)
+
+Filtro corte Orientación =
+IF(
+    ISFILTERED(dim_corte_rm),
+    INT(CALCULATE(COUNTROWS(fct_actividad_rm), fct_actividad_rm[modulo] = "3. Orientación") > 0),
+    1
+)
+
+Filtro corte Psicosocial =
+IF(
+    ISFILTERED(dim_corte_rm),
+    INT(CALCULATE(COUNTROWS(fct_actividad_rm), fct_actividad_rm[modulo] = "4. Psicosocial") > 0),
+    1
+)
+
+Filtro corte Colocación =
+IF(
+    ISFILTERED(dim_corte_rm),
+    INT(CALCULATE(COUNTROWS(fct_actividad_rm), fct_actividad_rm[modulo] = "7. Colocación") > 0),
+    1
+)
+
+// Tablas que tienen su propia columna corte.
+Filtro corte Preregistro =
+IF(ISFILTERED(dim_corte_rm),
+   INT(NOT ISEMPTY(INTERSECT(VALUES(fct_preregistro_rm[corte]), VALUES(dim_corte_rm[corte])))), 1)
+
+Filtro corte Intermediación =
+IF(ISFILTERED(dim_corte_rm),
+   INT(NOT ISEMPTY(INTERSECT(VALUES(fct_intermediacion_rm[corte]), VALUES(dim_corte_rm[corte])))), 1)
+
+Filtro corte Vacantes =
+IF(ISFILTERED(dim_corte_rm),
+   INT(NOT ISEMPTY(INTERSECT(VALUES(dim_vacantes_rm[corte]), VALUES(dim_corte_rm[corte])))), 1)
+
+Filtro corte Empresas =
+IF(ISFILTERED(dim_corte_rm),
+   INT(NOT ISEMPTY(INTERSECT(VALUES(dim_empresas_rm[corte]), VALUES(dim_corte_rm[corte])))), 1)
+
+Filtro corte SAE =
+IF(ISFILTERED(dim_corte_rm),
+   INT(NOT ISEMPTY(INTERSECT(VALUES(fct_registro_sae_rm[corte]), VALUES(dim_corte_rm[corte])))), 1)
+
+Filtro corte Postvinculación =
+IF(ISFILTERED(dim_corte_rm),
+   INT(NOT ISEMPTY(INTERSECT(VALUES(fct_postvinculacion_rm[corte]), VALUES(dim_corte_rm[corte])))), 1)
+
+Filtro corte Agenda Comercial =
+IF(ISFILTERED(dim_corte_rm),
+   INT(NOT ISEMPTY(INTERSECT(VALUES(fct_agenda_comercial_rm[Cohorte]), VALUES(dim_corte_rm[corte])))), 1)
+
+Filtro corte Agenda Orientación =
+IF(ISFILTERED(dim_corte_rm),
+   INT(NOT ISEMPTY(INTERSECT(VALUES(fct_agenda_orientacion_rm[corte]), VALUES(dim_corte_rm[corte])))), 1)
+
+
+// -----------------------------------------------------------------------------
+// 11. OTRAS CORRECCIONES
+// -----------------------------------------------------------------------------
+
+// Antes era una copia exacta de "Dias Inscripcion a Orientacion".
+Dias Orientacion a Intermediacion =
+AVERAGE(fct_ruta_mujer[dias_orientacion_a_intermediacion])
