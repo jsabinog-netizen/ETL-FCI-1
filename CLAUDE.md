@@ -69,7 +69,7 @@ ETL-FCI/
 
 ## Ruta Mujer — estado real
 
-### Módulos Zoho (14) y sus stagings
+### Módulos Zoho (15) y sus stagings
 
 Los nombres de staging derivan del snake_case del módulo Zoho, **no** de un alias corto.
 
@@ -78,7 +78,8 @@ Los nombres de staging derivan del snake_case del módulo Zoho, **no** de un ali
 | `Pre_registro_RutaM` | `stg_pre_registro_rutam` |
 | `Inscripci_n_Colsubsidios` | `stg_inscripci_n_colsubsidios` |
 | `Orientaci_n_Colsubsidios` | `stg_orientaci_n_colsubsidios` |
-| `Psicosocial_RutaM` | `stg_psicosocial_rutam` |
+| `Psicosocial_RutaM` | `stg_psicosocial_rutam` (Corte 1) |
+| `Psicosocial_RutaM_v2` | `stg_psicosocial_rutam_v2` (Corte 2) |
 | `Intermediaci_n_Ruta_M` | `stg_intermediaci_n_ruta_m` |
 | `Colocaci_n_Colsubsidios` | `stg_colocaci_n_colsubsidios` |
 | `Formaci_n_Colsubsidios` | `stg_formaci_n_colsubsidios` |
@@ -138,7 +139,9 @@ Columnas derivadas (en dbt, no DAX):
 
 ### `Corte` — el campo de cohorte
 
-Picklist en Zoho con valores `Corte 1` / `Corte 2`. **Existe en los 14 módulos.** Es la segmentación transversal del programa.
+Picklist en Zoho con valores `Corte 1` / `Corte 2`. **Existe en los 14 módulos originales.** Es la segmentación transversal del programa.
+
+**Excepción — psicosocial:** `Psicosocial_RutaM` (v1) es solo Corte 1 y `Psicosocial_RutaM_v2` es Corte 2. v2 **no tiene** campo `Corte` (el staging lo fija en `'corte 2'`). v1 tiene ~205 registros vacíos con `Corte` NULL de mujeres de Corte 2: se excluyen (`where corte = 'corte 1'`). Una mujer de Corte 1 que sigue en Corte 2 puede tener registro en ambos: v2 tiene prioridad en campos descriptivos. El `Owner` de v2 es la plataforma ("InClúyete 4.0"), no una profesional: se usa `Profesional_que_remite`.
 
 ⚠️ Durante una sesión se creyó erróneamente que `Corte` era un artefacto de texto y se eliminó de tres módulos. Es un campo real, verificado con `getFields` y COQL.
 

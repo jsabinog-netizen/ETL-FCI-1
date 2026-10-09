@@ -369,6 +369,29 @@ MODULES_RUTA_MUJER = {
         "Estrategia_para_la_superaci_n_de_la_barrera_3","Tipificaci_n_Mujer", "Evoluci_n",
         "Fecha_Fecha_de_inicio_acompa_amiento_SC_1", "Fecha_final_acompa_amiento_SC1"
     ],
+    # Psicosocial de Corte 2 (diagnóstico por ejes + llamadas L1/L2).
+    # Corte 1 sigue en Psicosocial_RutaM. Este módulo NO tiene campo Corte.
+    # Typos de Zoho usados tal cual: L1_Hora_de_inico, Puntaje_Eje_5_Barreras_0_151.
+    "Psicosocial_RutaM_v2": [
+        "Name", "Created_Time", "Modified_Time", "Owner", "Participante_RutaM",
+        "Profesional_que_remite", "Estado_del_diagn_stico", "Fuente_del_diagn_stico",
+        "C_mo_llegaste_a_este_acompa_amiento", "Canal_de_env_o_del_enlace",
+        "Nivel_de_riesgo_autom_tico", "Alerta_prioritaria_inmediata",
+        "Alerta_de_revisi_n_posible_control_econ_mico", "Banderas_rojas_activas",
+        "Eje_1_Violencias", "Eje_2_Redes_de_apoyo", "Eje_3_Bienestar_emocional",
+        "Eje_4_Autonom_a", "Eje_5_Barreras",
+        "Puntaje_Eje_1_Violencias_0_30", "Puntaje_Eje_2_Redes_de_apoyo_0_20",
+        "Puntaje_Eje_3_Bienestar_emocional_0_20", "Puntaje_Eje_4_Autonom_a_0_15",
+        "Puntaje_Eje_5_Barreras_0_151", "Puntaje_total_0_100",
+        "Marca_hasta_3_barreras_que_sientes_que_m_s_te_difi",
+        "L1_Hora_de_inico", "L1_Hora_fin", "L1_Duraci_n_total_min", "L1_Canal",
+        "L1_Contacto_efectivo", "L1_N_de_intento_de_contacto", "L1_Nivel_de_riesgo_final",
+        "L1_Alertas", "L1_Fecha_agendada_Llamada_2", "Estado_del_caso_Llamada_1",
+        "L2_Hora_inicio", "L2_Hora_fin", "L2_Duraci_n_total_min", "L2_Canal",
+        "L2_Contacto_efectivo", "L2_N_de_intento_de_contacto", "L2_Alertas",
+        "L2_Estado_del_proceso_de_empleabilidad", "L2_Remisi_n_tipo1",
+        "L2_Remisi_n_activaci_n_verificada", "Estado_final_del_caso",
+    ],
     "Intermediaci_n_Ruta_M": [
         "Corte",
         "Record_Status__s", "Name", "Owner", "Email", "Created_Time", "Modified_Time",
