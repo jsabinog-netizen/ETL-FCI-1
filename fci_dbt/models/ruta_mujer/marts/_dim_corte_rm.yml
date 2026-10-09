@@ -1,0 +1,21 @@
+version: 2
+models:
+  - name: dim_corte_rm
+    description: >
+      Un corte del programa (corte 1, corte 2, sin corte). Dimensión del único
+      slicer de corte en Power BI: se relaciona 1:* solo con fct_actividad_rm;
+      las demás tablas se filtran con TREATAS en las medidas DAX.
+    columns:
+      - name: corte
+        description: Llave en minúsculas, igual al campo corte de los marts.
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: corte_nombre
+        description: Etiqueta para mostrar en el slicer ('Corte 1', 'Corte 2', 'Sin corte').
+      - name: corte_orden
+        description: Orden de corte_nombre ("Ordenar por columna" en Power BI).

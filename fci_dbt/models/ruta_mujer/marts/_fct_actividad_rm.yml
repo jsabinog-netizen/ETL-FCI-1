@@ -1,0 +1,54 @@
+version: 2
+models:
+  - name: fct_actividad_rm
+    description: >
+      Un registro de un módulo de persona de Zoho por fila (pre-registro,
+      registro, orientación, psicosocial v1/v2, formación, intermediación,
+      colocación, postvinculación), con el Corte de ESE módulo. Base del
+      filtro único de corte. Contar registros con COUNTROWS y mujeres con
+      DISTINCTCOUNT(documento), siempre filtrando por modulo.
+    columns:
+      - name: actividad_id
+        description: Llave única = módulo + id de Zoho.
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: registro_id
+        description: id del registro en su módulo de Zoho.
+      - name: modulo
+        description: Módulo con prefijo numérico para ordenar.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['1. Pre-registro', '2. Registro', '3. Orientación', '4. Psicosocial',
+                         '5. Formación', '6. Intermediación', '7. Colocación', '8. Postvinculación']
+              config:
+                severity: warn
+      - name: modulo_zoho
+        description: api_name del módulo de origen; distingue Psicosocial_RutaM (Corte 1) de Psicosocial_RutaM_v2 (Corte 2).
+      - name: documento
+        description: Documento de la participante. Puede no existir en fct_ruta_mujer (mujeres no inscritas).
+      - name: corte
+        description: Corte del registro según SU módulo en Zoho; 'sin corte' si viene vacío.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['corte 1', 'corte 2', 'sin corte']
+              config:
+                severity: warn
+          - relationships:
+              arguments:
+                to: ref('dim_corte_rm')
+                field: corte
+              config:
+                severity: warn
+      - name: fecha_evento
+        description: Fecha principal del registro en su módulo; DATE.
+      - name: completado
+        description: BOOL con la misma definición de completado que usan los demás marts para ese módulo.
+      - name: estado
+        description: Estado del registro cuando el módulo lo tiene (psicosocial, intermediación, postvinculación); null en los demás.
