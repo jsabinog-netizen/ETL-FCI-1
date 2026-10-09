@@ -1,0 +1,37 @@
+version: 2
+models:
+  - name: fct_psicosocial_ejes_rm
+    description: >
+      Un eje de un diagnóstico psicosocial de Corte 2 diligenciado (5 filas por
+      diagnóstico). Para el gráfico "Resultados por ejes": eje en el eje X y
+      % de mujeres con alerta = DISTINCTCOUNT(documento) con en_alerta /
+      DISTINCTCOUNT(documento). El umbral es la var umbral_eje_psicosocial
+      (dbt_project.yml); hoy un eje está en alerta si su % es mayor a 0.
+    columns:
+      - name: eje_diagnostico_id
+        description: Llave única = id del diagnóstico + orden del eje.
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: eje
+        description: Nombre del eje (ordenar por eje_orden en Power BI).
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Violencias', 'Redes de apoyo', 'Bienestar emocional', 'Autonomía económica', 'Barreras']
+              config:
+                severity: warn
+      - name: eje_orden
+        description: 1 a 5, para "Ordenar por columna".
+      - name: eje_pct
+        description: Resultado del eje (0-100) que entrega el diagnóstico en Zoho.
+      - name: eje_puntaje
+        description: Puntaje bruto del eje; su máximo varía por eje (eje_puntaje_maximo).
+      - name: en_alerta
+        description: BOOL. eje_pct > umbral_eje_psicosocial.
+      - name: tiene_alerta
+        description: en_alerta en texto (Sí/No) para segmentadores.

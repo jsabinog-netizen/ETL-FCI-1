@@ -35,3 +35,9 @@ models:
       marts:
         +materialized: table
         +schema: proyecto_ruta_mujer
+
+vars:
+  # Ruta Mujer — puntaje (% del eje, 0-100) por ENCIMA del cual un eje del
+  # diagnóstico psicosocial cuenta como "alerta o necesidad".
+  # Provisional: > 0 (acordado 9-oct-2026, pendiente confirmar con psicosocial).
+  umbral_eje_psicosocial: 0
