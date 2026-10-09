@@ -4,6 +4,14 @@ with empresas_id as (
 ), empresas_nit as (
     select * from empresas_id where nit is not null
     qualify row_number() over (partition by nit order by modified_time desc nulls last, id desc) = 1
+), contratadas_por_vacante as (
+    -- Misma regla que dim_empresas_rm: una vacante cerrada con al menos una
+    -- contratada se cerro por intermediacion; sin contratadas, por gestion directa.
+    select buscar_vacante_id,
+        countif(estado = 'contratado' or lower(estado) like '%contratad%') as num_contratadas
+    from {{ ref('stg_intermediaci_n_ruta_m') }}
+    where buscar_vacante_id is not null
+    group by buscar_vacante_id
 )
 select v.* replace (
         date(v.created_time) as created_time,
@@ -43,7 +51,15 @@ select v.* replace (
         when v.tiempo_de_experiencia_requerido_meses <= 60 then '24 a 60'
         else 'más de 60'
     end as rango_experiencia_vacante,
-    -- Corte de la vacante basado en su fecha de inicio
+    -- Motivo de cierre por vacante: permite partir las vacantes cerradas por
+    -- el corte de la VACANTE (las sumas de dim_empresas_rm mezclan cortes).
+    case
+        when v.estado_de_la_vacante is distinct from 'cerrada' then null
+        when coalesce(ci.num_contratadas, 0) > 0 then 'Intermediación'
+        else 'Gestión directa'
+    end as motivo_cierre,
+    -- Corte de la vacante basado en su fecha de inicio.
+    -- OJO: contradice el campo Corte de Zoho en ~60 vacantes; filtrar por `corte`.
     case
         when coalesce(v.fecha_de_inicio_de_la_vacante, date(v.created_time)) >= '2026-09-01' then 'corte 2'
         else 'corte 1'
@@ -51,3 +67,4 @@ select v.* replace (
 from {{ ref('stg_ge_vacantes_colsubsidios') }} v
 left join empresas_id e on v.buscar_empresa_id = e.id
 left join empresas_nit n on e.id is null and v.buscar_empresa_nombre = n.nit
+left join contratadas_por_vacante ci on ci.buscar_vacante_id = v.id

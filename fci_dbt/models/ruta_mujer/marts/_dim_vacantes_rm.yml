@@ -27,4 +27,16 @@ models:
   - name: sector_normalizado
     description: Sector de la empresa asociada a la vacante, normalizado a categorías estándar.
   - name: corte_evento
-    description: Corte derivado de fecha_de_inicio_de_la_vacante (>= 2026-09-01 -> corte 2, else corte 1).
+    description: >
+      Corte derivado de fecha_de_inicio_de_la_vacante (>= 2026-09-01 -> corte 2, else corte 1).
+      Contradice el campo Corte de Zoho en ~60 vacantes: para filtrar usar `corte`.
+  - name: motivo_cierre
+    description: >
+      Solo vacantes cerradas: 'Intermediación' si tiene al menos una intermediación
+      contratada, 'Gestión directa' si no. Null si la vacante no está cerrada.
+    tests:
+      - accepted_values:
+          arguments:
+            values: ['Intermediación', 'Gestión directa']
+          config:
+            severity: warn
