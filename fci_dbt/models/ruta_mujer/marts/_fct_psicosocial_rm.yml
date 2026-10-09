@@ -1,0 +1,63 @@
+version: 2
+models:
+  - name: fct_psicosocial_rm
+    description: >
+      Un diagnóstico psicosocial de Corte 2 por id de Psicosocial_RutaM_v2.
+      Incluye ejes (% y puntaje), nivel de riesgo, alertas, barreras y
+      llamadas L1/L2. El psicosocial de Corte 1 (v1) no está aquí.
+      Los ejes y el riesgo solo existen cuando el diagnóstico está
+      diligenciado: usar tiene_diagnostico como denominador en Power BI.
+    columns:
+      - name: id
+        description: Identificador del registro en Zoho.
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: documento
+        description: >
+          Documento de la participante, tomado de Name. Hoy es único;
+          el test avisa si una mujer recibe un segundo diagnóstico.
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+      - name: corte_inscripcion
+        description: >
+          Corte de la inscripción de la mujer. Puede ser 'corte 1' para mujeres
+          que siguen en el programa en Corte 2; 'no inscrita' si no tiene inscripción.
+      - name: nivel_riesgo_automatico
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['bajo', 'moderado', 'alto']
+              config:
+                severity: warn
+      - name: nivel_riesgo_vigente
+        description: Riesgo validado por la profesional en L1 si existe; si no, el automático del formulario.
+      - name: nivel_riesgo
+        description: nivel_riesgo_vigente con prefijo numérico para ordenar ('1. Bajo' … '4. Sin diagnóstico').
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['1. Bajo', '2. Moderado', '3. Alto', '4. Sin diagnóstico']
+              config:
+                severity: warn
+      - name: estado_caso
+        description: Estado más avanzado del caso (estado final > estado llamada 1 > estado del diagnóstico).
+      - name: profesional_que_remite
+        description: Orientadora que remitió; es la profesional que se muestra para Corte 2.
+      - name: diagnostico_diligenciado
+        description: BOOL para medidas. TRUE si estado_del_diagnostico = 'diligenciado'.
+      - name: contacto_l1
+        description: BOOL. TRUE si la Llamada 1 tuvo contacto efectivo.
+      - name: contacto_l2
+        description: BOOL. TRUE si la Llamada 2 tuvo contacto efectivo.
+      - name: caso_cerrado
+        description: BOOL. TRUE si hay estado final del caso.
