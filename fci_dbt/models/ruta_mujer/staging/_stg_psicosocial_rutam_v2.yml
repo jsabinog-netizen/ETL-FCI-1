@@ -1,0 +1,40 @@
+version: 2
+models:
+- name: stg_psicosocial_rutam_v2
+  description: 'Ruta Mujer: Psicosocial_RutaM_v2 (Corte 2). Grano: un registro Zoho
+    identificado por id. Diagnóstico por ejes, nivel de riesgo y llamadas L1/L2.'
+  columns:
+  - name: id
+    tests:
+    - unique:
+        config:
+          severity: warn
+    - not_null:
+        config:
+          severity: warn
+  - name: documento
+    description: Numero de documento proveniente de Name, conservado como texto.
+    tests:
+    - not_null:
+        config:
+          severity: warn
+  - name: corte
+    description: Constante 'corte 2'. El módulo no tiene campo Corte; v2 es Corte 2 por regla de negocio.
+  - name: profesional_que_remite
+    description: Orientadora que remitió a la participante. Se usa como profesional psicosocial de Corte 2.
+  - name: owner_nombre
+    description: Propietario del registro. Es la plataforma (InClúyete 4.0), no una profesional.
+  - name: nivel_riesgo_automatico
+    description: Nivel de riesgo calculado por el formulario (bajo / moderado / alto).
+    tests:
+    - accepted_values:
+        arguments:
+          values: ['bajo', 'moderado', 'alto']
+        config:
+          severity: warn
+  - name: puntaje_eje_5_barreras
+    description: Puntaje Eje 5 (0–15). El api_name de Zoho termina en "_0_151" por un typo.
+  - name: l1_fecha_inicio
+    description: Fecha de inicio de la Llamada 1 (api_name L1_Hora_de_inico, typo de Zoho), DATE.
+  - name: psicosocial_completada
+    description: Placeholder en false hasta que se confirme qué cuenta como acompañamiento completado en v2.
