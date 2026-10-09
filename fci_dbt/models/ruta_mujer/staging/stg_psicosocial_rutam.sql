@@ -31,7 +31,7 @@ select
     lower(trim(`Seleccione_el_tipo_de_barrera_3`)) as seleccione_el_tipo_de_barrera_3,
     trim(`Estrategia_para_la_superaci_n_de_la_barrera_3`) as estrategia_para_la_superaci_n_de_la_barrera_3,
     lower(trim(`Tipificaci_n_Mujer`)) as tipificaci_n_mujer,
-    lower(trim(`Corte`)) as corte,
+    coalesce(lower(trim(`Corte`)), 'sin corte') as corte,
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time,
     trim(`Evoluci_n`) as evoluci_n,

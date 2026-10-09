@@ -78,7 +78,7 @@ select
     lower(trim(`Actitud_y_disposici_n`)) as actitud_y_disposici_n,
     lower(trim(`actualmente_cu_l_es_su_ocupaci_n`)) as ocupacion_actual,
     lower(trim(`Inter_s_Laboral`)) as inter_s_laboral,
-    lower(trim(`Corte`)) as corte,
+    coalesce(lower(trim(`Corte`)), 'sin corte') as corte,
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time,
     -- Campos SAE

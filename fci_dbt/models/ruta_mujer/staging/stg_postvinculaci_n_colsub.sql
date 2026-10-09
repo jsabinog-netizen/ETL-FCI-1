@@ -7,7 +7,7 @@
 select
     id,
     nullif(trim(Name), '') as documento,
-    lower(trim(`Corte`)) as corte,
+    coalesce(lower(trim(`Corte`)), 'sin corte') as corte,
 
     -- Identificación
     trim(`Primer_nombre`) as primer_nombre,

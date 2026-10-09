@@ -31,7 +31,7 @@ select
     trim(`Intermediador`) as intermediador,
     trim(`Novedad_Intermediaci_n`) as novedad_intermediaci_n,
     trim(`Perfil_ocupacional`) as perfil_ocupacional,
-    lower(trim(`Corte`)) as corte,
+    coalesce(lower(trim(`Corte`)), 'sin corte') as corte,
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time
 from {{ source('zoho_raw_ruta_mujer', 'intermediaci_n_ruta_m') }}

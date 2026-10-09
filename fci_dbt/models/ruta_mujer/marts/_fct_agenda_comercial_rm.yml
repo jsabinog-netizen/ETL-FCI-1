@@ -47,7 +47,7 @@ models:
         tests:
           - accepted_values:
               arguments:
-                values: ['corte 1', 'corte 2']
+                values: ['corte 1', 'corte 2', 'sin corte']
               config:
                 severity: warn
       - name: observaciones_agendamiento

@@ -70,7 +70,7 @@ select
     trim(`Observaci_n_del_gestor`) as observacion_del_gestor,
     lower(trim(`Herramientas_ofimaticas`)) as herramientas_ofimaticas,
 
-    lower(trim(`Corte`)) as corte,
+    coalesce(lower(trim(`Corte`)), 'sin corte') as corte,
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time
 from {{ source('zoho_raw_ruta_mujer', 'ge_vacantes_colsubsidios') }}
