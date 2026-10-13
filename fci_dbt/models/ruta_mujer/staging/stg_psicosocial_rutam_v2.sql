@@ -16,6 +16,9 @@ select
 
     -- ── Diagnostico ──
     lower(trim(`Estado_del_diagn_stico`)) as estado_del_diagnostico,
+    -- api_names cruzados en Zoho: se nombran por su ETIQUETA, no por el api_name.
+    date(safe_cast(`Fecha_de_diligenciamiento` as timestamp)) as fecha_envio_diagnostico,
+    date(safe_cast(`Fecha_de_diligenciamiento1` as timestamp)) as fecha_diligenciamiento,
     lower(trim(`Fuente_del_diagn_stico`)) as fuente_del_diagnostico,
     lower(trim(`C_mo_llegaste_a_este_acompa_amiento`)) as como_llego_al_acompanamiento,
     lower(trim(`Canal_de_env_o_del_enlace`)) as canal_envio_enlace,

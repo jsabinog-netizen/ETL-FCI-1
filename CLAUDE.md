@@ -160,6 +160,10 @@ Usalos **tal cual**. No los "corrijas".
 | `Tipo_de_novedad1` | sufijo "1" | `Postvinculaci_n_Colsub` |
 | `rea_de_Experiencia_Laboral_experiencia_2` | sin la "Á" inicial | `Orientaci_n_Colsubsidios` |
 | `rea_de_experiencia_laboral` | sin la "Á" inicial | `GE_Vacantes_Colsubsidios` |
+| `Fecha_de_diligenciamiento` | etiqueta real "Fecha de envío" (→ `fecha_envio_diagnostico`) | `Psicosocial_RutaM_v2` |
+| `Fecha_de_diligenciamiento1` | sufijo "1"; etiqueta "Fecha de diligenciamiento" | `Psicosocial_RutaM_v2` |
+| `L1_Hora_de_inico` | falta la "i" de inicio | `Psicosocial_RutaM_v2` |
+| `Puntaje_Eje_5_Barreras_0_151` | sufijo "1" | `Psicosocial_RutaM_v2` |
 
 ### Cambio reciente en Zoho (9-sep-2026)
 

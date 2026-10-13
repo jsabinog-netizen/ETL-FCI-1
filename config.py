@@ -392,6 +392,9 @@ MODULES_RUTA_MUJER = {
         "L2_Estado_del_proceso_de_empleabilidad", "L2_Remisi_n_tipo1",
         "L2_Remisi_n_activaci_n_verificada", "Estado_final_del_caso",
         "Psicosocial_Completado",
+        # OJO api_names cruzados en Zoho: Fecha_de_diligenciamiento = "Fecha de envio",
+        # Fecha_de_diligenciamiento1 = "Fecha de diligenciamiento". Usar tal cual.
+        "Fecha_de_diligenciamiento", "Fecha_de_diligenciamiento1",
         # Respuestas clave del diagnóstico (columnas Sí/No de la Base de Seguimiento en Excel)
         "Has_vivido_o_vives_situaciones_de_violencia_en_tu",
         "En_los_ltimos_12_meses_tu_pareja_o_expareja_ha_hec",
