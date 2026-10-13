@@ -3,7 +3,10 @@
 -- Alimenta el tablero psicosocial (ejes, riesgo, llamadas L1/L2).
 
 with inscripcion as (
-    select documento, corte
+    select documento, corte,
+        trim(concat(coalesce(primer_nombre, ''), ' ', coalesce(segundo_nombre, ''), ' ',
+                    coalesce(primer_apellido, ''), ' ', coalesce(segundo_apellido, ''))) as nombre,
+        n_mero_de_celular as telefono
     from {{ ref('stg_inscripci_n_colsubsidios') }}
     where documento is not null
     qualify row_number() over (
@@ -19,6 +22,8 @@ with inscripcion as (
         -- Una mujer de Corte 1 puede seguir en el programa en Corte 2:
         -- su diagnostico es de Corte 2 aunque su inscripcion sea de Corte 1.
         coalesce(i.corte, 'no inscrita') as corte_inscripcion,
+        coalesce(nullif(i.nombre, ''), 'No inscrita') as nombre,
+        i.telefono as telefono_principal,
         -- El riesgo validado por la profesional en L1 reemplaza al automatico.
         coalesce(p.l1_nivel_riesgo_final, p.nivel_riesgo_automatico) as nivel_riesgo_vigente,
         p.estado_del_diagnostico = 'diligenciado' as diagnostico_diligenciado,
@@ -67,5 +72,35 @@ select
     case when diagnostico_diligenciado then 'Sí' else 'No' end as tiene_diagnostico,
     case when contacto_l1 then 'Sí' else 'No' end as tiene_contacto_l1,
     case when contacto_l2 then 'Sí' else 'No' end as tiene_contacto_l2,
-    case when caso_cerrado then 'Sí' else 'No' end as tiene_cierre
+    case when caso_cerrado then 'Sí' else 'No' end as tiene_cierre,
+
+    -- ── Columnas de la Base de Seguimiento (Excel) ──
+    -- Respuestas clave en texto Sí/No; null si no diligenció el diagnóstico.
+    if(diagnostico_diligenciado, if(reporta_violencia, 'Sí', 'No'), null) as reporta_violencia_txt,
+    if(diagnostico_diligenciado, if(marca_ideas_autolesivas, 'Sí', 'No'), null) as marca_ideas_autolesivas_txt,
+    if(diagnostico_diligenciado, if(marca_indicadores_emocionales, 'Sí', 'No'), null) as marca_indicadores_emocionales_txt,
+    if(diagnostico_diligenciado, if(sin_redes_de_apoyo, 'Sí', 'No'), null) as sin_redes_de_apoyo_txt,
+    if(diagnostico_diligenciado, if(cuidado_afecta_permanencia, 'Sí', 'No'), null) as cuidado_afecta_permanencia_txt,
+    if(diagnostico_diligenciado, if(barreras_alimentacion_transporte_cuidado, 'Sí', 'No'), null) as barreras_alimentacion_transporte_cuidado_txt,
+    if(diagnostico_diligenciado, if(reporta_factores_permanencia, 'Sí', 'No'), null) as factores_permanencia_txt,
+    if(diagnostico_diligenciado, if(en_tratamiento_psicologico_flag, 'Sí', 'No'), null) as en_tratamiento_txt,
+    -- Alertas activas: misma logica que la formula de la columna H del Excel.
+    case
+        when not diagnostico_diligenciado then null
+        else coalesce(nullif(array_to_string([
+            if(reporta_violencia, 'Violencia', null),
+            if(marca_ideas_autolesivas, 'Seguridad personal', null),
+            if(marca_indicadores_emocionales, 'Emocional', null),
+            if(sin_redes_de_apoyo, 'Sin red de apoyo', null),
+            if(cuidado_afecta_permanencia, 'Carga de cuidado', null),
+            if(barreras_alimentacion_transporte_cuidado, 'Barreras críticas', null),
+            if(reporta_factores_permanencia, 'Riesgo de deserción', null),
+            if(en_tratamiento_psicologico_flag, 'Tratamiento en curso', null)
+        ], '; '), ''), 'Sin alertas')
+    end as alertas_activas,
+    nullif(array_to_string([
+        concat('Participante: ', l1_compromisos_participante),
+        concat('Profesional: ', l1_compromisos_profesional)
+    ], ' | '), '') as l1_acuerdos_plan_trabajo,
+    nullif(array_to_string([l2_remision_tipo, l2_remision_entidad, cast(l2_remision_fecha as string)], ' · '), '') as remisiones_realizadas
 from base
