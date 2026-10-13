@@ -17,35 +17,69 @@ No lo pegue en el repo, en chats ni en archivos: solo en los headers de cron-job
 
 ## 2. Crear los cronjobs en cron-job.org
 
-Cree una cuenta en https://cron-job.org. En **Settings**, ponga la zona horaria **America/Bogota**.
+Cree una cuenta en https://cron-job.org → **Panel → Cronjobs → Crear cronjob**.
+Repita este paso 6 veces, uno por fila de la tabla de la sección 2.5.
 
-Luego, **Cronjobs → Create cronjob** con esta configuración común:
+### 2.1 Pestaña principal
 
-| Campo | Valor |
+| Campo en pantalla | Qué poner |
 |---|---|
-| **URL** | `https://api.github.com/repos/jsabinog-netizen/ETL-FCI-1/actions/workflows/ARCHIVO/dispatches` |
-| **Execution schedule** | *Custom* (ver la tabla de abajo) |
-| **Advanced → Request method** | `POST` |
-| **Advanced → Request body** | `{"ref":"main"}` |
-| **Advanced → Headers** | `Accept` = `application/vnd.github+json` |
-| | `Authorization` = `Bearer EL_TOKEN` |
-| | `X-GitHub-Api-Version` = `2022-11-28` |
-| | `Content-Type` = `application/json` |
-| **Notifications** | Activar "Notify me when execution fails" |
-| **Time zone** (si el cronjob la pide) | America/Bogota |
+| **Título** | El nombre de la tabla 2.5, por ejemplo `Ruta Mujer` |
+| **URL** | `https://api.github.com/repos/jsabinog-netizen/ETL-FCI-1/actions/workflows/ARCHIVO/dispatches`, reemplazando `ARCHIVO` según la tabla 2.5 |
+| **Habilitar job** | Activado |
+| **Guardar respuestas en el historial de jobs** | Activado (sirve para ver el error si falla) |
 
-Reemplace `ARCHIVO` y `EL_TOKEN`. Los 6 cronjobs son:
+### 2.2 Horario de ejecución
 
-| # | Nombre | ARCHIVO | Minuto | Horas |
+1. Marque **Personalizado**.
+2. En **Expresión Crontab** borre `*/15 * * * *` y pegue la expresión de la tabla 2.5.
+3. Revise **Próximas ejecuciones**: deben salir las horas esperadas "(America/Bogota)". Si salen otras horas, la zona horaria está mal (ver 2.4).
+4. **El horario expira:** desactivado.
+
+### 2.3 Notificarme cuando…
+
+| Opción | Estado |
+|---|---|
+| cuando la ejecución del cronjob falle | **Activado**, notificar después de **1** fallo |
+| cuando la ejecución del cronjob tenga éxito después de haber fallado antes | **Activado** |
+| cuando el cronjob se deshabilite por demasiados fallos | Activado (ya viene así) |
+| el certificado TLS del servidor está a punto de expirar | Desactivado |
+
+**Notificar mediante:** todos los canales de notificación.
+
+### 2.4 Pestaña Avanzado
+
+| Campo en pantalla | Qué poner |
+|---|---|
+| **Requiere autenticación HTTP** | Desactivado (el token va en los encabezados) |
+| **Encabezados** → Clave / Valor (botón **+ AÑADIR** por cada uno) | `Accept` → `application/vnd.github+json` |
+| | `Authorization` → `Bearer EL_TOKEN` (la palabra Bearer, un espacio y el token) |
+| | `X-GitHub-Api-Version` → `2022-11-28` |
+| | `Content-Type` → `application/json` |
+| **Zona horaria** | `America/Bogota` |
+| **Método de solicitud** | **POST** (viene en GET: cámbielo, si no GitHub responde 404) |
+| **Cuerpo de la solicitud** | `{"ref":"main"}` |
+| **Tiempo de espera agotado** | 30 segundos (dejar así; GitHub responde en ~1 s) |
+| **Tratar las redirecciones 3xx como exitosas** | Desactivado |
+
+**Atajo:** el botón **IMPORT FROM CURL** llena URL, método, encabezados y cuerpo de una vez. Pegue esto, con su token y el archivo correcto, y después solo ajuste título y horario:
+
+```
+curl -X POST "https://api.github.com/repos/jsabinog-netizen/ETL-FCI-1/actions/workflows/pipeline_ruta_mujer.yml/dispatches" -H "Accept: application/vnd.github+json" -H "Authorization: Bearer EL_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" -H "Content-Type: application/json" -d "{\"ref\":\"main\"}"
+```
+
+### 2.5 Los 6 cronjobs
+
+| # | Título | ARCHIVO (en la URL) | Expresión Crontab | Corre a las (COL) |
 |---|---|---|---|---|
-| 1 | Colsubsidio | `pipeline.yml` | 40 | 8, 11, 13, 15, 17, 19 |
-| 2 | Colsubsidio 10:10 | `pipeline.yml` | 10 | 10 |
-| 3 | Ruta Mujer | `pipeline_ruta_mujer.yml` | 50 | 8, 11, 13, 15, 17, 19 |
-| 4 | Ruta Mujer 10:20 | `pipeline_ruta_mujer.yml` | 20 | 10 |
-| 5 | GIZ | `pipeline_giz.yml` | 50 | 8, 11, 13, 15, 17, 19 |
-| 6 | GIZ 10:20 | `pipeline_giz.yml` | 20 | 10 |
+| 1 | Colsubsidio | `pipeline.yml` | `40 8,11,13,15,17,19 * * *` | 08:40, 11:40, 13:40, 15:40, 17:40, 19:40 |
+| 2 | Colsubsidio 10:10 | `pipeline.yml` | `10 10 * * *` | 10:10 |
+| 3 | Ruta Mujer | `pipeline_ruta_mujer.yml` | `50 8,11,13,15,17,19 * * *` | 08:50, 11:50, 13:50, 15:50, 17:50, 19:50 |
+| 4 | Ruta Mujer 10:20 | `pipeline_ruta_mujer.yml` | `20 10 * * *` | 10:20 |
+| 5 | GIZ | `pipeline_giz.yml` | `50 8,11,13,15,17,19 * * *` | 08:50, 11:50, 13:50, 15:50, 17:50, 19:50 |
+| 6 | GIZ 10:20 | `pipeline_giz.yml` | `20 10 * * *` | 10:20 |
 
-Días: todos. Si quiere que no corra el fin de semana, desmarque sábado y domingo.
+Para no correr sábados ni domingos, cambie el último `*` por `1-5`. Ejemplo: `40 8,11,13,15,17,19 * * 1-5`.
 
 **Por qué esas horas:**
 - Cada corrida dura ~4 min, así que los datos quedan listos antes de las 09:00, 10:30, 12:00, 14:00, 16:00, 18:00 y 20:00.
@@ -54,12 +88,15 @@ Días: todos. Si quiere que no corra el fin de semana, desmarque sábado y domin
 
 ## 3. Probar
 
-1. En el cronjob de Ruta Mujer → **Test run**.
-   - **204** = correcto.
-   - **401 / 403**: el token está mal, venció o no tiene el permiso "Actions: Read and write".
-   - **404**: el nombre del archivo o del repo en la URL está mal.
-   - **422**: el body no es exactamente `{"ref":"main"}`.
-2. GitHub → **Actions → Pipeline ELT Ruta Mujer**: debe aparecer una corrida con evento `workflow_dispatch`, iniciada en segundos y que termina en verde.
+1. Antes de **CREAR**, pulse **EJECUCIÓN DE PRUEBA**.
+   - **204** = correcto. GitHub no devuelve cuerpo; es normal.
+   - **401 / 403**: el token está mal, venció o no tiene el permiso "Actions: Read and write". Revise que diga `Bearer ` con el espacio.
+   - **404**: el método quedó en GET, o el nombre del archivo o del repo en la URL está mal.
+   - **422**: el cuerpo no es exactamente `{"ref":"main"}`.
+2. GitHub → **Actions → Pipeline ELT ...**: debe aparecer una corrida con evento `workflow_dispatch`, iniciada en segundos y que termina en verde.
+3. Pulse **CREAR**.
+
+Ojo: cada "Ejecución de prueba" dispara una corrida real del pipeline. No pasa nada porque el pipeline es incremental, pero no la repita muchas veces seguidas en Colsubsidio y Ruta Mujer, que comparten la cuota de Zoho.
 
 ## 4. Respaldo
 
@@ -70,4 +107,4 @@ Para una actualización inmediata: GitHub → Actions → el pipeline → **Run 
 ## 5. Mantenimiento
 
 - **Renovar el token antes de que venza:** GitHub → Fine-grained tokens → Regenerate. Luego actualice el header `Authorization` en los 6 cronjobs.
-- Si un día no se actualizó el tablero, revise primero el historial de cron-job.org ("History") y después GitHub Actions.
+- Si un día no se actualizó el tablero, revise primero el historial del job en cron-job.org (por eso se activa "Guardar respuestas en el historial de jobs") y después GitHub Actions.
