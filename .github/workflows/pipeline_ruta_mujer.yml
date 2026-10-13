@@ -1,17 +1,11 @@
 name: Pipeline ELT Ruta Mujer
 
 on:
+  # Disparado a hora exacta por cron-job.org vía workflow_dispatch (ver docs/cron_job_org.md).
+  # GitHub descarta o retrasa horas los `schedule:`; este cron es SOLO respaldo diario de madrugada.
   workflow_dispatch:
   schedule:
-    # Colombia es UTC-5 sin horario de verano.
-    # Desfasados 10 min DESPUÉS de Colsubsidio: comparten cuenta de Zoho.
-    - cron: "20 13 * * *"   # 08:20 COL → objetivo 09:00
-    - cron: "50 14 * * *"   # 09:50 COL → objetivo 10:30
-    - cron: "20 16 * * *"   # 11:20 COL → objetivo 12:00
-    - cron: "20 18 * * *"   # 13:20 COL → objetivo 14:00
-    - cron: "20 20 * * *"   # 15:20 COL → objetivo 16:00
-    - cron: "20 22 * * *"   # 17:20 COL → objetivo 18:00
-    - cron: "20 0 * * *"   # 19:20 COL → objetivo 20:00
+    - cron: "20 6 * * *"   # 01:20 COL, respaldo
 
 concurrency:
   group: pipeline-ruta-mujer

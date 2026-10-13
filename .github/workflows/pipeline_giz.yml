@@ -1,9 +1,11 @@
 name: Pipeline ELT GIZ
 
 on:
+  # Disparado a hora exacta por cron-job.org vía workflow_dispatch (ver docs/cron_job_org.md).
+  # GitHub descarta o retrasa horas los `schedule:`; este cron es SOLO respaldo diario de madrugada.
   workflow_dispatch:
   schedule:
-    - cron: "0 * * * *"   # cada hora en punto (UTC)
+    - cron: "40 6 * * *"   # 01:40 COL, respaldo
 
 concurrency:
   group: pipeline-giz

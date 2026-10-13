@@ -1,17 +1,11 @@
 name: Pipeline ELT Colsubsidio
 
 on:
+  # Disparado a hora exacta por cron-job.org vía workflow_dispatch (ver docs/cron_job_org.md).
+  # GitHub descarta o retrasa horas los `schedule:`; este cron es SOLO respaldo diario de madrugada.
   workflow_dispatch:
   schedule:
-    # Colombia es UTC-5 sin horario de verano.
-    # Desfasados 10 min ANTES de Ruta Mujer: comparten cuenta de Zoho.
-    - cron: "10 13 * * *"   # 08:10 COL → objetivo 09:00
-    - cron: "40 14 * * *"   # 09:40 COL → objetivo 10:30
-    - cron: "10 16 * * *"   # 11:10 COL → objetivo 12:00
-    - cron: "10 18 * * *"   # 13:10 COL → objetivo 14:00
-    - cron: "10 20 * * *"   # 15:10 COL → objetivo 16:00
-    - cron: "10 22 * * *"   # 17:10 COL → objetivo 18:00
-    - cron: "10 0 * * *"   # 19:10 COL → objetivo 20:00
+    - cron: "0 6 * * *"   # 01:00 COL, respaldo
 
 concurrency:
   group: pipeline-colsubsidio

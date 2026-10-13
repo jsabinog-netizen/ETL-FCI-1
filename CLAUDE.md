@@ -171,13 +171,15 @@ Usalos **tal cual**. No los "corrijas".
 
 El requerimiento de gestión de vacantes (Módulo 2: `estado_agendamiento`, `enfoque_genero`, `resultado_seguimiento`) **no está implementado** en Zoho todavía.
 
-### Scheduling (UTC)
+### Scheduling (los 3 pipelines)
 
-```
-40 9, 40 12, 40 14, 10 17, 40 18, 40 20, 40 22, 40 0 * * *
-```
+GitHub descartaba o retrasaba horas los `schedule:` (las corridas de la mañana nunca salían). Desde oct-2026 los dispara **cron-job.org** vía `workflow_dispatch` a hora exacta (guía: `docs/cron_job_org.md`). Hora Colombia:
 
-8 ejecuciones diarias, desplazadas 20 min respecto a Colsubsidio (misma cuenta Zoho, mismo pool de tokens).
+| Objetivo | Colsubsidio | Ruta Mujer | GIZ |
+|---|---|---|---|
+| 09:00 · 10:30 · 12:00 · 14:00 · 16:00 · 18:00 · 20:00 | −20 min | −10 min | −10 min |
+
+Colsubsidio y Ruta Mujer van con 10 min de diferencia (misma cuenta Zoho, mismo pool de tokens). Cada corrida dura ~4 min. Cada workflow conserva **un** `schedule:` de respaldo de madrugada (01:00 / 01:20 / 01:40 COL) por si cron-job.org o el token fallan.
 
 ---
 
