@@ -53,7 +53,7 @@ ETL-FCI/
 ├── extractor.py       # extracción con fields explícitos
 ├── loader.py          # carga a BigQuery, param. por dataset_id
 ├── metadata.py        # watermarks, param. por dataset_id
-├── reconciliar.py     # ⚠️ aún hardcodeado a Colsubsidio
+├── reconciliar.py     # borrados Zoho→BQ: python reconciliar.py <proyecto> [--dry-run]. Manual, no está en ningún workflow
 └── fci_dbt/
     └── models/
         ├── colsubsidio/
@@ -323,7 +323,7 @@ Metas (tabla `Metas RM` del .pbix, confirmadas por Jorge el 9-oct-2026): registr
 ## Pendientes
 
 - Construcción del dashboard en Power BI (19 páginas)
-- `reconciliar.py` sigue hardcodeado a Colsubsidio — hay que parametrizarlo
+- Los borrados en Zoho NO se propagan solos: el MERGE incremental no borra. Hasta correr `reconciliar.py`, los registros borrados siguen en raw (ej. nov-2026: psicosocial v2 con documento duplicado). Decidir si se automatiza en un workflow (mismo grupo de concurrencia que el incremental)
 - Módulo 2 del requerimiento (gestión de vacantes) — esperando a tecnología
 - Reportar a tecnología los typos `Peramencia_de_seguimiento` y `Tipo_de_novedad1`
 - Confirmar si el cálculo de los 20 días de post-vinculación lo hace un workflow de Zoho o se calcula en dbt

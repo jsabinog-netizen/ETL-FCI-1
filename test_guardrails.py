@@ -127,6 +127,35 @@ class GuardrailsTest(unittest.TestCase):
                 extract.assert_not_called()
                 client.assert_not_called()
 
+    def test_reconcile_dry_run_never_writes_nor_builds(self):
+        huerfano = {'id': '9', 'Name': '"52561381"', 'Modified_Time': None}
+        with patch.object(sys, 'argv', ['reconciliar.py', 'ruta_mujer', '--dry-run']), \
+             patch('reconciliar.run_extraction') as extract, patch('reconciliar.get_client'), \
+             patch('reconciliar.contar_huerfanos', return_value=(10, 11, [huerfano])) as contar, \
+             patch('reconciliar.reconciliar_module') as reconcile, \
+             patch('reconciliar.ensure_metadata_table') as meta, \
+             patch('reconciliar.subprocess.run') as dbt:
+            reconciliar.main()
+        extract.assert_called_once_with(projects=['ruta_mujer'], full_refresh=True)
+        self.assertEqual(contar.call_count, len(reconciliar.PROJECTS['ruta_mujer']['modules']))
+        reconcile.assert_not_called()
+        meta.assert_not_called()
+        dbt.assert_not_called()
+
+    def test_reconcile_dry_run_flag_position_is_free(self):
+        with patch.object(sys, 'argv', ['reconciliar.py', '--dry-run', 'giz']), \
+             patch('reconciliar.run_extraction'), patch('reconciliar.dry_run') as dry, \
+             patch('reconciliar.reconciliar_module') as reconcile:
+            reconciliar.main()
+        dry.assert_called_once_with('giz')
+        reconcile.assert_not_called()
+
+    def test_guardrail_rule_is_shared(self):
+        self.assertTrue(loader.decidir_borrado(497, 501))      # caída chica
+        self.assertTrue(loader.decidir_borrado(0, 5))          # <= tolerancia
+        self.assertFalse(loader.decidir_borrado(10, 100))      # caída grande y proporcional
+        self.assertTrue(loader.decidir_borrado(3, 0))          # raw vacío
+
     def test_reconcile_extraction_failure_never_deletes(self):
         with patch.object(sys,'argv',['reconciliar.py','giz']), \
              patch('reconciliar.run_extraction', side_effect=RuntimeError('partial')), \
