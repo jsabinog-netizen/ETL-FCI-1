@@ -17,3 +17,6 @@ models:
           - accepted_values:
               arguments:
                 values: ['ejecutada', 'pendiente', 'programada']
+              config:
+                severity: warn
+                
