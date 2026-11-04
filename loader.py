@@ -100,6 +100,22 @@ def prepare_rows(records, fields):
         rows.append(row)
     return rows
 
+
+def prepare_module_rows(records, fields, project_name, module_name):
+    """
+    prepare_rows + ajustes por módulo. La usan la carga incremental Y la
+    reconciliación: si un ajuste vive solo en una de las dos rutas, la otra
+    reescribe raw con el dato roto.
+    """
+    rows = prepare_rows(records, fields)
+    if project_name == "ruta_mujer" and module_name == "Postvinculaci_n_Colsub":
+        # Empresa es texto en el módulo reconstruido, pero raw la tiene como JSON
+        # (columna compartida con los lookups). Sin esto, PARSE_JSON la deja NULL.
+        for record, row in zip(records, rows):
+            if isinstance(record.get("Empresa"), str):
+                row["Empresa"] = json.dumps(record["Empresa"], ensure_ascii=False)
+    return rows
+
 # OPERACIONES BIGQUERY
 
 def ensure_table(client, table_fqn, schema):
@@ -298,7 +314,7 @@ def _reconciliar_module(client, module_name, fields,dataset, project_name="colsu
     if any(not isinstance(r, dict) or not r.get("id") for r in records):
         raise ValueError(f"{module_name}: registros sin id válido — reconciliación abortada")
 
-    rows = prepare_rows(records, fields)
+    rows = prepare_module_rows(records, fields, project_name, module_name)
     raw_schema = build_raw_schema(fields)
     staging_schema = build_staging_schema(fields)
 
@@ -367,12 +383,7 @@ def load_module(client, module_name, fields,dataset, project_name="colsubsidio")
         raise ValueError(f"{module_name}: registros sin id válido — carga abortada")
 
     # 3. Preparar filas y schemas
-    rows = prepare_rows(records, fields)
-    if project_name == "ruta_mujer" and module_name == "Postvinculaci_n_Colsub":
-        # Empresa es texto en el módulo reconstruido, pero se usa json en el compartido
-        for record, row in zip(records, rows):
-            if isinstance(record.get("Empresa"), str):
-                row["Empresa"] = json.dumps(record["Empresa"], ensure_ascii=False)
+    rows = prepare_module_rows(records, fields, project_name, module_name)
     raw_schema = build_raw_schema(fields)
     staging_schema = build_staging_schema(fields)
 
