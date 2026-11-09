@@ -66,7 +66,15 @@ select
         else 'Otros'
     end as sector_normalizado,
 
-    lower(trim(`Tama_o_de_la_empresa`)) as tama_o_de_la_empresa,
+    case
+        when regexp_contains(lower(trim(coalesce(`Tama_o_de_la_empresa`, ''))), r'^(1[-–]10|11[-–]50|1[-–]50)$')
+            then '1–50'
+        when regexp_contains(lower(trim(coalesce(`Tama_o_de_la_empresa`, ''))), r'^51[-–]200$')
+            then '51–200'
+        when regexp_contains(lower(trim(coalesce(`Tama_o_de_la_empresa`, ''))), r'm[aá]s de 200|> ?200')
+            then 'más de 200'
+        else lower(trim(`Tama_o_de_la_empresa`))
+    end as tama_o_de_la_empresa,
     lower(trim(`Departamento`)) as departamento,
     lower(trim(`Ciudad_municipio_principal`)) as ciudad_municipio_principal,
     coalesce(lower(trim(`Corte`)), 'sin corte') as corte,
