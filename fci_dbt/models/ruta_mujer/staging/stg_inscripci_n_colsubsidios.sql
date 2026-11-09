@@ -24,7 +24,13 @@ select
     lower(trim(`Sexo_al_nacer`)) as sexo_al_nacer,
     lower(trim(`Nacionalidad`)) as nacionalidad,
     trim(`Otra_nacionalidad`) as otra_nacionalidad,
-    lower(trim(`Tipificaci_n_Mujer`)) as tipificaci_n_mujer,
+    coalesce(
+        case
+            when starts_with(trim(`Tipificaci_n_Mujer1`), '[') then lower(trim(json_value(`Tipificaci_n_Mujer1`, '$[0]')))
+            else lower(trim(`Tipificaci_n_Mujer1`))
+        end,
+        lower(trim(`Tipificaci_n_Mujer`))
+    ) as tipificaci_n_mujer,
     `Grupos_poblacionales` as grupos_poblacionales_json,
     case
         when starts_with(trim(`Grupos_poblacionales`), '[') then lower(trim(json_value(`Grupos_poblacionales`, '$[0]')))

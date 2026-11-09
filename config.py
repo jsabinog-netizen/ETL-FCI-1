@@ -275,7 +275,7 @@ MODULES_RUTA_MUJER = {
         "Name", "Created_Time", "Modified_Time", "Primer_nombre", "Segundo_nombre", "Primer_apellido",
         "Segundo_apellido", "Fecha_de_registro", "Fecha_de_nacimiento", "Edad", "Tipo_de_documento",
         "Email", "N_mero_de_celular", "Sexo_al_nacer", "Nacionalidad", "Otra_nacionalidad",
-        "Tipificaci_n_Mujer", "Grupos_poblacionales", "Tipo_de_poblaci_n", "Modalidad_de_atenci_n",
+        "Tipificaci_n_Mujer1", "Grupos_poblacionales", "Tipo_de_poblaci_n", "Modalidad_de_atenci_n",
         "Inscripci_n_completada", "Profesional_de_registro", "Municipio_de_residencia1", "Municipio_de_nacimiento",
         "Departamento_de_nacimiento", "Localidad", "Direcci_n_de_residencia", "Estrato", "Estado_Civil",
         "Tiene_hijos", "Pre_registro", "Desea_generar_acompa_amiento_psicosocial", "D_nde_te_enteraste_de_esta_vacante",
