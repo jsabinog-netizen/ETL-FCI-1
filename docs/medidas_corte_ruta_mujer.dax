@@ -88,7 +88,7 @@ CALCULATE([Mujeres registradas], fct_ruta_mujer[tipo_de_poblacion_subsidio] = "h
 
 // -----------------------------------------------------------------------------
 // 2. ORIENTACIÓN  (fct_actividad_rm, modulo "3. Orientación")
-//    Control: Total 805 · C1 573 · C2 232
+//    Incluye mujeres orientadas completadas (completado = TRUE()).
 //    Incluye ~37 mujeres orientadas que no tienen inscripción (fct_ruta_mujer
 //    nunca podía contarlas: su base es la inscripción).
 // -----------------------------------------------------------------------------
@@ -96,7 +96,8 @@ CALCULATE([Mujeres registradas], fct_ruta_mujer[tipo_de_poblacion_subsidio] = "h
 Mujeres Orientadas =
 CALCULATE(
     DISTINCTCOUNT(fct_actividad_rm[documento]),
-    fct_actividad_rm[modulo] = "3. Orientación"
+    fct_actividad_rm[modulo] = "3. Orientación",
+    fct_actividad_rm[completado] = TRUE()
 )
 
 Personas Orientadas =
@@ -105,7 +106,8 @@ CALCULATE(
     USERELATIONSHIP(Calendario[Date], fct_actividad_rm[fecha_evento])
 )
 
-// (NUEVA) Orientaciones con "Orientación sociocupación completada" = sí.
+// Orientaciones con "Orientación sociocupación completada" = sí.
+// (Nota: Si [Mujeres Orientadas] ya filtra completado = TRUE(), esta medida es idéntica).
 Orientaciones Completadas =
 CALCULATE([Mujeres Orientadas], fct_actividad_rm[completado] = TRUE())
 
