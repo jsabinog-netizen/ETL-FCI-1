@@ -55,7 +55,7 @@ def request_with_backoff(fn, max_retries=5):
             logger.warning(f"Intento {intento+1}/{max_retries} falló: {e}. Reintentando en {wait_time:.2f}s...")
             time.sleep(wait_time)
 
-def fetch_page(auth, module_name, fields, page, per_page=200, since=None, _retried= False):
+def fetch_page(auth, module_name, fields, page, per_page=200, since=None, _retried= False, page_token=None):
     """
     Hace UN request a la API de Zoho para una página específica.
     Maneja errores de forma diferenciada según el código HTTP.
@@ -68,6 +68,10 @@ def fetch_page(auth, module_name, fields, page, per_page=200, since=None, _retri
         per_page: registros por página (Zoho max: 200)
         since: datetime string ISO para extracción incremental (o None)
         _retried: uso interno — evita loop infinito en renovación de token 401.No pasar desde afuera.
+        page_token: next_page_token de la respuesta anterior. Zoho lo exige
+            para pasar del registro 2000 (DISCRETE_PAGINATION_LIMIT_EXCEEDED)
+            y rechaza enviarlo junto con `page` (AMBIGUITY_DURING_PROCESSING),
+            así que si viene, reemplaza a `page`.
 
     Returns:
         tuple: (lista_de_registros, hay_mas_paginas, next_page_token)
@@ -86,9 +90,12 @@ def fetch_page(auth, module_name, fields, page, per_page=200, since=None, _retri
 
     parametros = {
     "fields":",".join(f.strip() for f in fields_con_sistema),
-    "page": page,
     "per_page": per_page
     }
+    if page_token:
+        parametros["page_token"] = page_token
+    else:
+        parametros["page"] = page
 
     headers = auth.get_header()
 
@@ -135,7 +142,8 @@ def fetch_page(auth, module_name, fields, page, per_page=200, since=None, _retri
         if _retried:
             raise Exception(f"401 persistente en {module_name} — verificá credenciales en .env")
         auth.get_access_token()
-        return fetch_page(auth, module_name, fields, page, per_page, since, _retried=True)
+        return fetch_page(auth, module_name, fields, page, per_page, since, _retried=True,
+                          page_token=page_token)
 
     # Rate limit excedido — espera Retry-After (o 60s por defecto) y deja que request_with_backoff reintente
     elif response.status_code == 429:
@@ -151,6 +159,11 @@ def fetch_page(auth, module_name, fields, page, per_page=200, since=None, _retri
         logger.warning(f"{response.status_code} en {module_name} — reintentando con backoff")
         raise Exception(f"HTTP {response.status_code} en {module_name}")
 
+# Zoho solo entrega los primeros 2000 registros paginando con `page`
+# (10 páginas de 200). Desde la 11 hay que usar el next_page_token.
+PAGINAS_SIN_TOKEN = 2000 // 200
+
+
 def _extract_single_chunk(auth, module_name, fields, since=None, checkpoint_suffix=""):
     """Extrae registros para un único lote de campos respetando paginación y checkpoints."""
     os.makedirs("checkpoints", exist_ok=True)
@@ -160,12 +173,14 @@ def _extract_single_chunk(auth, module_name, fields, since=None, checkpoint_suff
     if os.path.exists(checkpoint_file):
         with open(checkpoint_file, "r") as f:
             estado = json.load(f)
-        page = estado["page"]
+        page = estado["page"] + 1  # el checkpoint guarda la última página YA procesada
         all_records = estado["records"]
+        next_token = estado.get("next_page_token")
         logger.info(f"{module_name}{checkpoint_suffix}: reanudando desde página {page} con {len(all_records)} registros previos")
     else:
         all_records = []
         page = 1
+        next_token = None
         logger.info(f"Iniciando extracción de {module_name}{checkpoint_suffix}...")
         if since is not None:
             logger.info(f"Modo Incremental desde {since}")
@@ -176,13 +191,22 @@ def _extract_single_chunk(auth, module_name, fields, since=None, checkpoint_suff
     start_time = datetime.now()
     paginas_procesadas = 0
     while has_more:
-        registros, mas_paginas, _token = request_with_backoff(
+        token = None
+        if page > PAGINAS_SIN_TOKEN:
+            if not next_token:
+                raise RuntimeError(
+                    f"{module_name}{checkpoint_suffix}: Zoho no devolvió next_page_token "
+                    f"y la página {page} supera el límite de 2000 registros sin token"
+                )
+            token = next_token
+        registros, mas_paginas, next_token = request_with_backoff(
             lambda: fetch_page(auth, module_name=module_name, fields=fields,
-                               page=page, since=since)
+                               page=page, since=since, page_token=token)
         )
         all_records.extend(registros)
 
-        estado = {"page": page, "records": all_records}
+        # next_page_token es el de la página SIGUIENTE: se guarda para poder reanudar.
+        estado = {"page": page, "records": all_records, "next_page_token": next_token}
         with open(checkpoint_file, "w") as f:
             json.dump(estado, f)
         
