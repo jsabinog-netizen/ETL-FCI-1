@@ -100,6 +100,22 @@ def prepare_rows(records, fields):
         rows.append(row)
     return rows
 
+
+def prepare_module_rows(records, fields, project_name, module_name):
+    """
+    prepare_rows + ajustes por módulo. La usan la carga incremental Y la
+    reconciliación: si un ajuste vive solo en una de las dos rutas, la otra
+    reescribe raw con el dato roto.
+    """
+    rows = prepare_rows(records, fields)
+    if project_name == "ruta_mujer" and module_name == "Postvinculaci_n_Colsub":
+        # Empresa es texto en el módulo reconstruido, pero raw la tiene como JSON
+        # (columna compartida con los lookups). Sin esto, PARSE_JSON la deja NULL.
+        for record, row in zip(records, rows):
+            if isinstance(record.get("Empresa"), str):
+                row["Empresa"] = json.dumps(record["Empresa"], ensure_ascii=False)
+    return rows
+
 # OPERACIONES BIGQUERY
 
 def ensure_table(client, table_fqn, schema):
@@ -244,17 +260,52 @@ def es_seguro_borrar(client, staging_fqn, raw_fqn, umbral_pct=0.8, tolerancia_ab
     row = list(client.query(q).result())[0]
     n_staging = row["n_staging"] or 0
     n_raw = row["n_raw"] or 0
+    return decidir_borrado(n_staging, n_raw, umbral_pct, tolerancia_abs), n_staging, n_raw
 
+
+def decidir_borrado(n_fuente, n_raw, umbral_pct=0.8, tolerancia_abs=5):
+    """Regla del guardrail, sin I/O. La comparten el borrado real y el dry-run."""
     if n_raw == 0:
-        return True, n_staging, n_raw
+        return True
+    caida_abs = n_raw - n_fuente
+    ratio = n_fuente / n_raw
+    return ratio >= umbral_pct or caida_abs <= tolerancia_abs
 
-    caida_abs = n_raw - n_staging
-    ratio = n_staging / n_raw
 
-    if ratio >= umbral_pct or caida_abs <= tolerancia_abs:
-        return True, n_staging, n_raw
+def contar_huerfanos(client, module_name, dataset, project_name):
+    """
+    DRY-RUN: compara los ids del full refresh (output/{project}/{module}.json)
+    contra raw SIN escribir nada en BigQuery (ni staging, ni raw, ni metadata).
 
-    return False, n_staging, n_raw
+    Devuelve (n_zoho, n_raw, huerfanos) donde huerfanos es una lista de
+    dicts {id, Name, Modified_Time} que la reconciliación borraría.
+    """
+    raw_fqn = f"{PROJECT_ID}.{dataset}.{module_name.lower()}"
+    path = f"output/{project_name}/{module_name}.json"
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"{module_name}: no existe {path} — corré el extractor en full refresh primero")
+    with open(path, "r", encoding="utf-8") as f:
+        records = json.load(f)
+    if any(not isinstance(r, dict) or not r.get("id") for r in records):
+        raise ValueError(f"{module_name}: registros sin id válido — dry-run abortado")
+
+    ids_zoho = sorted({str(r["id"]) for r in records})
+    q = f"""
+    SELECT
+      (SELECT COUNT(DISTINCT id) FROM `{raw_fqn}`) AS n_raw,
+      ARRAY(
+        SELECT AS STRUCT id, TO_JSON_STRING(Name) AS Name, Modified_Time
+        FROM `{raw_fqn}`
+        WHERE id NOT IN UNNEST(@ids)
+        ORDER BY Modified_Time
+      ) AS huerfanos
+    """
+    job_config = bigquery.QueryJobConfig(query_parameters=[
+        bigquery.ArrayQueryParameter("ids", "STRING", ids_zoho),
+    ])
+    row = list(client.query(q, job_config=job_config).result())[0]
+    huerfanos = [dict(h) for h in row["huerfanos"]]
+    return len(ids_zoho), row["n_raw"] or 0, huerfanos
 
 
 def reconciliar_module(client, module_name, fields, dataset, project_name="colsubsidio", umbral_pct=0.8, tolerancia_abs=5):
@@ -298,7 +349,7 @@ def _reconciliar_module(client, module_name, fields,dataset, project_name="colsu
     if any(not isinstance(r, dict) or not r.get("id") for r in records):
         raise ValueError(f"{module_name}: registros sin id válido — reconciliación abortada")
 
-    rows = prepare_rows(records, fields)
+    rows = prepare_module_rows(records, fields, project_name, module_name)
     raw_schema = build_raw_schema(fields)
     staging_schema = build_staging_schema(fields)
 
@@ -367,12 +418,7 @@ def load_module(client, module_name, fields,dataset, project_name="colsubsidio")
         raise ValueError(f"{module_name}: registros sin id válido — carga abortada")
 
     # 3. Preparar filas y schemas
-    rows = prepare_rows(records, fields)
-    if project_name == "ruta_mujer" and module_name == "Postvinculaci_n_Colsub":
-        # Empresa es texto en el módulo reconstruido, pero se usa json en el compartido
-        for record, row in zip(records, rows):
-            if isinstance(record.get("Empresa"), str):
-                row["Empresa"] = json.dumps(record["Empresa"], ensure_ascii=False)
+    rows = prepare_module_rows(records, fields, project_name, module_name)
     raw_schema = build_raw_schema(fields)
     staging_schema = build_staging_schema(fields)
 

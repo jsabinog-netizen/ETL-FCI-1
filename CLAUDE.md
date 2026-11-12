@@ -53,7 +53,8 @@ ETL-FCI/
 ├── extractor.py       # extracción con fields explícitos
 ├── loader.py          # carga a BigQuery, param. por dataset_id
 ├── metadata.py        # watermarks, param. por dataset_id
-├── reconciliar.py     # ⚠️ aún hardcodeado a Colsubsidio
+├── borrados.py        # cada corrida: DELETE en raw de los ids que Zoho reporta borrados (/deleted). Activo con propagar_borrados en config
+├── reconciliar.py     # respaldo manual: full refresh + borrado por ausencia. python reconciliar.py <proyecto> [--dry-run]
 └── fci_dbt/
     └── models/
         ├── colsubsidio/
@@ -323,7 +324,7 @@ Metas (tabla `Metas RM` del .pbix, confirmadas por Jorge el 9-oct-2026): registr
 ## Pendientes
 
 - Construcción del dashboard en Power BI (19 páginas)
-- `reconciliar.py` sigue hardcodeado a Colsubsidio — hay que parametrizarlo
+- Borrados Zoho→BQ: Ruta Mujer los propaga en cada corrida (`borrados.py`). Causa real en psicosocial v2: al diligenciar el diagnóstico la integración borra el registro "enlace enviado" y crea uno nuevo. Colsubsidio y GIZ siguen sin propagación: activar `propagar_borrados` cuando se valide en Ruta Mujer
 - Módulo 2 del requerimiento (gestión de vacantes) — esperando a tecnología
 - Reportar a tecnología los typos `Peramencia_de_seguimiento` y `Tipo_de_novedad1`
 - Confirmar si el cálculo de los 20 días de post-vinculación lo hace un workflow de Zoho o se calcula en dbt

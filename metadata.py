@@ -11,6 +11,7 @@ def ensure_metadata_table(client, dataset_id):
     """
     Crea pipeline_metadata si no existe. Una fila por módulo por corrida (historial).
     - status:    success | empty | error | reconciled | reconcile_blocked | reconcile_skipped | reconcile_error
+                 | deleted | delete_error  (borrados.py; watermark siempre NULL)
     - watermark: MAX(Modified_Time) de lo cargado en esa corrida; NULL si vacío/falló.
                  De acá sale el since incremental: MAX(watermark) por módulo.
     """

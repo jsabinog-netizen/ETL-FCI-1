@@ -578,5 +578,8 @@ PROJECTS = {
         "dataset_id": "proyecto_ruta_mujer",
         "env_prefix": "ZOHO",
         "modules": MODULES_RUTA_MUJER,
+        # Cada corrida elimina de raw los ids que Zoho reporta borrados (borrados.py).
+        # Colsubsidio y GIZ siguen sin esto hasta validarlo en Ruta Mujer.
+        "propagar_borrados": True,
     },
 }

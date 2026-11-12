@@ -42,6 +42,29 @@ class PostvinculacionEmpresaTest(unittest.TestCase):
                 self.assertEqual(rows[0]["Empresa"], "Empresa")
 
 
+class ReconciliacionEmpresaTest(unittest.TestCase):
+    """La reconciliación reescribe raw: debe aplicar el mismo ajuste que la carga."""
+
+    def test_reconciliacion_conserva_empresa_texto(self):
+        value = 'Empresa "Bogotá"'
+        records = [{"id": "1", "Empresa": value, "Modified_Time": "2026-11-01T00:00:00Z"}]
+        client = MagicMock()
+        client.query.return_value.result.return_value = [{"n": 0}]
+        with (
+            patch("loader.ensure_metadata_table"),
+            patch("loader.os.path.exists", return_value=True),
+            patch("builtins.open", mock_open(read_data=json.dumps(records))),
+            patch("loader.ensure_table"),
+            patch("loader.load_to_staging", return_value=1) as load,
+            patch("loader.es_seguro_borrar", return_value=(True, 1, 1)),
+            patch("loader.write_run"),
+        ):
+            loader.reconciliar_module(client, "Postvinculaci_n_Colsub", ["Empresa"],
+                                      "proyecto_ruta_mujer", project_name="ruta_mujer")
+        rows = load.call_args.args[1]
+        self.assertEqual(json.loads(rows[0]["Empresa"]), value)
+
+
 class EnsureTableSchemaEvolutionTest(unittest.TestCase):
     def test_crea_tabla_si_no_existe(self):
         client = MagicMock()
