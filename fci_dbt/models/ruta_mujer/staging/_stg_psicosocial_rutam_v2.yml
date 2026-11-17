@@ -44,3 +44,9 @@ models:
     description: ARRAY con las opciones marcadas en "Indicadores de alerta" (ideas de hacerse daño, sueño, consumo, pérdida de control).
   - name: barreras_opciones
     description: ARRAY con las barreras marcadas (hasta 3). barrera_1..3 son las mismas en columnas.
+  - name: nombre_formacion
+    description: Nombre del curso o programa de formación asociado al acompañamiento psicosocial.
+  - name: grupo
+    description: Grupo asignado para la formación en psicosocial.
+  - name: fecha_formacion
+    description: Fecha programada o de realización de la formación psicosocial (DATE).

@@ -95,6 +95,11 @@ select
     date(safe_cast(`L2_Remisi_n_fecha` as timestamp)) as l2_remision_fecha,
     date(safe_cast(`L2_Remisi_n_fecha_de_verificaci_n` as timestamp)) as l2_remision_fecha_verificacion,
 
+    -- ── Formación psicosocial ──
+    trim(`Nombre_Formaci_n`) as nombre_formacion,
+    trim(`Grupo`) as grupo,
+    date(safe_cast(`Fecha_Formaci_n` as timestamp)) as fecha_formacion,
+
     safe_cast(_loaded_at as timestamp) as _loaded_at,
     safe_cast(Modified_Time as timestamp) as modified_time,
 from {{ source('zoho_raw_ruta_mujer', 'psicosocial_rutam_v2') }}

@@ -83,3 +83,9 @@ models:
         description: Respondió algún factor que dificultó su permanencia laboral.
       - name: en_tratamiento_psicologico_flag
         description: Está en tratamiento psicológico o psiquiátrico (Sí).
+      - name: nombre_formacion
+        description: Nombre del curso o formación psicosocial asociada.
+      - name: grupo
+        description: Grupo de formación en psicosocial.
+      - name: fecha_formacion
+        description: Fecha de la formación psicosocial (DATE).

@@ -411,6 +411,8 @@ MODULES_RUTA_MUJER = {
         "L1_Herramientas_y_recursos_entregados",
         "L2_Remisi_n_entidad_o_ruta_espec_fica", "L2_Remisi_n_fecha",
         "L2_Remisi_n_fecha_de_verificaci_n",
+        # Formación psicosocial
+        "Nombre_Formaci_n", "Grupo", "Fecha_Formaci_n",
     ],
     "Intermediaci_n_Ruta_M": [
         "Corte",
