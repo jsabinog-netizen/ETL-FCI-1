@@ -172,7 +172,7 @@ with orientacion as (
         coalesce(o.area_experiencia_2, 'No aplica / Sin experiencia') as area_experiencia_2,
         coalesce(o.tiempo_de_experiencia_laboral, 'Sin información') as tiempo_de_experiencia_laboral,
         coalesce(o.tiempo_busqueda_empleo, 'Sin información') as tiempo_busqueda_empleo,
-        coalesce(o.brecha_o_barrera_identificada, 'Sin información') as brecha_o_barrera_identificada,
+        coalesce(o.brecha_o_barrera_identificada, 'Sin barrera') as brecha_o_barrera_identificada,
         coalesce(o.profundice_la_barrera_o_brecha_identificada, 'Sin información') as profundice_la_barrera_o_brecha_identificada,
 
         -- ── Campos de Psicosocial agregados para replicar vw_fact_Colsubsidio ──
